@@ -1,0 +1,57 @@
+[branch "master"]
+	rebase = true
+
+[merge "ours"]
+	driver = true
+
+[user]
+	email = a@monks.co
+	name = monks
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[help]
+    autocorrect = 1
+
+[core]
+  editor = vim
+  # pager = delta --theme=zenburn
+
+[alias]
+    r = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"git commit --amend \\\"--date=$(date)\\\" --no-edit\" ; }; f"
+    ri = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase -i $target && git rebase $target --exec \"git commit --amend \\\"--date=$(date)\\\" --no-edit\" ; }; f"
+    i = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase -i $target ; }; f"
+    p = "!f() { branch=$(git rev-parse --abbrev-ref HEAD) ; while ! git push --force-with-lease --set-upstream -- origin $branch ; do echo retrying push ; done ; }; f"
+    rp = "!f() { git r && git p ; }; f"
+    rip = "!f() { git ri && git p ; }; f"
+
+    ri-test = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target -i --exec \"regen && git add . && git commit --amend --no-edit\" && git r ; }; f"
+
+    safe-rebase-target = "!f() { safe-rebase-target; }; f"
+    master = "!f() { git status --porcelain && git fetch && git checkout master && git reset --hard $(git safe-rebase-target) ; }; f"
+    devbox = "!f() { git fetch && git checkout $(ssh devbox 'cd ~/co/backend && git rev-parse --short HEAD'); }; f"
+
+    # check out a new branch from safe master
+    new-branch = "!f() { git fetch && git checkout -b $1 && git reset --hard $(git safe-rebase-target); }; f"
+
+    # diff branch by message
+    miff = "!f() { commit-message-diff $1 $2 | column -t -s'\t' ; }; f"
+
+    # commit
+    c = "commit -pv"
+
+    stat = "show --stat"
+    uncommit = "reset HEAD~"
+
+    #
+    summon = "!f() { b=$1&& git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b ; }; f"
+    branches = "branch --sort=-committerdate"
+    touching = "rev-list --all --format=%B"
+    choose = "!f() { git branches | fzf | sed 's/^\\* //g' | xargs echo -n ; }; f"
+    change = "!f() { b=`git choose` && git checkout $b ; }; f"
+
+    backtrack = "rebase -i HEAD~10"

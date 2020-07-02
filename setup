@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+function wait_for_enter() {
+	read -p "Press enter to continue"
+}
+
+function install_xcode_tools() {
+	if xcode-select -p 1>/dev/null ; then
+		return
+	fi
+
+	echo Installing XCode tools
+
+	xcode-select --install
+	wait_for_enter
+}
+
+function install_macports() {
+	if test -f /opt/local/bin/port ; then
+		return
+	fi
+
+	echo Installing MacPorts
+
+	macports_version=2.6.2-10.15-Catalina
+	url=https://distfiles.macports.org/MacPorts/MacPorts-$macports_version.pkg
+	curl --location $url --output macports.pkg
+	open macports.pkg
+	wait_for_enter
+	rm macports.pkg
+}
+
+function install_fish() {
+	if which fish 1>/dev/null ; then
+		return
+	fi	
+
+	echo Installing Fish
+
+	sudo /opt/local/bin/port install fish
+	sudo sh -c 'echo /opt/local/bin/fish >> /etc/shells'
+	chpass -s /opt/local/bin/fish ${USER}
+}
+
+
+
+
+
+install_xcode_tools
+install_macports
+install_fish
+
+./setup.fish
+
