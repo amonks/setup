@@ -191,20 +191,14 @@ end
 	
 
 set_preferences
-install_1password
-install_karabiner
-install_slack
+
+# INSTALL PORTS
 install_port jq
 install_port fd
 install_port rg ripgrep
 install_port autojump
 install_port htop
 install_port nvim neovim
-install_telegram
-install_divvy
-setup_ssh_key
-install_vscode
-install_hey
 install_port direnv
 install_port tmux
 install_port bat
@@ -212,4 +206,13 @@ install_port exa
 install_port prettyping
 install_port ncdu
 install_port mtr
+
+install_1password
+install_karabiner
+install_slack
+install_telegram
+install_divvy
+setup_ssh_key
+install_vscode
+install_hey
 
