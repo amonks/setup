@@ -207,4 +207,9 @@ install_vscode
 install_hey
 install_port direnv
 install_port tmux
+install_port bat
+install_port exa
+install_port prettyping
+install_port ncdu
+install_port mtr
 

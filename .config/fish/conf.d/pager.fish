@@ -1,6 +1,6 @@
-# use vim as pager
-set -x PAGER "/bin/sh -c \"unset PAGER;col -b -x | \
-  vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
-  -c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
-  -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
+if status --is-interactive
+  if which bat 1>/dev/null
+    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+  end
+end
 
