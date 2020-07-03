@@ -193,6 +193,8 @@ end
 set_preferences
 
 # INSTALL PORTS
+install_port node nodejs14
+install_port bash
 install_port jq
 install_port fd
 install_port rg ripgrep
