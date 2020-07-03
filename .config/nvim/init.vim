@@ -10,7 +10,7 @@ unlet autoload_plug_path
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_node_path = "/usr/bin/node"
+let g:coc_node_path = trim(system('which node'))
 
 Plug 'fatih/vim-go'
 Plug 'tfnico/vim-gradle'
