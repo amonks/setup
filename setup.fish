@@ -1,5 +1,27 @@
 #!/usr/bin/env fish
 
+
+set -q SETUP_MODE; or set SETUP_MODE "secondary"
+
+
+set system_type unknown
+if string match 'linux-gnu*' $OSTYPE 1>/dev/null
+  if which yum 1>/dev/null
+    set system_type yum
+  end
+else if string match 'darwin*' $OSTYPE 1>/dev/null
+  set system_type macos
+end
+
+if test $system_type = unknown
+  echo "Unsupported OS"
+  exit 1
+end
+
+echo Setting up a $SETUP_MODE machine on $system_type
+
+
+
 function set_macos_preferences
   echo Setting macos preferences
 
@@ -41,18 +63,34 @@ function set_macos_preferences
   defaults write com.apple.finder CreateDesktop -bool FALSE
 end
 
+function with-default --argument-names secondary primary
+  if test -n $secondary
+    echo $secondary
+  else
+    echo $primary
+  end
+end
 
-function install_port --argument-names bin_name port_name
-  if test -z "$port_name"
-    set port_name $bin_name
+function install-package
+  argparse 'n-name=' 'p-port=' 'y-yum=' -- $argv
+
+  if test -z "$_flag_name"
+    echo "required name not provided to install-package"
+    return 1
   end
 
-  if which $bin_name 1>/dev/null
+  if which $_flag_name 1>/dev/null
     return
   end
 
-  echo Installing $bin_name
-  sudo port install $port_name
+  echo Installing $_flag_name
+
+  switch $system_type
+    case macos
+      port install (with-default $_flag_name $_flag_port)
+    case yum
+      yum install (with-default $_flag_name $_flag_yum)
+  end
 end
 
 
@@ -83,31 +121,33 @@ end
 
   
 
-set_macos_preferences
-setup_ssh_key
+install-package --name fzf
+install-package --name bash
+install-package --name jq
+install-package --name fd
+install-package --name rg --port ripgrep
+install-package --name autojump
+install-package --name htop
+install-package --name nvim --port neovim
+install-package --name direnv
+install-package --name tmux
+install-package --name bat
+install-package --name exa
+install-package --name prettyping
+install-package --name ncdu
+install-package --name mtr
+install-package --name mosh
 
-# INSTALL PORTS
-install_port fzf
-install_port ledger
-install_port node nodejs14
-install_port bash
-install_port jq
-install_port fd
-install_port rg ripgrep
-install_port autojump
-install_port htop
-install_port nvim neovim
-install_port direnv
-install_port tmux
-install_port bat
-install_port exa
-install_port prettyping
-install_port ncdu
-install_port mtr
-install_port mosh
+if test $SETUP_MODE = primary
+  setup_ssh_key
+  install-package --name ledger
+  install-package --name node --port nodejs14
+  install_rust
+end
 
-install_rust
-
-source ./macos_apps.fish
-install_macos_apps
+if test $system_type = macos
+  set_macos_preferences
+  source ./macos_apps.fish
+  install_macos_apps
+end
 
