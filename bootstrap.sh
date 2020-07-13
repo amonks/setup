@@ -7,7 +7,7 @@ if test -d "$HOME/.cfg" ; then
   exit 1
 fi
 
-git clone --bare git@github.com:amonks/setup.git "$HOME/.cfg"
+git clone --bare https://github.com/amonks/setup.git "$HOME/.cfg"
 git --git-dir="$HOME/.cfg/" --work-tree="$HOME" checkout
 
 ./setup
