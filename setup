@@ -44,7 +44,7 @@ function install_fish() {
     yum)
       pushd /etc/yum.repos.d/ || return 1
       sudo wget https://download.opensuse.org/repositories/shells:fish:release:3/CentOS_8/shells:fish:release:3.repo
-      sudo yum install fish
+      sudo yum -y install fish
       popd || return 1
     ;;
   esac

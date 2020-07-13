@@ -89,7 +89,7 @@ function install-package
     case macos
       sudo port install (with-default $_flag_name $_flag_port)
     case yum
-      sudo yum install (with-default $_flag_name $_flag_yum)
+      sudo yum -y install (with-default $_flag_name $_flag_yum)
   end
 end
 
