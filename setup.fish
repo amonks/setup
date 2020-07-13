@@ -87,6 +87,8 @@ set_macos_preferences
 setup_ssh_key
 
 # INSTALL PORTS
+install_port fzf
+install_port ledger
 install_port node nodejs14
 install_port bash
 install_port jq
@@ -102,6 +104,7 @@ install_port exa
 install_port prettyping
 install_port ncdu
 install_port mtr
+install_port mosh
 
 install_rust
 
