@@ -87,9 +87,9 @@ function install-package
 
   switch $system_type
     case macos
-      port install (with-default $_flag_name $_flag_port)
+      sudo port install (with-default $_flag_name $_flag_port)
     case yum
-      yum install (with-default $_flag_name $_flag_yum)
+      sudo yum install (with-default $_flag_name $_flag_yum)
   end
 end
 
