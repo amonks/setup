@@ -1,53 +1,80 @@
 #!/usr/bin/env bash
 
 function wait_for_enter() {
-	read -p "Press enter to continue"
+  read -rp "Press enter to continue"
 }
 
 function install_xcode_tools() {
-	if xcode-select -p 1>/dev/null ; then
-		return
-	fi
+  if xcode-select -p 1>/dev/null ; then
+    return
+  fi
 
-	echo Installing XCode tools
+  echo Installing XCode tools
 
-	xcode-select --install
-	wait_for_enter
+  xcode-select --install
+  wait_for_enter
 }
 
 function install_macports() {
-	if test -f /opt/local/bin/port ; then
-		return
-	fi
+  if test -f /opt/local/bin/port ; then
+    return
+  fi
 
-	echo Installing MacPorts
+  echo Installing MacPorts
 
-	macports_version=2.6.2-10.15-Catalina
-	url=https://distfiles.macports.org/MacPorts/MacPorts-$macports_version.pkg
-	curl --location $url --output macports.pkg
-	open macports.pkg
-	wait_for_enter
-	rm macports.pkg
+  macports_version=2.6.2-10.15-Catalina
+  url=https://distfiles.macports.org/MacPorts/MacPorts-$macports_version.pkg
+  curl --location $url --output macports.pkg
+  open macports.pkg
+  wait_for_enter
+  rm macports.pkg
 }
 
 function install_fish() {
-	if which fish 1>/dev/null ; then
-		return
-	fi	
+  if which fish 1>/dev/null ; then
+    return
+  fi  
 
-	echo Installing Fish
+  echo Installing Fish
 
-	sudo /opt/local/bin/port install fish
-	sudo sh -c 'echo /opt/local/bin/fish >> /etc/shells'
-	chpass -s /opt/local/bin/fish ${USER}
+  case $mode in
+    macos)
+      sudo /opt/local/bin/port install fish
+    ;;
+    yum)
+      pushd /etc/yum.repos.d/ || return 1
+      wget https://download.opensuse.org/repositories/shells:fish:release:3/CentOS_8/shells:fish:release:3.repo
+      yum install fish
+      popd || return 1
+    ;;
+  esac
+  sudo sh -c 'echo /opt/local/bin/fish >> /etc/shells'
+  chpass -s /opt/local/bin/fish "${USER}"
 }
 
 
 
+mode=unknown
+
+if [[ "$OSTYPE" == "linux-gnu"* ]] ; then
+  if which yum 1>/dev/null ; then
+    mode=yum
+  fi
+elif [[ "$OSTYPE" == "darwin"* ]] ; then
+  mode=macos
+fi
+
+if [[ "$mode" == "unknown" ]] ; then
+  echo "Unsupported OS"
+fi
 
 
-install_xcode_tools
-install_macports
+
+if [[ "$mode" == "macos" ]] ; then
+  install_xcode_tools
+  install_macports
+fi
+
 install_fish
 
 ./setup.fish
