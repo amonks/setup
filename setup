@@ -66,6 +66,7 @@ fi
 
 if [[ "$mode" == "unknown" ]] ; then
   echo "Unsupported OS"
+  exit 1
 fi
 
 
