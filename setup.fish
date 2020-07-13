@@ -14,6 +14,7 @@ function set_macos_preferences
 
   ## Speed
   
+  defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
   defaults write 'Apple Global Domain' InitialKeyRepeat 15
   defaults write 'Apple Global Domain' KeyRepeat 2
 
