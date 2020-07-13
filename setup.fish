@@ -83,8 +83,6 @@ function install-package
     return
   end
 
-  echo Installing $_flag_name
-
   switch $system_type
     case macos
       set -l package (with-default $_flag_name $_flag_port)
@@ -92,6 +90,7 @@ function install-package
 	return
       end
 
+      echo Installing $_flag_name
       sudo port install $package
 
     case yum
@@ -100,6 +99,7 @@ function install-package
 	return
       end
 
+      echo Installing $_flag_name
       sudo yum -y install $package
   end
 end
