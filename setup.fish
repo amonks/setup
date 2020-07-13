@@ -79,7 +79,7 @@ function install-package
     return 1
   end
 
-  if which $_flag_name 1>/dev/null
+  if which $_flag_name 1>/dev/null 2>&1
     return
   end
 
