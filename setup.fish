@@ -5,11 +5,11 @@ set -q SETUP_MODE; or set SETUP_MODE "secondary"
 
 
 set system_type unknown
-if string match 'linux-gnu*' $OSTYPE 1>/dev/null
+if test (uname) = Linux
   if which yum 1>/dev/null
     set system_type yum
   end
-else if string match 'darwin*' $OSTYPE 1>/dev/null
+else if test (uname) = Darwin
   set system_type macos
 end
 
