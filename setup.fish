@@ -71,6 +71,16 @@ function setup_ssh_key
   wait_for_enter
 end
 
+function install_rust
+  if which rustc 1>/dev/null
+    return
+  end
+
+  echo "Installing rust"
+
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+end
+
   
 
 set_macos_preferences
@@ -92,6 +102,8 @@ install_port exa
 install_port prettyping
 install_port ncdu
 install_port mtr
+
+install_rust
 
 source ./macos_apps.fish
 install_macos_apps
