@@ -148,6 +148,23 @@ function install_hey
 end
 
 
+function install_spotify
+  if test -d "/Applications/Spotify.app"
+    return
+  end
+
+  echo "Installing Spotify"
+
+  curl --location "https://download.scdn.co/SpotifyInstaller.zip" --output "spotify.zip"
+  unzip "spotify.zip"
+
+  open "Install Spotify.app"
+  wait_for_enter
+
+  rm -rf "Install Spotify.app" "spotify.zip"
+end
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -160,5 +177,6 @@ function install_macos_apps
   install_divvy
   install_vscode
   install_hey
+  install_spotify
 end
 
