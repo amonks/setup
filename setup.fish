@@ -132,19 +132,19 @@ end
 
   
 
-install-package --name fzf
+install-package --name fzf --yum SKIP
 install-package --name bash
 install-package --name jq
-install-package --name fd
-install-package --name rg --port ripgrep
-install-package --name autojump
+install-package --name fd --yum SKIP
+install-package --name rg --port ripgrep --yum SKIP
+install-package --name autojump --yum SKIP
 install-package --name htop
-install-package --name nvim --port neovim
-install-package --name direnv
+install-package --name nvim --port neovim --yum neovim
+install-package --name direnv --yum SKIP
 install-package --name tmux
-install-package --name bat
-install-package --name exa
-install-package --name prettyping
+install-package --name bat --yum SKIP
+install-package --name exa --yum SKIP
+install-package --name prettyping --yum SKIP
 install-package --name ncdu
 install-package --name mtr
 install-package --name mosh
