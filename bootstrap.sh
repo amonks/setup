@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -ex
+
 cd "$HOME" || exit
 
 if test -d "$HOME/.cfg" ; then
