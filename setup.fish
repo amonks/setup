@@ -64,10 +64,10 @@ function set_macos_preferences
 end
 
 function with-default --argument-names secondary primary
-  if test -n $secondary
-    echo $secondary
-  else
+  if test -n $primary
     echo $primary
+  else
+    echo $secondary
   end
 end
 
