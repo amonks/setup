@@ -1,9 +1,9 @@
 function system-type
   if test (uname) = Linux
-    if which yum 1>/dev/null 2>&1
+    if is-installed yum
       echo "yum"
       return
-    else if which apt-get 1>/dev/null 2>&1
+    else if is-installed apt-get
       echo "apt"
       return
     end

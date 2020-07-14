@@ -6,7 +6,7 @@ function install-package
     return 1
   end
 
-  if which $_flag_name 1>/dev/null 2>&1
+  if is-installed $_flag_name
     return
   end
 

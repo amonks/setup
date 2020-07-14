@@ -1,5 +1,5 @@
 function install-rust
-  if which rustc 1>/dev/null
+  if is-installed rustc
     return
   end
 
