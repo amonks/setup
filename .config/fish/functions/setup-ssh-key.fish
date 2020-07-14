@@ -9,7 +9,7 @@ function setup-ssh-key
   eval "(ssh-agent -s)"
   ssh-add -K ~/.ssh/id_rsa
   open "https://github.com/settings/ssh/new"
-  cat ~/.ssh/id_rsa.pub | pbcopy
+  show-text ~/.ssh/id_rsa.pub<
   wait_for_enter
 end
 
