@@ -60,9 +60,11 @@ install-package --name mosh
 
 
 
-if test $SETUP_MODE = primary
-  setup-ssh-key
+setup-ssh-key
 
+
+
+if test $SETUP_MODE = primary
   install-package --name ledger
 
   install-package --name graphviz
