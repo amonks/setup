@@ -2,7 +2,7 @@ function ping
   if begin; status --is-interactive; and which prettyping 1>/dev/null; end
     prettyping --nolegend $argv
   else
-    ping $argv
+    command ping $argv
   end
 end
 
