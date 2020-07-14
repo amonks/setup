@@ -24,6 +24,8 @@ install-package --name tree --yum SKIP
 
 install-package --name iotop --port SKIP
 
+install-package --name iftop
+
 install-package --name bash
 
 install-package --name jq
