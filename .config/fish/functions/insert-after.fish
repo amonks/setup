@@ -2,7 +2,7 @@ function insert-after --argument-names filename pattern insertion
   if test -z "$insertion"
     echo "usage: insert-after \$filename \$pattern \$insertion"
     echo "(inserts \$insertion into \$filename after line containing \$pattern)"
-    exit 1
+    return 1
   end
 
   # by copying the file before replacing it, we retain its chmod stuff
