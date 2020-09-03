@@ -17,7 +17,7 @@ function make-pr
   echo
   echo "COMMITS"
   for commit in $commits
-    git show "$commit" --stat
+    git --no-pager show "$commit" --stat
   end
   echo
   echo "TARGET BRANCH $branch"
