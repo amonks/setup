@@ -18,7 +18,7 @@ function cherry-pick
     git reset --hard
     git branch -D amonks/$name-$branch
     git checkout -b amonks/$name-$branch
-    git reset --hard origin/driver2/$branch
+    git reset --hard origin/$branch
 
     for commit in $commits
       git cherry-pick $commit
@@ -29,7 +29,7 @@ function cherry-pick
   end
 
   for branch in $branches
-    echo https://github.com/samsara-dev/backend/compare/driver2/$branch...amonks/$name-$branch
+    echo https://github.com/samsara-dev/backend/compare/$branch...amonks/$name-$branch
   end
 end
 
