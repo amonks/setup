@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(description='Compare two branches')
 
 parser.add_argument('from_branch', metavar='FROM')
 parser.add_argument('to_branch', metavar='TO')
+parser.add_argument('extra_args', metavar='EXTRA')
 
 args = parser.parse_args()
 
@@ -27,7 +28,7 @@ def get_commits_in_branch(branch_name):
         produce a list of tuples (sha, message) of every commit in a given
         branch (or other git-log-able specifier)
         """
-        output = subprocess.check_output("git log --pretty=format:'{}' {}".format(git_format, branch_name), shell=True)
+        output = subprocess.check_output("git log --pretty=format:'{}' {} {}".format(git_format, branch_name, args.extra_args), shell=True)
         lines = output.decode("utf-8").split("\n")
         out = []
         for line in lines:
