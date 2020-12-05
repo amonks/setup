@@ -182,6 +182,9 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 
 nmap <C-P> :FZF<CR>
 nmap <leader><space> <Plug>(coc-codeaction)
+nmap <leader><leader><space> :<C-u>CocList commands<cr>
+nmap <leader>o :<C-u>CocList outline<cr>
+nmap <leader>f <Plug>(coc-fix-current)
 nmap <leader>. :call CocAction('doHover')<CR>
 nmap <leader>r <Plug>(coc-rename)
 
