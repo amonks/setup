@@ -17,17 +17,11 @@ let g:coc_global_extensions = [
   \ 'coc-eslint'
   \ ]
 
-if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
-  let g:coc_global_extensions += ['coc-prettier']
-endif
-
-if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
-  let g:coc_global_extensions += ['coc-eslint']
-endif
-
 " syntax
 Plug 'sheerun/vim-polyglot'
 Plug 'milch/vim-fastlane'
+
+Plug 'powerman/vim-plugin-AnsiEsc'
 
 " other
 " Plug '~/.fzf'
@@ -35,6 +29,7 @@ Plug 'ap/vim-buftabline'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 let $FZF_DEFAULT_COMMAND = 'fd --type f'
+Plug 'tpope/vim-fugitive'
 Plug 'godlygeek/tabular' " required for vim-markdown
 Plug 'airblade/vim-gitgutter' " see icons for changed lines in gutter
 Plug 'easymotion/vim-easymotion' " type ,, before a motion for a visual selection rather than a count
