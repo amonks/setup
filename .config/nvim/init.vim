@@ -12,7 +12,9 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
-  \ 'coc-json'
+  \ 'coc-json',
+  \ 'coc-prettier',
+  \ 'coc-eslint'
   \ ]
 
 if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
