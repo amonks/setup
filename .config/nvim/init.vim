@@ -170,8 +170,8 @@ let g:vim_markdown_frontmatter=1
 
 
 " COLOR SCHEME
-" set background=dark
-" colorscheme gruvbox
+set background=dark
+colorscheme gruvbox
 
 
 
