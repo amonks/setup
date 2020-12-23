@@ -9,6 +9,8 @@ unlet autoload_plug_path
 
 call plug#begin('~/.local/share/nvim/plugged')
 
+Plug 'christoomey/vim-tmux-navigator'
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
