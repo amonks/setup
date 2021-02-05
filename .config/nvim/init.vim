@@ -1,3 +1,5 @@
+" Plugins {{{1
+
 " Bootstrap Plug
 let autoload_plug_path = stdpath('data') . '/site/autoload/plug.vim'
 if !filereadable(autoload_plug_path)
@@ -7,72 +9,38 @@ if !filereadable(autoload_plug_path)
 endif
 unlet autoload_plug_path
 
+" Install plugins
 call plug#begin('~/.local/share/nvim/plugged')
-
-Plug 'christoomey/vim-tmux-navigator'
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = [
-  \ 'coc-tsserver',
-  \ 'coc-json',
-  \ 'coc-prettier',
-  \ 'coc-eslint'
-  \ ]
-
-" syntax
-Plug 'sheerun/vim-polyglot'
-Plug 'milch/vim-fastlane'
-
-Plug 'powerman/vim-plugin-AnsiEsc'
-
-" other
-" Plug '~/.fzf'
-Plug 'ap/vim-buftabline'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-let $FZF_DEFAULT_COMMAND = 'fd --type f'
-Plug 'tpope/vim-fugitive'
-Plug 'godlygeek/tabular' " required for vim-markdown
 Plug 'airblade/vim-gitgutter' " see icons for changed lines in gutter
+Plug 'ap/vim-buftabline'
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'easymotion/vim-easymotion' " type ,, before a motion for a visual selection rather than a count
 Plug 'editorconfig/editorconfig-vim' " honor editorconfig files
-Plug 'luochen1990/rainbow' " rainbow parentheses
 Plug 'google/vim-searchindex' " show 'n of m'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'luochen1990/rainbow' " rainbow parentheses
 Plug 'mbbill/undotree' " track a tree of edits
+Plug 'milch/vim-fastlane'
 Plug 'mileszs/ack.vim' " search in project
-Plug 'stefandtw/quickfix-reflector.vim' " project-wide find and replace
-" Plug 'tpope/vim-commentary' " gc<motion> to comment
-Plug 'tomtom/tcomment_vim' " like commentary but supports contextual JSX
 Plug 'morhetz/gruvbox'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'sheerun/vim-polyglot'
+Plug 'stefandtw/quickfix-reflector.vim' " project-wide find and replace
+Plug 'tomtom/tcomment_vim' " like commentary but supports contextual JSX
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat' " support repeating more things with .
 Plug 'tpope/vim-rsi' " regular bash movement bindings in commandline and insert modes (ctrl-a to go to the beginning of a line, etc)
 Plug 'tpope/vim-speeddating' " increment dates intelligently with ctrl-a and ctrl-x in normal mode
 Plug 'tpope/vim-surround' " ys<movement><surround> to add surround, cs<movement><surround> to change surround, ds<surround> to delete surround,
-			  " for example, ysiw<em> surrounds the current word in an <em> tag
 Plug 'tpope/vim-vinegar' " press - to go up a directory
-
-" Plug 'vim-airline/vim-airline' " status bar
-" Plug 'vim-airline/vim-airline-themes'
-
 call plug#end()
 
 
 
-
-
-
-
-
-
-" I think this has to come before any mappings that use leader
-" the leader is a prefix-modifier key used for lots of stuff.
-" the default leader is backslash but comma is more common for some reason
-" <leader><leader>j means 'press comma twice then pres j'
-let mapleader = ","
-
-" no shift to enter command mode, just use the semicolon key
-nnoremap ; :
-vnoremap ; :
+" Settings {{{1
+"
 
 " allow editing multiple files at once
 set hidden
@@ -80,12 +48,9 @@ set hidden
 " enable syntax highlighting
 syntax enable
 
-" " show files as a tree (press dash in normal mode). You can press i in the
-" " file browser to switch views. ':help netrw' for more.
-" let g:netrw_liststyle=3
-
 " show buffer numbers
 let g:buftabline_numbers=1
+
 " disable weird alternate buffer numbering
 let g:buftabline_plug_max=0
 
@@ -95,24 +60,15 @@ set mouse=a
 " search while typing, not just after pressing enter
 set incsearch
 
+" highlight search results
+set hlsearch
+
 " case insensitive, unless the search term contains caps
 set ignorecase
 set smartcase
 
-" use escape in normal mode to clear the highlighting from the last search
-nnoremap <space> :let @/ = ""<return><esc>
-
-" ctrl-dash to see a list of open files
-map <C--> :BufExplorer<CR>
-
-" highlight search results
-set hlsearch
-
 " use better autoindent
 set cindent
-
-" make backspace normal
-set backspace=indent,eol,start
 
 " save swp in ~/.vim-tmp
 set backup
@@ -148,14 +104,23 @@ set softtabstop=2
 " don't break mid word
 set linebreak
 
+" Color scheme
+set background=dark
+colorscheme gruvbox
 
-" RAINBOW PARENTHESES
+
+
+" Plugin Settings {{{1
+
+
+" Rainbow Parentheses {{{2
+
 let g:rainbow_active = 1
 " Colors I got off the internet somewhere
 let g:rainbow_conf = { 'ctermfgs': ['cyan', 'magenta', 'yellow', 'grey', 'red', 'green', 'blue'], 'guifgs': ['#FF0000', '#FF00FF', '#FFFF00', '#000000', '#FF0000', '#00FF00', '#0000FF'] }
 
+" Ack.vim {{{2
 
-" ACK
 " use ack alternatives if present
 if executable('rg')
   let g:ackprg = 'rg --vimgrep'
@@ -163,19 +128,36 @@ elseif executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
 
+" FZF {{{2
 
-" MARKDOWN
-" disable annoying code folding with vim-markdown
-let g:vim_markdown_folding_disabled=1
-" enable yaml front matter highlighting in vim-markdown
-let g:vim_markdown_frontmatter=1
+let $FZF_DEFAULT_COMMAND = 'fd --type f'
+
+" COC {{{2
+
+let g:coc_global_extensions = [
+  \ 'coc-tsserver',
+  \ 'coc-json',
+  \ 'coc-prettier',
+  \ 'coc-eslint'
+  \ ]
 
 
-" COLOR SCHEME
-set background=dark
-colorscheme gruvbox
+
+" Keyboard {{{1
 
 
+" I think this has to come before any mappings that use leader
+" the leader is a prefix-modifier key used for lots of stuff.
+" the default leader is backslash but comma is more common for some reason
+" <leader><leader>j means 'press comma twice then pres j'
+let mapleader = ","
+
+" no shift to enter command mode, just use the semicolon key
+nnoremap ; :
+vnoremap ; :
+
+" make backspace normal
+set backspace=indent,eol,start
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
@@ -187,7 +169,7 @@ nmap <leader><space> <Plug>(coc-codeaction)
 nmap <leader><leader><space> :<C-u>CocList commands<cr>
 nmap <leader>o :<C-u>CocList outline<cr>
 nmap <leader>f <Plug>(coc-fix-current)
-nmap <leader>. :call CocAction('doHover')<CR>
+nmap <leader>. :call CocActionAsync('doHover')<CR>
 nmap <leader>r <Plug>(coc-rename)
 
 " GoTo code navigation.
@@ -195,4 +177,13 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+
+
+" Filetype Settings {{{1
+
+
+autocmd Syntax sql setlocal foldmethod=marker
+autocmd Syntax vim setlocal foldmethod=marker
+autocmd Syntax typescript setlocal foldmethod=syntax foldlevel=99
 
