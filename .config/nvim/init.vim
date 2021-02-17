@@ -183,3 +183,8 @@ autocmd Syntax sql setlocal foldmethod=marker
 autocmd Syntax vim setlocal foldmethod=marker
 autocmd Syntax typescript setlocal foldmethod=syntax foldlevel=99
 
+function! WritingWords()
+	return system("cat ~/writing/*.md | sed 's/[^A-z ]//g\' | wc -w")[:-2] . " words"
+endfunction
+autocmd BufRead,BufNewFile,BufWritePost */ajm/writing/* setlocal statusline=%{WritingWords()}
+
