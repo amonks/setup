@@ -16,6 +16,7 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'easymotion/vim-easymotion' " type ,, before a motion for a visual selection rather than a count
 Plug 'editorconfig/editorconfig-vim' " honor editorconfig files
+Plug 'fatih/vim-go'
 Plug 'google/vim-searchindex' " show 'n of m'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
