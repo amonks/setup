@@ -12,7 +12,7 @@ unlet autoload_plug_path
 " Install plugins
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'airblade/vim-gitgutter' " see icons for changed lines in gutter
-Plug 'ap/vim-buftabline'
+Plug 'jlanzarotta/bufexplorer'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'easymotion/vim-easymotion' " type ,, before a motion for a visual selection rather than a count
 Plug 'editorconfig/editorconfig-vim' " honor editorconfig files
@@ -47,12 +47,6 @@ set hidden
 
 " enable syntax highlighting
 syntax enable
-
-" show buffer numbers
-let g:buftabline_numbers=1
-
-" disable weird alternate buffer numbering
-let g:buftabline_plug_max=0
 
 " enable scrolling
 set mouse=a
@@ -164,7 +158,9 @@ set backspace=indent,eol,start
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-nmap <C-P> :FZF<CR>
+nmap <C-e> :BufExplorerVerticalSplit<CR>
+
+nmap <C-p> :FZF<CR>
 nmap <leader><space> <Plug>(coc-codeaction)
 nmap <leader><leader><space> :<C-u>CocList commands<cr>
 nmap <leader>o :<C-u>CocList outline<cr>
