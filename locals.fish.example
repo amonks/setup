@@ -1,0 +1,7 @@
+set -u machine_sigil X
+set -u machine_name MACHINE
+
+set -u use_tmux true
+
+set -u machine_user (whoami)
+
