@@ -12,10 +12,21 @@ if test -f $lock_file
 	exit 1
 end
 
-touch $lock_file
+function unlock_backup
+	echo "Unlock"
+	rm $lock_file
+end
+
+function lock_backup
+	echo "Lock"
+	touch $lock_file
+end
+
+lock_backup
+trap unlock_backup INT TERM
+
 syncoid --sshkey /home/ajm/.ssh/id_ed25519 --recursive mypool root@57269.zfs.rsync.net:data1/thor
 set exit_code $status
-rm $lock_file
-
+unlock_backup
 exit $exit_code
 
