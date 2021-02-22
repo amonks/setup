@@ -1,6 +1,6 @@
 if status --is-interactive
   if is-installed direnv
-    eval (direnv hook fish)
+    direnv hook fish | source
   end
 end
 
