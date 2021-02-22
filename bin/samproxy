@@ -2,9 +2,11 @@
 
 cleanup() {
   networksetup -setsocksfirewallproxystate Wi-Fi off
+  networksetup -setsocksfirewallproxystate Ethernet off
 }
 
 networksetup -setsocksfirewallproxystate Wi-Fi on
+networksetup -setsocksfirewallproxystate Ethernet on
 trap cleanup INT TERM
 
 ssh -D 1337 -q -C -N sambox
