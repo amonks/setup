@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+logs_dir="$1"
+snitch="$2"
+script="$3"
+
+if test -z "$logs_dir"; then
+	echo "Logs dir not provided"
+	exit 1
+fi
+
+if test -z "$snitch" ; then
+	echo "Snitch not provided"
+	exit 1
+fi
+
+if test -z "$script" ; then
+	echo "Script not provided"
+	curl -d s=1 "https://nosnch.in/$snitch" &>/dev/null
+	exit 1
+fi
+
+
+
+logs_file="$logs_dir/(basename "$script").log"
+
+date | tee -a "$logs_file"
+echo "$script" | tee -a "$logs_file"
+
+$script 2>&1 | tee -a "$logs_file"
+
+exit_code="${PIPESTATUS[0]}"
+
+echo "exit: $exit_code" | tee -a "$logs_file"
+
+curl -d "s=$exit_code" "https://nosnch.in/$snitch" &>/dev/null
+
