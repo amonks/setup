@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 logs_dir="$1"
-snitch="$2"
-script="$3"
+shift
+snitch="$1"
+shift
+script="$1"
+shift
+args=$@
 
 if test -z "$logs_dir"; then
 	echo "Logs dir not provided"
@@ -25,9 +29,9 @@ fi
 logs_file="$logs_dir/(basename "$script").log"
 
 date | tee -a "$logs_file"
-echo "$script" | tee -a "$logs_file"
+echo "$script" $args | tee -a "$logs_file"
 
-$script 2>&1 | tee -a "$logs_file"
+$script $args 2>&1 | tee -a "$logs_file"
 
 exit_code="${PIPESTATUS[0]}"
 
