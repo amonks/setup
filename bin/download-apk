@@ -20,7 +20,7 @@ fi
 
 auth="Authorization: Bearer $SAMSARA_BUILDKITE_TOKEN"
 
-url=$(curl --silent -H "$auth" "https://api.buildkite.com/v2/organizations/samsara/pipelines/troy-build-dev/builds/667/artifacts" | jq -r '.[] | select( .filename | test("apk$") ) | .download_url')
+url=$(curl --silent -H "$auth" "https://api.buildkite.com/v2/organizations/samsara/pipelines/$pipeline/builds/$build_number/artifacts" | jq -r '.[] | select( .filename | test("apk$") ) | .download_url')
 
 echo "https://buildkite.com/samsara/$pipeline/builds/$build_number"
 echo downloading to "~/$build_number.apk"
