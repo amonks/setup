@@ -26,7 +26,7 @@ fi
 
 
 
-logs_file="$logs_dir/(basename "$script").log"
+logs_file="$logs_dir/$(basename "$script").log"
 
 date | tee -a "$logs_file"
 echo "$script" $args | tee -a "$logs_file"
