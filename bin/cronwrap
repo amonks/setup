@@ -32,10 +32,11 @@ date | tee -a "$logs_file"
 echo "$script" $args | tee -a "$logs_file"
 
 $script $args 2>&1 | tee -a "$logs_file"
-
 exit_code="${PIPESTATUS[0]}"
 
+echo "" | tee -a "$logs_file"
 echo "exit: $exit_code" | tee -a "$logs_file"
-
-curl -d "s=$exit_code" "https://nosnch.in/$snitch" &>/dev/null
-
+curl -d "s=$exit_code" "https://nosnch.in/$snitch" | tee -a "$logs_file"
+echo "completed at $(date)" | tee -a "$logs_file"
+echo "" | tee -a "$logs_file"
+echo "" | tee -a "$logs_file"
