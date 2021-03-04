@@ -17,5 +17,5 @@ rsync -ha --progress \
   --exclude ".viminfo" \
   --exclude ".localized" \
   --exclude ".Trash" \
-  ~/ thor:/mypool/data/mirror/$machine_name/$machine_user
+  ~/ thor-syncer:/mypool/data/mirror/$machine_name/$machine_user
 
