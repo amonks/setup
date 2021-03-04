@@ -14,6 +14,7 @@ rsync -ha --progress \
   --include "/Library/Preferences/*" \
   --exclude "/Library/*" \
   --exclude ".DS_Store" \
+  --exclude ".viminfo" \
   --exclude ".localized" \
   --exclude ".Trash" \
   ~/ thor:/mypool/data/mirror/$machine_name/$machine_user
