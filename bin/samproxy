@@ -11,3 +11,5 @@ trap cleanup INT TERM
 
 ssh -D 1337 -q -C -N sambox
 
+cleanup
+
