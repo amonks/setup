@@ -8,5 +8,9 @@ for album in (cat $list_file)
 end
 rm $list_file
 
-/home/ajm/nas-scripts/restart-itunes.fish
+wait-for 10 beets to catch up
+sudo service forked-daapd restart
+
+wait-for 10 forked-daapd to catch up
+echo "ok reconnect itunes now"
 
