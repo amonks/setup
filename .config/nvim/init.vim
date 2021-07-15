@@ -169,6 +169,9 @@ nmap <leader>f <Plug>(coc-fix-current)
 nmap <leader>. :call CocActionAsync('doHover')<CR>
 nmap <leader>r <Plug>(coc-rename)
 
+nmap <C-c> gg:CocDiagnostics<CR>:lopen<CR>
+nmap <C-n> :lnext<CR>
+
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
