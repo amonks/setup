@@ -30,6 +30,9 @@
     rp = "!f() { git r && git p ; }; f"
     rip = "!f() { git ri && git p ; }; f"
 
+    each = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"$@; git add . && git commit --amend --no-edit\" ; }; f"
+    troy-each = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"cd $BACKEND_ROOT/mobile/Troy; $@; cd $BACKEND_ROOT; git add . && git commit --amend --no-edit\" ; }; f"
+
     ri-test = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target -i --exec \"regen && git add . && git commit --amend --no-edit\" && git r ; }; f"
 
     safe-rebase-target = "!f() { safe-rebase-target; }; f"
