@@ -19,6 +19,7 @@
 
 [core]
   editor = vim
+  excludesfile = ~/.global_gitignore
   # pager = delta --theme=zenburn
 
 [alias]
