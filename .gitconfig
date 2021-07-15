@@ -59,3 +59,6 @@
     change = "!f() { b=`git choose` && git checkout $b ; }; f"
 
     backtrack = "rebase -i HEAD~10"
+
+[gc]
+	auto = 0
