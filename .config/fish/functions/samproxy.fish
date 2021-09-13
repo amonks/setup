@@ -30,9 +30,6 @@ function samproxy --argument-names command
   end
 
 
-  safely-set-proxy-state Ethernet on
-  safely-set-proxy-state Wi-Fi on
-
   echo "Connecting to sambox with $sambox_socket..."
   # -C: use compression
   # -M: "master mode"
@@ -42,6 +39,9 @@ function samproxy --argument-names command
   # -S $sambox_socket: specify socket
   # -D 1337: "dymanic" port forwarding
   ssh -CMNfq -S "$sambox_socket" -D 1337 sambox
+
+  safely-set-proxy-state Ethernet on
+  safely-set-proxy-state Wi-Fi on
 
   read --prompt-str="Ready. Press enter to disconnect. "
 
