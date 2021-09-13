@@ -1,4 +1,5 @@
-function samproxy
+function samproxy --argument-names command
+
   set sambox_socket "/tmp/sambox.sock"
 
   function safely-set-proxy-state --argument-names interface value
@@ -8,6 +9,25 @@ function samproxy
     end
   end
 
+  function cleanup
+    echo "Cleaning up..."
+
+    echo "Disconnecting SSH..."
+    # -S $sambox_socket: specify socket
+    # -O exit: send control-command to master process
+    ssh -S "$sambox_socket" -O exit sambox
+
+    safely-set-proxy-state Ethernet off
+    safely-set-proxy-state Wi-Fi off
+
+    echo "Done."
+  end
+
+
+  if test -n "$command" ; and test "$command" = "off"
+    cleanup
+    return 0
+  end
 
 
   safely-set-proxy-state Ethernet on
@@ -25,18 +45,6 @@ function samproxy
 
   read --prompt-str="Ready. Press enter to disconnect. "
 
-
-
-  echo "Cleaning up..."
-
-  echo "Disconnecting SSH..."
-  # -S $sambox_socket: specify socket
-  # -O exit: send control-command to master process
-  ssh -S "$sambox_socket" -O exit sambox
-
-  safely-set-proxy-state Ethernet off
-  safely-set-proxy-state Wi-Fi off
-
-  echo "Done."
+  cleanup
 end
 
