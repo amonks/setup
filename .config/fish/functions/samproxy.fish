@@ -9,7 +9,7 @@ function samproxy --argument-names command
     end
   end
 
-  function cleanup
+  function cleanup --no-scope-shadowing
     echo "Cleaning up..."
 
     echo "Disconnecting SSH..."
