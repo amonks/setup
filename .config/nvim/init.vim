@@ -52,6 +52,9 @@ syntax enable
 " enable scrolling
 set mouse=a
 
+" no wrap
+set nowrap
+
 " search while typing, not just after pressing enter
 set incsearch
 
