@@ -21,6 +21,7 @@ Plug 'fatih/vim-go'
 Plug 'google/vim-searchindex' " show 'n of m'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'luochen1990/indent-detector.vim'
 Plug 'luochen1990/rainbow' " rainbow parentheses
 Plug 'mbbill/undotree' " track a tree of edits
 Plug 'milch/vim-fastlane'
