@@ -1,11 +1,10 @@
 ```bash
-curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/amonks/setup/master/bootstrap.sh | bash -s
+curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/amonks/setup/master/setup | bash -s
 ```
 
 ## what
 
-- bootstrap sets up a bare git repo tracking ~ in ~/.cfg
-- then it calls setup, which sets up the package manager and installs fish
+- setup clones this repo, installs fish (and macports if necessary)
 - then it calls setup.fish which installs a bunch of shit
 
 the other files are just regular dotfiles. if you make a new dotfile, you can, eg,

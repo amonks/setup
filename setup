@@ -1,88 +1,46 @@
 #!/usr/bin/env bash
 
-function wait_for_enter() {
-  read -rp "Press enter to continue"
-}
+set -euo pipefail
 
-function install_xcode_tools() {
-  if xcode-select -p 1>/dev/null ; then
-    return
+cd "$HOME" || exit
+
+if ! test -d "$HOME/.cfg" ; then
+  echo Cloning dotfiles
+
+  git clone --bare https://github.com/amonks/setup.git "$HOME/.cfg"
+  git --git-dir="$HOME/.cfg/" --work-tree="$HOME" checkout
+  git --git-dir="$HOME/.cfg/" --work-tree="$HOME" pull --force
+fi
+
+if test "$OSTYPE" = "darwin" ; then
+  if ! xcode-select -p 1>/dev/null 2>&1 ; then
+    echo Installing XCode tools
+
+    xcode-select --install
+    read -rp "Press enter to continue"
   fi
 
-  echo Installing XCode tools
+  if ! test -f /opt/local/bin/port ; then
+    echo Installing MacPorts
 
-  xcode-select --install
-  wait_for_enter
-}
-
-function install_macports() {
-  if test -f /opt/local/bin/port ; then
-    return
+    url=https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1-11-BigSur.pkg
+    curl --location $url --output macports.pkg
+    open macports.pkg
+    read -rp "Press enter to continue"
+    rm macports.pkg
   fi
+fi
 
-  echo Installing MacPorts
-
-  macports_version=2.6.2-10.15-Catalina
-  url=https://distfiles.macports.org/MacPorts/MacPorts-$macports_version.pkg
-  curl --location $url --output macports.pkg
-  open macports.pkg
-  wait_for_enter
-  rm macports.pkg
-}
-
-function install_fish() {
-  if which fish 1>/dev/null ; then
-    return
-  fi  
-
+if ! which fish 1>/dev/null 2>&1 ; then
   echo Installing Fish
 
-  case $system_type in
-    macos)
-      sudo /opt/local/bin/port install fish
-    ;;
-    yum)
-      pushd /etc/yum.repos.d/ || return 1
-      sudo wget https://download.opensuse.org/repositories/shells:fish:release:3/CentOS_8/shells:fish:release:3.repo
-      sudo yum -y install fish
-      popd || return 1
-    ;;
-    apt)
-      sudo apt-add-repository ppa:fish-shell/release-3 -y
-      sudo apt-get install fish -y
-    ;;
-  esac
-  sudo sh -c 'echo "'"$(which fish)"'" >> /etc/shells'
-  chsh -s "$(which fish)" "${USER}"
-}
-
-
-
-system_type=unknown
-
-if [[ "$OSTYPE" == "linux-gnu"* ]] ; then
-  if which yum 1>/dev/null 2>&1 ; then
-    system_type=yum
+  if test "$OSTYPE" = "dadrwin" ; then
+    sudo /opt/local/bin/port install fish
   elif which apt-get 1>/dev/null 2>&1 ; then
-    system_type=apt
+    sudo apt-add-repository ppa:fish-shell/release-3 -y
+    sudo apt-get install fish -y
   fi
-elif [[ "$OSTYPE" == "darwin"* ]] ; then
-  system_type=macos
 fi
-
-if [[ "$system_type" == "unknown" ]] ; then
-  echo "Unsupported OS"
-  exit 1
-fi
-
-
-
-if [[ "$system_type" == "macos" ]] ; then
-  install_xcode_tools
-  install_macports
-fi
-
-install_fish
 
 ./setup.fish
 
