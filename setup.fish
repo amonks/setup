@@ -7,14 +7,18 @@ if test $system_type = unknown
   exit 1
 end
 
+function _install-fzf-on-apt-system
+  git clone --depth 1 https://github.com/junegun/fzf.git ~/.fzf
+  ~/.fzf/install
+end
+
 echo Setting up on $system_type
 
 
 setup-ssh-key
 
-
 install-package --name autojump
-install-package --name fzf         --apt SKIP
+install-package --name fzf         --apt function:_install-fzf-on-apt-system
 install-package --name jq
 install-package --name mosh
 
@@ -32,7 +36,7 @@ if yes-or-no "Install development tools"
   install-package --name iotop       --port SKIP
   install-package --name mtr
   install-package --name ncdu
-  install-package --name node --port nodejs14 --apt nodejs
+  install-package --name node        --port nodejs14        --apt nodejs
   install-package --name nvim        --port neovim
   install-package --name prettyping
   install-package --name rg          --port ripgrep
@@ -64,14 +68,6 @@ end
 if yes-or-no "Install ledger"
   install-package --name ledger
 end
-
-
-
-if test $system_type = apt
-  git clone --depth 1 https://github.com/junegun/fzf.git ~/.fzf
-  ~/.fzf/install
-end
-
 
 
 if test $system_type = macos

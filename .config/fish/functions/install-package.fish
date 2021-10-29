@@ -1,5 +1,5 @@
 function install-package
-  argparse 'n-name=' 'p-port=' 'y-yum=' 'a-apt=' -- $argv
+  argparse 'n-name=' 'p-port=' 'a-apt=' -- $argv
 
   if test -z "$_flag_name"
     echo "required name not provided to install-package"
@@ -18,7 +18,12 @@ function install-package
       end
 
       echo Installing $_flag_name
-      sudo port install $package
+
+      if string match 'function:(?<fun>.*)' $package
+        $fun
+      else
+        sudo port install $package
+      end
 
     case apt
       set -l package (with-default $_flag_name $_flag_apt)
@@ -27,7 +32,12 @@ function install-package
       end
 
       echo Installing $_flag_name
-      sudo apt-get install -y $package
+
+      if string match 'function:(?<fun>.*)' $package
+        $fun
+      else
+        sudo apt-get install -y $package
+      end
   end
 end
 
