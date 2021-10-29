@@ -192,6 +192,8 @@ autocmd Syntax sql setlocal foldmethod=marker
 autocmd Syntax vim setlocal foldmethod=marker
 autocmd Syntax typescript setlocal foldmethod=syntax foldlevel=99
 
+autocmd FileType swift let b:coc_root_patterns = ['.xcodeproj', '.xcworkspace', ]
+
 function! WritingWords()
 	return system("cat ~/writing/*.md | sed 's/[^A-z ]//g\' | wc -w")[:-2] . " words"
 endfunction
