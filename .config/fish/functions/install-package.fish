@@ -14,25 +14,16 @@ function install-package
     case macos
       set -l package (with-default $_flag_name $_flag_port)
       if test $package = SKIP
-	return
+        return
       end
 
       echo Installing $_flag_name
       sudo port install $package
 
-    case yum
-      set -l package (with-default $_flag_name $_flag_yum)
-      if test $package = SKIP
-	return
-      end
-
-      echo Installing $_flag_name
-      sudo yum -y install $package
-
     case apt
       set -l package (with-default $_flag_name $_flag_apt)
       if test $package = SKIP
-	return
+        return
       end
 
       echo Installing $_flag_name
