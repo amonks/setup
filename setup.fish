@@ -1,5 +1,6 @@
 #!/usr/bin/env fish
 
+setup-locals
 
 set system_type (system-type)
 if test $system_type = unknown
@@ -7,52 +8,64 @@ if test $system_type = unknown
   exit 1
 end
 
-function _install-fzf-on-apt-system
-  git clone --depth 1 https://github.com/junegun/fzf.git ~/.fzf
-  ~/.fzf/install
-end
 
 echo Setting up on $system_type
 
-
 setup-ssh-key
 
-install-package --name autojump
-install-package --name fzf         --apt function:_install-fzf-on-apt-system
-install-package --name jq
-install-package --name mosh
+if test "$setup_fancy_cli_tools" = true
+  function _install-fzf-on-apt-system
+    git clone --depth 1 https://github.com/junegun/fzf.git ~/.fzf
+    ~/.fzf/install
+  end
 
-if yes-or-no "Install development tools"
+  install-package --name autojump
   install-package --name bash
   install-package --name bat
-  install-package --name direnv
-  install-package --name entr
   install-package --name exa
   install-package --name fd
-  install-package --name gh
-  install-package --name graphviz
+  install-package --name fzf         --apt function:_install-fzf-on-apt-system
   install-package --name htop
+  install-package --name jq
+  install-package --name ncdu
+  install-package --name rg          --port ripgrep
+  install-package --name tree
+end
+
+if test "$use_tmux" = true
+  install-package --name tmux
+end
+
+if test "$setup_network_tools" = true
   install-package --name iftop
   install-package --name iotop       --port SKIP
+  install-package --name mosh
   install-package --name mtr
-  install-package --name ncdu
-  install-package --name node        --port nodejs14        --apt nodejs
-  install-package --name nvim        --port neovim
   install-package --name prettyping
-  install-package --name rg          --port ripgrep
+end
+
+if test "$setup_development_tools" = true
+  install-package --name direnv
+  install-package --name entr
+  install-package --name gh
+  install-package --name graphviz
   install-package --name rlwrap
-  install-package --name tmux
-  install-package --name tree
+end
 
-  sudo npm i -g neovim
+if test "$setup_node_environment" = true
+  install-package --name node        --port nodejs14        --apt nodejs
+end
 
-  if yes-or-no "Install rust"
-    install-rust
-  end
+if test "$setup_rust_environment" = true
+  install-rust
+end
 
-  if test $system_type = macos
-    install-package carthage -apt SKIP
-  end
+if test $system_type = macos; and test "$setup_swift_environment" = true
+  install-package carthage -apt SKIP
+end
+
+if test "$setup_neovim" = true
+  install-package --name nvim        --port neovim
 
   if ! is-installed pip3
     echo Installing pip3
@@ -63,12 +76,15 @@ if yes-or-no "Install development tools"
     echo Installing pynvim
     pip3 install pynvim
   end
+
+  if test "$setup_node_environment" = true
+    sudo npm i -g neovim
+  end
 end
 
-if yes-or-no "Install ledger"
+if test "$setup_ledger" = true
   install-package --name ledger
 end
-
 
 if test $system_type = macos
   set-macos-preferences
