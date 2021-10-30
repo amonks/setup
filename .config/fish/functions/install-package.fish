@@ -19,7 +19,7 @@ function install-package
 
       echo Installing $_flag_name
 
-      if string match 'function:(?<fun>.*)' $package
+      if string match -rq 'function:(?<fun>.*)' "$package"
         $fun
       else
         sudo port install $package
@@ -33,7 +33,7 @@ function install-package
 
       echo Installing $_flag_name
 
-      if string match 'function:(?<fun>.*)' $package
+      if string match -rq 'function:(?<fun>.*)' "$package"
         $fun
       else
         sudo apt-get install -y $package
