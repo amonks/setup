@@ -36,6 +36,9 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
+(global-set-key [mouse-4] 'scroll-down-line)
+(global-set-key [mouse-5] 'scroll-up-line)
+
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
