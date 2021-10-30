@@ -2,11 +2,17 @@ set --universal machine_name MACHINE
 set --universal machine_sigil X
 set --universal machine_user (whoami)
 set --universal setup_development_tools false
+set --universal setup_emacs false
 set --universal setup_fancy_cli_tools true
+set --universal setup_golang_environment false
 set --universal setup_ledger false
+set --universal setup_lisp_environment false
+set --universal setup_markdown_environment false
 set --universal setup_neovim true
 set --universal setup_network_tools false
 set --universal setup_node_environment false
+set --universal setup_python_environment false
+set --universal setup_racket_environment false
 set --universal setup_rust_environment false
 set --universal setup_swift_environment false
 set --universal use_tmux true

@@ -4,6 +4,6 @@ function has-setup-option --argument-names name
 		return 1
 	end
 
-	test "$name" = true
+	eval "test \$$name = true"
 end
 
