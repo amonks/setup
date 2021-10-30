@@ -21,11 +21,11 @@ function setup
     install-package --name bat
     install-package --name exa
     install-package --name fd
-    install-package --name fzf         --apt function:_install-fzf-on-apt-system
+    install-package --name fzf --apt function:_install-fzf-on-apt-system
     install-package --name htop
     install-package --name jq
     install-package --name ncdu
-    install-package --name rg          --port ripgrep
+    install-package --name rg --port ripgrep
     install-package --name tree
   end
 
@@ -35,7 +35,7 @@ function setup
 
   if test "$setup_network_tools" = true
     install-package --name iftop
-    install-package --name iotop       --port SKIP
+    install-package --name iotop --port SKIP
     install-package --name mosh
     install-package --name mtr
     install-package --name prettyping
@@ -50,7 +50,7 @@ function setup
   end
 
   if test "$setup_node_environment" = true
-    install-package --name node        --port nodejs14        --apt nodejs
+    install-package --name node --port nodejs14 --apt nodejs
   end
 
   if test "$setup_rust_environment" = true
@@ -61,11 +61,11 @@ function setup
   end
 
   if test $system_type = macos; and test "$setup_swift_environment" = true
-    install-package carthage -apt SKIP
+    install-package --name carthage --apt SKIP
   end
 
   if test "$setup_neovim" = true
-    install-package --name nvim        --port neovim
+    install-package --name nvim --port neovim
 
     if ! is-installed pip3
       echo Installing pip3
