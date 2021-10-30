@@ -45,5 +45,5 @@ if ! which fish 1>/dev/null 2>&1 ; then
   fi
 fi
 
-./setup.fish
+fish -c 'setup'
 
