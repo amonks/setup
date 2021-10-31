@@ -46,7 +46,7 @@ function setup
 
     if has-setup-option setup_development_tools
         function _has_recent_git
-            git --version | grep 2.2 1>/dev/null 2>&1
+            git --version | grep -e 2.2 -e 2.3 1>/dev/null 2>&1
         end
         function _install_git_on_apt
             sudo add-apt-repository ppa:git-core/ppa
