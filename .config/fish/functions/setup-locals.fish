@@ -1,10 +1,17 @@
 function setup-locals
   if test -f ~/locals.fish
     source ~/locals.fish
+  else
+    touch ~/locals.fish
   end
 
   for line in (cat ~/locals.fish.example)
     if string match -rq 'set (?<scope>[A-z-]+) (?<name>[A-z_]+) (?<default>.*)' "$line"
+      if test -z "$name"
+        echo "Failed to parse line: $line"
+        return 1
+      end
+
       if set -q $name
         continue
       end
