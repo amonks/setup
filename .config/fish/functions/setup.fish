@@ -147,7 +147,9 @@ function setup
             ln -s (which emacs27) ~/bin/emacs
         end
         install-package --name emacs --versioncheck _has_new_emacs --apt function:_install_emacs_on_apt
+        config submodule init
         config submodule update
+        config submodule sync
         doom sync
     end
 
