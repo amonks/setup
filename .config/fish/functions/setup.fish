@@ -181,6 +181,8 @@ function setup
 
     if test $system_type = macos
         set-macos-preferences
-        source ./install-macos-apps.fish
+        if has-setup-option install_desktop_apps
+            source ./install-macos-apps.fish
+        end
     end
 end

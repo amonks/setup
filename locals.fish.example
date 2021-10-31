@@ -1,3 +1,4 @@
+set --universal install_desktop_apps false
 set --universal machine_name MACHINE
 set --universal machine_sigil X
 set --universal machine_user (whoami)
