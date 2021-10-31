@@ -1,5 +1,5 @@
 function install-package
-    argparse 'n-name=' 'p-port=' 'a-apt=' -- $argv
+    argparse 'n-name=' 'p-port=' 'a-apt=' 'c-versioncheck=' -- $argv
 
     if test -z "$_flag_name"
         echo "required name not provided to install-package"
@@ -7,7 +7,12 @@ function install-package
     end
 
     if is-installed $_flag_name
-        return
+        if test -z $_flag_versioncheck
+            return
+        end
+        if $_flag_versioncheck
+            return
+        end
     end
 
     echo Installing $_flag_name
