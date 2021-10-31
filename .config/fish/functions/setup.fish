@@ -8,7 +8,10 @@ function setup
     echo Setting up on $system_type
 
     setup-locals
-    setup-ssh-key
+
+    if has-setup-option setup_ssh_primary
+        setup-ssh-key
+    end
 
     if has-setup-option setup_fancy_cli_tools
         function _install-fzf-on-apt-system

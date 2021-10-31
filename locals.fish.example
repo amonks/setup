@@ -14,6 +14,7 @@ set --universal setup_node_environment false
 set --universal setup_python_environment false
 set --universal setup_racket_environment false
 set --universal setup_rust_environment false
+set --universal setup_ssh_primary true
 set --universal setup_swift_environment false
 set --universal use_tmux true
 
