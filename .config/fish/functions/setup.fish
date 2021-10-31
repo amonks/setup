@@ -18,7 +18,7 @@ function setup
 
         install-package --name autojump
         install-package --name bash
-        install-package --name bat
+        install-package --name bat --apt SKIP
         install-package --name exa
         install-package --name fd
         install-package --name fzf --apt function:_install-fzf-on-apt-system
@@ -42,10 +42,20 @@ function setup
     end
 
     if has-setup-option setup_development_tools
+        function _has_recent_git
+            git --version | grep 2.2 1>/dev/null 2>&1
+        end
+        function _install_git_on_apt
+            sudo add-apt-repository ppa:git-core/ppa
+            sudo apt-get update
+            sudo apt-get install git
+        end
+        install-package --name git --versioncheck _has_recent_git
+
         install-package --name gls --port coreutils --apt SKIP
         install-package --name direnv
         install-package --name entr
-        install-package --name gh
+        install-package --name gh --apt SKIP
         install-package --name dot --port graphviz --apt graphviz
         install-package --name rlwrap
         install-package --name shellcheck
@@ -124,7 +134,18 @@ function setup
     end
 
     if has-setup-option setup_emacs
-        install-package --name emacs
+        function _has_new_emacs
+            emacs --version | grep 'GNU Emacs 27' 1>/dev/null 2>&1
+        end
+        function _install_emacs_on_apt
+            sudo add-apt-repository ppa:kelleyk/emacs
+            sudo apt-get update
+            sudo apt-get install emacs27
+            ln -s (which emacs27) ~/bin/emacs
+        end
+        install-package --name emacs --versioncheck _has_new_emacs --apt function:_install_emacs_on_apt
+        config submodule update
+        doom sync
     end
 
     if has-setup-option setup_neovim
@@ -135,9 +156,11 @@ function setup
             python3 -m ensurepip
         end
 
-        if ! pip3 show pynvim 1>/dev/null 2>&1
-            echo Installing pynvim
-            pip3 install pynvim
+        if test $system_type = macos
+            if ! pip3 show pynvim 1>/dev/null 2>&1
+                echo Installing pynvim
+                pip3 install pynvim
+            end
         end
 
         if has-setup-option setup_node_environment
