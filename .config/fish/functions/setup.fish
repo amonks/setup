@@ -64,7 +64,7 @@ function setup
         install-package --name shellcheck
     end
 
-    if has-setup-option setup_node_environment
+    if has-setup-option setup_node_environment || has-setup-option setup_neovim
         install-package --name node --port nodejs14 --apt nodejs
     end
 
