@@ -39,6 +39,7 @@
 (global-set-key [mouse-4] 'scroll-down-line)
 (global-set-key [mouse-5] 'scroll-up-line)
 
+(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
