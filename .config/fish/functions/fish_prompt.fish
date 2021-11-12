@@ -22,8 +22,8 @@ function fish_prompt
   if test -z "$machine_sigil"
     set machine_sigil "?"
   end
-  # set -l caret    "$fish"
-  set -l caret    ">"
+  set -l caret    "$fish"
+  # set -l caret    ">"
 
   echo -n $bold"$machine_sigil "$normal_color
   echo -n $cyan(prompt_pwd) $normal_color
