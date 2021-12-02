@@ -25,6 +25,8 @@ end
 lock_backup
 trap unlock_backup INT TERM
 
+echo Start
+
 syncoid --sshkey /home/ajm/.ssh/id_ed25519 --recursive mypool root@57269.zfs.rsync.net:data1/thor
 set exit_code $status
 unlock_backup
