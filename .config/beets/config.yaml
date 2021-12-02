@@ -1,0 +1,23 @@
+directory: /mypool/data/music
+library: /mypool/data/music/library.db
+plugins: embedart fetchart ftintitle zero mbsync convert
+
+musicbrainz:
+  extra_tags: [country, label]
+
+paths:
+  default: $albumartist/$album%aunique{}/$track $title
+  singleton: Non-Album/$artist/$title
+  comp: Compilations/$album%aunique{}/$track $title
+
+original_date: true
+
+zero:
+  fields: genre
+  update_database: true
+
+convert:
+  command: /usr/home/ajm/nas-scripts/convert-to-mp3.sh $source $dest
+  extension: mp3
+  dest: /mypool/data/mp3/
+
