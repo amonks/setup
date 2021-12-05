@@ -36,11 +36,6 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
-(global-set-key [mouse-4] 'scroll-down-line)
-(global-set-key [mouse-5] 'scroll-up-line)
-
-(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
-
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
@@ -58,5 +53,16 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+
+;; Enable mouse support in iterm2
+(global-set-key [mouse-4] 'scroll-down-line)
+(global-set-key [mouse-5] 'scroll-up-line)
+
+
+;; Disable the `s' binding to evil-snipe. I use `s' too much for substitue.
+(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
+
 ;; C-c C-c to evaluate top level form _within_ Rich comment
 (setq clojure-toplevel-inside-comment-form t)
+
+(use-package! graphviz-dot-mode)
