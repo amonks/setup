@@ -57,3 +57,6 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+;; C-c C-c to evaluate top level form _within_ Rich comment
+(setq clojure-toplevel-inside-comment-form t)

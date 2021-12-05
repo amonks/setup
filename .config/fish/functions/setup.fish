@@ -68,6 +68,11 @@ function setup
         install-package --name node --port nodejs14 --apt nodejs
     end
 
+    if has-setup-option setup_clojure_environment
+        install-package --name java --port openjdk17
+        install-package --name clojure
+    end
+
     if has-setup-option setup_lisp_environment
         install-package --name sbcl
         if ! test -d ~/.quicklisp

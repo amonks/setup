@@ -2,6 +2,7 @@ set --universal install_desktop_apps false
 set --universal machine_name MACHINE
 set --universal machine_sigil X
 set --universal machine_user (whoami)
+set --universal setup_clojure_environment false
 set --universal setup_development_tools false
 set --universal setup_emacs false
 set --universal setup_fancy_cli_tools true
