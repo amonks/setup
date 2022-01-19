@@ -14,6 +14,8 @@ function p --argument-names name
     end
 
 
+    set name (ls ~/projects | string replace '.fish' '' | fzf --filter=$name)
+
     # p project
     # enter or start named project
 
