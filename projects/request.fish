@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-cd ~/request
+set WORKDIR ~/request
 
 tmux split-window -hb 'emacs .'
 yarn dev

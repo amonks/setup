@@ -1,5 +1,6 @@
 #!/usr/bin/env fish
 
-cd ~/semistatic
+set WORKDIR ~/semistatic
+
 tmux split-window -hb 'emacs .'
 go version

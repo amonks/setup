@@ -31,7 +31,13 @@ function p --argument-names name
         return 0
     end
 
-    # start project in new window
-    tmux new-window -n "$name"
+    # find workdir
+    set workdir (cat ~/projects/$name.fish | grep '^set WORKDIR ' | cut -d' ' -f3 | string replace '~' "$HOME")
+    if test -z $workdir
+        set workdir ~
+    end
+
+    # create window
+    tmux new-window -c "$workdir" -n "$name"
     tmux send-keys -t "$name" "fish ~/projects/$name.fish" Enter
 end

@@ -1,4 +1,5 @@
 #!/usr/bin/env fish
 
-cd ~/projects
+set WORKDIR ~/projects
+
 emacs . ~/.config/fish/functions/p.fish
