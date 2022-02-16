@@ -28,7 +28,7 @@ function setup
         install-package --name htop
         install-package --name jq
         install-package --name ncdu
-        install-package --name rg --port ripgrep
+        install-package --name rg --macport ripgrep --freebsdpkg ripgrep
         install-package --name tree
     end
 
@@ -37,8 +37,9 @@ function setup
     end
 
     if has-setup-option setup_network_tools
+        install-package --name drill
         install-package --name iftop
-        install-package --name iotop --port SKIP
+        install-package --name iotop --macport SKIP --freebsdpkg SKIP
         install-package --name mosh
         install-package --name mtr
         install-package --name prettyping
@@ -55,17 +56,17 @@ function setup
         end
         install-package --name git --versioncheck _has_recent_git
 
-        install-package --name gls --port coreutils --apt SKIP
+        install-package --name gls --macport coreutils --apt SKIP --freebsdpkg SKIP # not sure why I need this on macos... exa?
         install-package --name direnv
         install-package --name entr
         install-package --name gh --apt SKIP
-        install-package --name dot --port graphviz --apt graphviz
+        install-package --name dot --macport graphviz --apt graphviz --freebsdpkg graphviz
         install-package --name rlwrap
         install-package --name shellcheck
     end
 
     if has-setup-option setup_node_environment || has-setup-option setup_neovim
-        install-package --name node --port nodejs14 --apt nodejs
+        install-package --name node --macport nodejs14 --apt nodejs
     end
 
     if has-setup-option setup_clojure_environment
@@ -89,7 +90,7 @@ function setup
             open https://download.racket-lang.org
             wait-for-enter
         end
-        install-package --name racket --port function:_macos_install_racket
+        install-package --name racket --macport function:_macos_install_racket
     end
 
     if has-setup-option setup_golang_environment
@@ -141,7 +142,7 @@ function setup
 
     if has-setup-option setup_markdown_environment
         install-package --name pandoc
-        install-package --name tex --port texlive-latex-recommended
+        install-package --name tex --macport texlive-latex-recommended
     end
 
     if test $system_type = macos; and has-setup-option setup_swift_environment
@@ -166,7 +167,7 @@ function setup
     end
 
     if has-setup-option setup_neovim
-        install-package --name nvim --port neovim
+        install-package --name nvim --macport neovim
 
         if ! is-installed pip3
             echo Installing pip3
