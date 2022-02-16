@@ -1,5 +1,5 @@
 function install-package
-    argparse 'n-name=' 'p-port=' 'a-apt=' 'c-versioncheck=' -- $argv
+    argparse 'n-name=' 'm-macport=' 'a-apt=' 'b-freebsdpkg=' 'c-versioncheck=' -- $argv
 
     if test -z "$_flag_name"
         echo "required name not provided to install-package"
@@ -40,6 +40,18 @@ function install-package
                 $fun
             else
                 sudo apt-get install -y $package
+            end
+
+        case freebsd
+            set -l package (with-default $_flag_name $_flag_freebsdpkg)
+            if test $package = SKIP
+                return
+            end
+
+            if string match -rq 'function:(?<fun>.*)' "$package"
+                $fun
+            else
+                sudo pkg install $package
             end
 
         case '*'
