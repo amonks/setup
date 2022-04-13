@@ -62,6 +62,9 @@
 ;; Disable the `s' binding to evil-snipe. I use `s' too much for substitue.
 (remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 
+;; Disable auto-close on parens/quotes/etc
+(remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
+
 ;; C-c C-c to evaluate top level form _within_ Rich comment
 (setq clojure-toplevel-inside-comment-form t)
 
