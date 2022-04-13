@@ -108,6 +108,11 @@ set linebreak
 set background=dark
 colorscheme gruvbox
 
+" italic comments but doesn't work with termguicolors
+highlight Comment cterm=italic
+
+" prettier colors but no italics
+set termguicolors
 
 
 " Plugin Settings {{{1
