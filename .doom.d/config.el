@@ -68,4 +68,8 @@
 ;; C-c C-c to evaluate top level form _within_ Rich comment
 (setq clojure-toplevel-inside-comment-form t)
 
+;; for .ts, use prettier, not lsp-format
+(setq-hook! 'typescript-mode-hook +format-with-lsp nil)
+(setq-hook! 'typescript-tsx-mode-hook +format-with-lsp nil)
+
 (use-package! graphviz-dot-mode)
