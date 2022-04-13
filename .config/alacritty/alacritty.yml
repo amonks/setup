@@ -1,0 +1,10 @@
+scrolling:
+  history: 100000
+font:
+  normal:
+    family: Operator Mono Lig
+    style: Medium
+  size: 14.0
+  offset:
+    y: 16
+
