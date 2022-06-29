@@ -70,7 +70,7 @@ function setup
     end
 
     if has-setup-option setup_clojure_environment
-        install-package --name java --port openjdk17
+        install-package --name java --macport openjdk17
         install-package --name clojure
     end
 

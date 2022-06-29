@@ -19,7 +19,7 @@ function install-package
 
     switch (system-type)
         case macos
-            set -l package (with-default $_flag_name $_flag_port)
+            set -l package (with-default $_flag_name $_flag_macport)
             if test $package = SKIP
                 return
             end
@@ -27,7 +27,7 @@ function install-package
             if string match -rq 'function:(?<fun>.*)' "$package"
                 $fun
             else
-                sudo port install $package
+                yes | sudo port install $package
             end
 
         case apt
