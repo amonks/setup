@@ -120,7 +120,7 @@ set termguicolors
 
 " Rainbow Parentheses {{{2
 
-let g:rainbow_active = 1
+let g:rainbow_active = 0
 " Colors I got off the internet somewhere
 let g:rainbow_conf = { 'ctermfgs': ['cyan', 'magenta', 'yellow', 'grey', 'red', 'green', 'blue'], 'guifgs': ['#FF0000', '#FF00FF', '#FFFF00', '#000000', '#FF0000', '#00FF00', '#0000FF'] }
 
@@ -204,4 +204,8 @@ function! WritingWords()
 	return system("cat ~/writing/*.md | sed 's/[^A-z ]//g\' | wc -w")[:-2] . " words"
 endfunction
 autocmd BufRead,BufNewFile,BufWritePost */ajm/writing/* setlocal statusline=%{WritingWords()}
+
+
+
+
 
