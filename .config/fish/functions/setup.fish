@@ -151,7 +151,7 @@ function setup
 
     if has-setup-option setup_emacs
         function _has_new_emacs
-            emacs --version | grep 'GNU Emacs 27' 1>/dev/null 2>&1
+            emacs --version | grep 'GNU Emacs 28' 1>/dev/null 2>&1
         end
         function _install_emacs_on_apt
             sudo add-apt-repository ppa:kelleyk/emacs
