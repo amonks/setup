@@ -1,4 +1,4 @@
 function wait-for-enter
   echo Press any key to continue
-  read
+  read -P 'Done? '
 end
