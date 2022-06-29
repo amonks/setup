@@ -37,7 +37,7 @@ fi
 if ! which fish 1>/dev/null 2>&1 ; then
   echo Installing Fish
 
-  if test "$OSTYPE" = "dadrwin" ; then
+  if [[ $OSTYPE = darwin* ]] ; then
     sudo /opt/local/bin/port install fish
   elif which apt-get 1>/dev/null 2>&1 ; then
     sudo apt-add-repository ppa:fish-shell/release-3 -y
