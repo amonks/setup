@@ -15,6 +15,10 @@ function p --argument-names name
 
 
     set name (ls ~/projects | string replace '.fish' '' | fzf --filter=$name)
+    if test -z "$name"
+        echo "No project found"
+        return 1
+    end
 
     # p project
     # enter or start named project
