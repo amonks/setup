@@ -3,8 +3,8 @@ scrolling:
 font:
   normal:
     family: Operator Mono Lig
-    style: Medium
-  size: 14.0
+    style: Book
+  size: 16.0
   offset:
-    y: 16
+    y: 18
 
