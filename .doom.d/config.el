@@ -72,4 +72,8 @@
 (setq-hook! 'typescript-mode-hook +format-with-lsp nil)
 (setq-hook! 'typescript-tsx-mode-hook +format-with-lsp nil)
 
+;; add graphviz support
 (use-package! graphviz-dot-mode)
+
+;; vim-vinegar
+(define-key evil-normal-state-map (kbd "-") 'dired-jump)
