@@ -1,5 +1,5 @@
-#!/usr/bin/env fish
+#!/usr/bin/env bash
 
-yes | beet convert
-echo done
+beet convert -y 2>&1 | grep '^convert:' | grep -v 'target file exists'
+exit 0
 
