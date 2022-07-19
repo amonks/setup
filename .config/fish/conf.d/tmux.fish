@@ -1,12 +1,7 @@
-if has-setup-option use_tmux
-    # always use tmux
-    if test -n "$TERM"
-        if status --is-login
-            if is-installed tmux
-                if test "$TERM" != screen; and test -z "$TMUX"; and test "$use_tmux" != false
-                    exec tmux new-session -A -s main
-                end
-            end
+if has-setup-option use_tmux; and is-installed tmux
+    if test -n "$TERM"; and status --is-login
+        if test "$TERM" != screen; and test -z "$TMUX"; and test "$use_tmux" != false
+            exec tmux new-session -A -s main
         end
     end
 end
