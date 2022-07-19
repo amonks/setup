@@ -1,11 +1,13 @@
 #!/usr/bin/env fish
 
 if test -z "$machine_name"
-	echo "set machine_name in ~/locals.fish"
+  echo "set machine_name in ~/locals.fish"
+  exit 1
 end
 
 if test -z "$machine_user"
-	echo "set machine_user in ~/locals.fish"
+  echo "set machine_user in ~/locals.fish"
+  exit 1
 end
 
 rsync -ha --progress \
