@@ -12,7 +12,7 @@ if ! test -d "$HOME/.cfg" ; then
   git --git-dir="$HOME/.cfg/" --work-tree="$HOME" pull --force
 fi
 
-if test "$OSTYPE" = "darwin" ; then
+if [[ "$OSTYPE" = "darwin"* ]] ; then
   if ! xcode-select -p 1>/dev/null 2>&1 ; then
     echo Installing XCode tools
 
