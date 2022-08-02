@@ -67,6 +67,7 @@ function setup
 
     if has-setup-option setup_node_environment || has-setup-option setup_neovim
         install-package --name node --macport nodejs14 --apt nodejs
+        install-package --name npm --macport npm8 --apt SKIP
     end
 
     if has-setup-option setup_clojure_environment
