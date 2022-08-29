@@ -1,10 +1,12 @@
-if status --is-interactive
-  if test -f /usr/share/autojump/autojump.fish
-    source /usr/share/autojump/autojump.fish
-  else if test -f /opt/local/share/autojump/autojump.fish
-    source /opt/local/share/autojump/autojump.fish
-  else if test -f /usr/local/share/autojump/autojump.fish
-    source /usr/local/share/autojump/autojump.fish
+debug-fish-init start (status -f)
+  if status --is-interactive
+    if test -f /usr/share/autojump/autojump.fish
+      source /usr/share/autojump/autojump.fish
+    else if test -f /opt/local/share/autojump/autojump.fish
+      source /opt/local/share/autojump/autojump.fish
+    else if test -f /usr/local/share/autojump/autojump.fish
+      source /usr/local/share/autojump/autojump.fish
+    end
   end
-end
+debug-fish-init end (status -f)
 
