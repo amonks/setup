@@ -15,7 +15,7 @@
 		<key>enabled</key>
 		<true/>
 		<key>predicate</key>
-		<string>URL CONTAINS "samsara.com" OR URL CONTAINS "dropbox.com" OR URL CONTAINS "atlassian.net" OR URL CONTAINS "samsara" OR URL CONTAINS "forms.gle" OR URL CONTAINS "aws.com" OR URL CONTAINS "datadoghq.com"</string>
+		<string>URL CONTAINS "samsara.com" OR URL CONTAINS "dropbox.com" OR URL CONTAINS "atlassian.net" OR URL CONTAINS "samsara" OR URL CONTAINS "forms.gle" OR URL CONTAINS "aws.com" OR URL CONTAINS "datadoghq.com" OR URL CONTAINS "docs.google.com" OR URL CONTAINS "lucid.app"</string>
 		<key>title</key>
 		<string>samsara</string>
 	</dict>
