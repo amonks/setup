@@ -15,6 +15,7 @@ Plug 'airblade/vim-gitgutter' " see icons for changed lines in gutter
 Plug 'jlanzarotta/bufexplorer'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'cweagans/vim-taskpaper'
+Plug 'darfink/vim-plist'
 Plug 'easymotion/vim-easymotion' " type ,, before a motion for a visual selection rather than a count
 Plug 'editorconfig/editorconfig-vim' " honor editorconfig files
 Plug 'fatih/vim-go'
