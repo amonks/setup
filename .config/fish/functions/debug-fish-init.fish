@@ -1,4 +1,6 @@
 function debug-fish-init --argument-names command file
-  echo "$command	:: "(basename $file)
+  if test "$debug_fish_init" = "true"
+    echo "$command	:: "(basename $file)
+  end
 end
 
