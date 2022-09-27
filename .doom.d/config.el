@@ -68,12 +68,30 @@
 ;; C-c C-c to evaluate top level form _within_ Rich comment
 (setq clojure-toplevel-inside-comment-form t)
 
-;; for .ts, use prettier, not lsp-format
-(setq-hook! 'typescript-mode-hook +format-with-lsp nil)
-(setq-hook! 'typescript-tsx-mode-hook +format-with-lsp nil)
-
 ;; add graphviz support
 (use-package! graphviz-dot-mode)
 
+
+;; formatting
+(add-hook! 'go-mode-hook
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook #'lsp-format-buffer nil 'local)
+  (add-hook 'before-save-hook #'lsp-organize-imports nil 'local))
+
+(defun use-prettier (parser)
+  "use prettierjs with the given parser"
+  (message "using prettier with: '%s'" parser)
+  (make-local-variable 'prettier-js-args)
+  (setq prettier-js-args `("--parser" ,parser))
+  (prettier-js-mode))
+
+(use-package! prettier-js)
+(add-hook! 'mhtml-mode-hook (use-prettier "go-template"))
+(add-hook! 'typescript-mode-hook (use-prettier "typescript"))
+(add-hook! 'typescript-tsx-mode-hook (use-prettier "typescript"))
+(add-hook! 'css-mode-hook (use-prettier "css"))
+
+
 ;; vim-vinegar
 (define-key evil-normal-state-map (kbd "-") 'dired-jump)
+

@@ -58,3 +58,5 @@
 			 :files ("gitignore-mode.el")))
 
 (package! graphviz-dot-mode)
+
+(package! prettier-js)
