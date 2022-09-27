@@ -21,15 +21,16 @@ end
 
 
 function install_1password
-  if test -d "/Applications/1Password 7.app"
+  if test -d "/Applications/1Password.app"
     return
   end
 
   echo "Installing 1Password"
 
-  set onepassword_url "https://app-updates.agilebits.com/download/OPM7"
-  curl --location $onepassword_url --output 1password.pkg
-  do_pkg 1password.pkg
+  set onepassword_url "https://downloads.1password.com/mac/1Password.zip"
+  curl --location $onepassword_url --output 1password.zip
+  tar xzf 1password.zip
+  do_pkg '1Password Installer.pkg'
 end
 
 
