@@ -20,12 +20,13 @@ open "https://www.macports.org/install.php"
 read -p "url? "
 curl --location $REPLY --output macports.pkg
 open macports.pkg
+echo "Macports installer is open. Use it to complete the installation."
 read -p "Press enter to continue"
 rm macports.pkg
 echo 
 echo "Now, uninstalling outdated ports."
-sudo port -f uninstall installed
-sudo port reclaim
+sudo /opt/local/bin/port -f uninstall installed
+sudo /opt/local/bin/port reclaim
 echo
 echo "Done. Now run ~/setup to reinstall ports."
 
