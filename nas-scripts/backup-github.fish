@@ -1,5 +1,10 @@
 #!/usr/bin/env fish
 
+if ! gh auth status
+  echo "not logged into github"
+  exit 1
+end
+
 function backup --argument-names org
   for repo in (gh repo list --limit 500 "$org" | cut -f1 | cut -d'/' -f2)
     echo "org: $org; repo: $repo"
@@ -37,7 +42,7 @@ set orgs_response (gh api graphql -f query='
 
 set orgs (echo $orgs_response | jq --raw-output .data.viewer.organizations.nodes[].login)
 
-backup amonks $repo
+backup amonks
 
 for org in $orgs
   backup $org
