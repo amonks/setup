@@ -70,6 +70,7 @@
 
 ;; add graphviz support
 (use-package! graphviz-dot-mode)
+(use-package! graphql-mode)
 
 
 ;; formatting

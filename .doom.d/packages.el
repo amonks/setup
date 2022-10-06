@@ -57,6 +57,8 @@
 	  :recipe (:host github :repo "magit/git-modes"
 			 :files ("gitignore-mode.el")))
 
+(package! graphql-mode)
+
 (package! graphviz-dot-mode)
 
 (package! prettier-js)
