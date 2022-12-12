@@ -1,13 +1,6 @@
 {
-  "languageserver": {
-    "golang": {
-      "command": "gopls",
-      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-      "filetypes": ["go"],
-      "initializationOptions": {
-        "usePlaceholders": true
-      }
-    }
+  "go.goplsOptions": {
+    "memoryMode": "DegradeClosed"
   },
   "eslint.filetypes": [
     "javascript",
@@ -22,7 +15,6 @@
     "typescriptreact"
   ],
   "tsserver.formatOnType": true,
-  "coc.preferences.formatOnType": true,
-	"prettier.disableSuccessMessage": true
+  "coc.preferences.formatOnType": true
 }
 
