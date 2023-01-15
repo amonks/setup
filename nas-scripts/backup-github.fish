@@ -25,7 +25,7 @@ end
 
 
 
-set backup_dir /mypool/data/mirror/github
+set backup_dir /mypool/tank/mirror/github
 
 set orgs_response (gh api graphql -f query='
   {
