@@ -15,6 +15,12 @@ require('packer').startup(function(use)
 
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- fast syntax highlighting
 
+    use {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
+    }
+
+
     use 'airblade/vim-gitgutter'
     use 'christoomey/vim-tmux-navigator' 
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
@@ -99,29 +105,35 @@ vim.g.mapleader = ","
 
 -- keyboard mapping helpers
 
-local function map(mode, shortcut, command)
-    vim.api.nvim_set_keymap(mode, shortcut, command, { noremap = true, silent = true })
+local function map(mode, shortcut, command, extra)
+    opts = { noremap = true, silent = true }
+    for k,v in pairs(extra or {}) do
+        opts[k] = v
+    end
+    vim.keymap.set(mode, shortcut, command, opts)
 end
+local function nmap(shortcut, command, extra) map('n', shortcut, command, extra) end
+local function imap(shortcut, command, extra) map('i', shortcut, command, extra) end
+local function vmap(shortcut, command, extra) map('v', shortcut, command, extra) end
 
-local function nmap(shortcut, command)
-    map('n', shortcut, command)
+local function mapcmd(mode, shortcut, command, extra)
+    opts = { noremap = true, silent = true }
+    for k,v in pairs(extra or {}) do
+        opts[k] = v
+    end
+    vim.api.nvim_set_keymap(mode, shortcut, command, opts)
 end
-
-local function imap(shortcut, command)
-    map('i', shortcut, command)
-end
-
-local function vmap(shortcut, command)
-    map('v', shortcut, command)
-end
+local function nmapcmd(shortcut, command, extra) map('n', shortcut, command, extra) end
+local function imapcmd(shortcut, command, extra) map('i', shortcut, command, extra) end
+local function vmapcmd(shortcut, command, extra) map('v', shortcut, command, extra) end
 
 -- no shift to enter command mode, just use semicolon
-nmap(";", ":")
-vmap(";", ":")
+nmapcmd(";", ":")
+vmapcmd(";", ":")
 
 -- -- ctrl-j/k for 'next'/'prev'
--- nmap("<C-j>", ":lnext<CR>")
--- nmap("<C-k>", ":lprev<CR>")
+-- nmapcmd("<C-j>", ":lnext<CR>")
+-- nmapcmd("<C-k>", ":lprev<CR>")
 
 
 
@@ -134,6 +146,19 @@ require('nvim-treesitter.configs').setup {
         additional_vim_regex_highlighting = false,
     },
 }
+
+
+
+
+require('telescope').load_extension('fzf')
+local builtin = require('telescope.builtin')
+nmap("<C-p>", builtin.find_files)
+nmap("<leader>ff", builtin.find_files)
+nmap("<leader>fg", builtin.live_grep)
+nmap("<leader>fb", builtin.buffers)
+nmap("<leader>fh", builtin.help_tags)
+
+
 
 
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -161,29 +186,24 @@ local on_attach = function(client, bufnr)
     -- enable completion triggered by <C-x><C-o>
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-    local function map(mode, shortcut, command)
-        vim.keymap.set(mode, shortcut, command, { noremap = true, silent = true, buffer = bufnr })
-    end
-    local function nmap(shortcut, command) map('n', shortcut, command) end
-    local function imap(shortcut, command) map('i', shortcut, command) end
+    local extra = { buffer = bufnr }
+    nmap("gD", vim.lsp.buf.type_definition, extra)
+    nmap("gd", vim.lsp.buf.definition, extra)
+    nmap("gr", vim.lsp.buf.references, extra)
 
-    nmap("gD", vim.lsp.buf.type_definition)
-    nmap("gd", vim.lsp.buf.definition)
-    nmap("gr", vim.lsp.buf.references)
+    nmap("K", vim.lsp.buf.hover, extra)
+    nmap("gi", vim.lsp.buf.implementation, extra)
 
-    nmap("K", vim.lsp.buf.hover)
-    nmap("gi", vim.lsp.buf.implementation)
+    nmap("<C-k>", vim.lsp.buf.signature_help, extra)
+    imap("<C-k>", vim.lsp.buf.signature_help, extra)
 
-    nmap("<C-k>", vim.lsp.buf.signature_help)
-    imap("<C-k>", vim.lsp.buf.signature_help)
+    nmap("?", vim.diagnostic.open_float, extra)
+    nmap("[d", vim.diagnostic.goto_prev, extra)
+    nmap("]d", vim.diagnostic.goto_next, extra)
 
-    nmap("?", vim.diagnostic.open_float)
-    nmap("[d", vim.diagnostic.goto_prev)
-    nmap("]d", vim.diagnostic.goto_next)
-
-    nmap("<space>rn", vim.lsp.buf.rename)
-    nmap("<space>ca", vim.lsp.buf.code_action)
-    nmap("<space>f", function() vim.lsp.buf.format { async = true } end)
+    nmap("<space>rn", vim.lsp.buf.rename, extra)
+    nmap("<space>ca", vim.lsp.buf.code_action, extra)
+    nmap("<space>f", function() vim.lsp.buf.format { async = true } end, extra)
 end
 
 local null_ls = require("null-ls")
