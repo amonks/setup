@@ -19,5 +19,5 @@ rsync -ha --progress \
   --exclude ".viminfo" \
   --exclude ".localized" \
   --exclude ".Trash" \
-  ~/ "thor-syncer:/mypool/data/mirror/$machine_name/$machine_user"
+  ~/ "thor-syncer:/mypool/tank/mirror/$machine_name/$machine_user"
 
