@@ -26,24 +26,29 @@ require('packer').startup(function(use)
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
     use 'google/vim-searchindex'              -- show "N of M"
     use 'jose-elias-alvarez/null-ls.nvim' 
-    use 'luochen1990/indent-detector.vim'     -- auto set tab to match file
     use 'mbbill/undotree' 
     use 'morhetz/gruvbox' 
     use 'neovim/nvim-lspconfig' 
     use 'nvim-lua/plenary.nvim'               -- dependency of many lua plugins
     use 'nvim-telescope/telescope.nvim'       -- ctrlp, search
     use 'stefandtw/quickfix-reflector.vim'    -- find-and-replace
-    use 'tpope/vim-commentary'                -- comment stuff out with gc
+
+    -- tpope section (vary based)
+    use 'tpope/vim-abolish'                   -- :%Subvert/facilit{y,ies}/building{,s}/g, crs(nake)
+    use 'tpope/vim-commentary'                -- gcc
+    use 'tpope/vim-eunuch'                    -- :Rename (also renames buffer), :SudoWrite
+                                              -- also, redetect filetype and chmod+x after writing #! line
     use 'tpope/vim-fugitive'                  -- :Git blame
     use 'tpope/vim-repeat'                    -- make . repeat more things
     use 'tpope/vim-rsi'                       -- use bash-style insert bindings in commandline
-    use 'tpope/vim-surround' 
+    use 'tpope/vim-sleuth'                    -- automatically detect indent
+    use 'tpope/vim-surround'                  -- ysiW"
     use 'tpope/vim-vinegar'                   -- press - to go to netrw
 end)
 
 
 -- gq wrap width; otherwise wraps to window
-vim.opt.textwidth = 70
+-- vim.opt.textwidth = 70
 
 -- allow editing multiple files at once
 vim.opt.hidden = true
@@ -152,9 +157,15 @@ require('nvim-treesitter.configs').setup {
 
 require('telescope').load_extension('fzf')
 local builtin = require('telescope.builtin')
-nmap("<C-p>", builtin.find_files)
-nmap("<leader>ff", builtin.find_files)
+local function find_files()
+  builtin.find_files({
+    find_command = {"fd", "--type=f", "--hidden", "--ignore", "--exclude=.git"},
+  }) 
+end
+nmap("<C-p>", find_files)
+nmap("<leader>ff", find_files) 
 nmap("<leader>fg", builtin.live_grep)
+nmap("<leader>fc", builtin.treesitter)
 nmap("<leader>fb", builtin.buffers)
 nmap("<leader>fh", builtin.help_tags)
 
@@ -162,6 +173,7 @@ nmap("<leader>fh", builtin.help_tags)
 
 
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
 
 local on_attach = function(client, bufnr)
     -- avoid formatting conflict between tsserver and prettier
@@ -177,8 +189,9 @@ local on_attach = function(client, bufnr)
                 group = augroup,
                 buffer = bufnr,
                 callback = function()
-                    vim.lsp.buf.formatting_ssync()
+                    vim.lsp.buf.format({ bufnr = bufnr, async = false })
                 end,
+                desc = "[lsp] format on save",
             })
         end
     end
@@ -197,17 +210,18 @@ local on_attach = function(client, bufnr)
     nmap("<C-k>", vim.lsp.buf.signature_help, extra)
     imap("<C-k>", vim.lsp.buf.signature_help, extra)
 
-    nmap("?", vim.diagnostic.open_float, extra)
+    -- nmap("?", vim.diagnostic.open_float, extra)
     nmap("[d", vim.diagnostic.goto_prev, extra)
     nmap("]d", vim.diagnostic.goto_next, extra)
 
     nmap("<space>rn", vim.lsp.buf.rename, extra)
     nmap("<space>ca", vim.lsp.buf.code_action, extra)
-    nmap("<space>f", function() vim.lsp.buf.format { async = true } end, extra)
+    nmap("<space>f", function() vim.lsp.buf.format({ async = true }) end, extra)
 end
 
 local null_ls = require("null-ls")
 null_ls.setup({
+    debug = true,
     on_attach = on_attach,
     sources = {
         null_ls.builtins.formatting.prettierd,
