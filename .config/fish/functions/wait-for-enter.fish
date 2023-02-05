@@ -1,4 +1,7 @@
 function wait-for-enter
-  echo Press any key to continue
-  read -P 'Done? '
+  if test -n "$argv"
+    echo "$argv"
+  end
+  echo "Press any key to continue"
+  read -P 'OK? '
 end
