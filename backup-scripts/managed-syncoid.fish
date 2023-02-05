@@ -48,7 +48,7 @@ while true
 
 # kill the backup
     echo \n"[$backup_pid] timed out: killing"
-    pkill -2 $backup_pid
+    pkill -9 -P $backup_pid
 
 # wait for death
     set time_waited 0
