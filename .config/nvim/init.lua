@@ -15,12 +15,6 @@ require('packer').startup(function(use)
 
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- fast syntax highlighting
 
-    use {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
-    }
-
-
     use 'airblade/vim-gitgutter'
     use 'christoomey/vim-tmux-navigator' 
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
@@ -30,7 +24,7 @@ require('packer').startup(function(use)
     use 'morhetz/gruvbox' 
     use 'neovim/nvim-lspconfig' 
     use 'nvim-lua/plenary.nvim'               -- dependency of many lua plugins
-    use 'nvim-telescope/telescope.nvim'       -- ctrlp, search
+    use 'junegunn/fzf'                        -- ctrlp, search -- telescope seems cool but the implementation is insane
     use 'stefandtw/quickfix-reflector.vim'    -- find-and-replace
 
     -- tpope section (vary based)
@@ -155,20 +149,43 @@ require('nvim-treesitter.configs').setup {
 
 
 
-require('telescope').load_extension('fzf')
-local builtin = require('telescope.builtin')
-local function find_files()
-  builtin.find_files({
-    find_command = {"fd", "--type=f", "--hidden", "--ignore", "--exclude=.git"},
-  }) 
-end
-nmap("<C-p>", find_files)
-nmap("<leader>ff", find_files) 
-nmap("<leader>fg", builtin.live_grep)
-nmap("<leader>fc", builtin.treesitter)
-nmap("<leader>fb", builtin.buffers)
-nmap("<leader>fh", builtin.help_tags)
+-- require('telescope').load_extension('fzf')
+-- local builtin = require('telescope.builtin')
+-- local function find_files()
+--   builtin.find_files({
+--     find_command = {"fd", "--type=f", "--hidden", "--ignore", "--exclude=.git"},
+--   }) 
+-- end
+-- nmap("<C-p>", find_files)
+-- nmap("<leader>ff", find_files) 
+-- nmap("<leader>fg", builtin.grep_string)
+-- nmap("<leader>fc", builtin.treesitter)
+-- nmap("<leader>fb", builtin.buffers)
+-- nmap("<leader>fh", builtin.help_tags)
 
+-- grep
+vim.api.nvim_create_user_command("Rg", function(p) 
+  local fzf_run = vim.fn["fzf#run"]
+  local fzf_wrp = vim.fn["fzf#wrap"]
+  fzf_run(fzf_wrp({
+    source = "rg --column --line-number --no-heading --smart-case " .. vim.fn.shellescape(p.args),
+    options = {},
+    sinklist = function(lines)
+      local item = lines[1]
+      local colon, _ = string.find(item, ":")
+      local filepath = string.sub(item, 1, colon-1)
+      vim.cmd("e "..filepath)
+    end,
+  }))
+end, {nargs="+"})
+
+-- grep
+nmap("<C-p>", function() 
+  local file = vim.api.nvim_call_function("fzf#run", {{
+    source = "fd --type=f --hidden --ignore --exclude=.git",
+    sink = "e",
+  }})
+end)
 
 
 
