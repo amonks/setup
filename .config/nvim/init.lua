@@ -179,9 +179,6 @@ vim.api.nvim_create_user_command("Rg", function(p)
       local secondColonIndex, _ = string.find(item, ":", firstColonIndex+1)
       local lineno = string.sub(item, firstColonIndex+1, secondColonIndex-1)
 
-      local thirdColonIndex, _ = string.find(item, ":", secondColonINdex+1)
-      local colno = string.sub(item, secondColonIndex+1, thirdColonIndex-1)
-
       vim.cmd("e +"..lineno.." "..filepath)
     end,
   }))
