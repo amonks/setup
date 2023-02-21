@@ -15,6 +15,7 @@ rsync -ha --progress \
   --include "/Library/Application?Support/*" \
   --include "/Library/Preferences/*" \
   --exclude "/Library/*" \
+  --exclude "tailscaled.state" \
   --exclude ".DS_Store" \
   --exclude ".viminfo" \
   --exclude ".localized" \
