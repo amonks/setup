@@ -1,5 +1,5 @@
-directory: /mypool/data/music
-library: /mypool/data/music/library.db
+directory: /mypool/tank/music/flac
+library: /mypool/tank/music/library.db
 plugins: embedart fetchart ftintitle zero mbsync convert
 
 musicbrainz:
@@ -19,5 +19,5 @@ zero:
 convert:
   command: /usr/home/ajm/nas-scripts/convert-to-mp3.sh $source $dest
   extension: mp3
-  dest: /mypool/data/mp3/
+  dest: /mypool/tank/music/mp3/
 
