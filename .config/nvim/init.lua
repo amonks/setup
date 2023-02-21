@@ -27,7 +27,7 @@ require('packer').startup(function(use)
     use 'junegunn/fzf'                        -- ctrlp, search -- telescope seems cool but the implementation is insane
     use 'stefandtw/quickfix-reflector.vim'    -- find-and-replace
 
-    -- tpope section (vary based)
+    -- tpope section (very based)
     use 'tpope/vim-abolish'                   -- :%Subvert/facilit{y,ies}/building{,s}/g, crs(nake)
     use 'tpope/vim-commentary'                -- gcc
     use 'tpope/vim-eunuch'                    -- :Rename (also renames buffer), :SudoWrite
