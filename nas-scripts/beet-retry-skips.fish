@@ -1,11 +1,39 @@
 #!/usr/bin/env fish
 
-set file "$HOME/beet-import.log"
-set albums
-for album in (cat $file | grep '^skip')
-	set dir (echo $album | sed 's/^skip //')
-	set -a albums "$dir"
-end
-echo importing (count $albums) albums
-beet import $albums
+set batchsize 20
+set infile "$HOME/beet-skips.log"
+set outfile "$HOME/beet-corrected.log"
+set bookmarkfile "$HOME/beet-retry-bookmark.stamp"
+set todo (cat $infile | wc -l | string trim)
 
+function set-bookmark --argument-names value
+	echo $value > $bookmarkfile
+end
+
+function get-bookmark
+	cat $bookmarkfile | string trim
+end
+
+function report-batch
+	set-bookmark (math (get-bookmark) + $batchsize)
+end
+
+function get-next-batch
+	cat $infile | tail -n +(math (get-bookmark) + 1) | head -n$batchsize
+end
+
+if ! test -f $bookmarkfile
+	set-bookmark 0
+end
+
+while test (get-bookmark) -lt $todo
+	set batch 
+	for alb in (get-next-batch)
+		set -a batch "$alb"
+	end
+	beet import $batch
+	for alb in $batch
+		echo $alb >> $outfile
+	end
+	report-batch
+end

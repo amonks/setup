@@ -27,23 +27,6 @@ trap unlock_backup INT TERM
 
 echo Start
 
-
-# echo Unencrypted portion
-#
-# syncoid --sshkey /home/ajm/.ssh/id_ed25519 --recursive --no-sync-snap \
-# 	mypool/data \
-# 	root@57269.zfs.rsync.net:data1/thor/tank/data
-# set exit_code $status
-#
-# ## early exit if unencrypted portion fails
-# if test "$exit_code" -ne 0
-# 	unlock_backup
-# 	exit $exit_code
-# end
-
-
-echo Encrypted portion
-
 syncoid --sshkey /home/ajm/.ssh/id_ed25519 --recursive --no-sync-snap --sendoptions="w" \
 	mypool/tank \
 	root@57269.zfs.rsync.net:data1/thor/tank

@@ -90,19 +90,9 @@ end
 
 set dry_run false
 
-# and encrypt-locally mirror/lugh
-# and encrypt-locally mirror/lugh/ajm
-# and echo "--- end phase 1 ---"
-# and destroy-unencrypted-remotely mirror/lugh/ajm
-# and destroy-unencrypted-remotely mirror/lugh
-# and echo "--- end phase 2 --- "
+encrypt-locally mirror/whatbox
 # and exit 0
-and backup-encrypted mirror/lugh
-and backup-encrypted mirror/lugh/ajm
-and echo "--- end phase 3 ---"
-and exit 0
-and destroy-unencrypted-locally mirror/lugh/ajm
-and destroy-unencrypted-locally mirror/lugh
+# and destroy-unencrypted-locally mirror/whatbox
 
 
 
