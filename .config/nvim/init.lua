@@ -172,9 +172,17 @@ vim.api.nvim_create_user_command("Rg", function(p)
     options = {},
     sinklist = function(lines)
       local item = lines[1]
-      local colon, _ = string.find(item, ":")
-      local filepath = string.sub(item, 1, colon-1)
-      vim.cmd("e "..filepath)
+
+      local firstColonIndex, _ = string.find(item, ":")
+      local filepath = string.sub(item, 1, firstColonIndex-1)
+
+      local secondColonIndex, _ = string.find(item, ":", firstColonIndex+1)
+      local lineno = string.sub(item, firstColonIndex+1, secondColonIndex-1)
+
+      local thirdColonIndex, _ = string.find(item, ":", secondColonINdex+1)
+      local colno = string.sub(item, secondColonIndex+1, thirdColonIndex-1)
+
+      vim.cmd("e +"..lineno.." "..filepath)
     end,
   }))
 end, {nargs="+"})
