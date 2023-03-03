@@ -77,7 +77,7 @@ vim.opt.showmatch = true
 -- the fish conditional in this file
 -- https://github.com/tpope/vim-sensible/blob/master/plugin/sensible.vim#L64
 -- looks tempting but doesn't seem to work for me :shrug:
-vim.opt.shell = "/bin/bash"
+vim.opt.shell = "/bin/sh"
 
 -- default to spaces for indent
 vim.opt.shiftwidth = 2
