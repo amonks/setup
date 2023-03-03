@@ -1,8 +1,8 @@
 #!/usr/bin/env fish
 
-set import_flags "-l"
+set import_flags "-l beet-import.log"
 if contains -- --quiet $argv
-	set import_flags "-ql"
+	set import_flags "-ql beet-import.log"
 end
 
 set list_file (mktemp)
@@ -20,7 +20,7 @@ if test (count $albums) -eq "0"
 end
 
 echo importing (count $albums) albums
-beet import $import_flags beet-import.log $albums
+beet import $import_flags $albums
 
 and ~/nas-scripts/beet-convert-mp3s.fish
 and sudo service forked-daapd restart
