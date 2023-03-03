@@ -41,58 +41,72 @@ require('packer').startup(function(use)
 end)
 
 
--- gq wrap width; otherwise wraps to window
--- vim.opt.textwidth = 70
 
--- allow editing multiple files at once
-vim.opt.hidden = true
 
--- 
-vim.opt.wrap = false
 
--- / search; case sensitive unless search query contains caps
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
--- swp in ~/.vim-tmp
-vim.opt.backup = true
-vim.opt.swapfile = true
 local HOME = os.getenv("HOME")
-vim.opt.backupdir = HOME .. "/.vim-tmp"
-vim.opt.directory = HOME .. "/.vim-tmp"
 
--- highlight selected line
-vim.opt.cursorline = true
 
--- line numbers
-vim.opt.number = true
+local vim_opts = {
+    -- gq wrap width; otherwise wraps to window
+    textwidth = 70,
 
--- be more verbose about stuff generally
-vim.opt.showcmd = true
+    -- allow editing multiple files at once
+    hidden = true,
 
--- briefly highlight matching brackets on close/open
-vim.opt.showmatch = true
+    -- no wrap
+    wrap = false,
 
--- use bash for scripting
--- the fish conditional in this file
--- https://github.com/tpope/vim-sensible/blob/master/plugin/sensible.vim#L64
--- looks tempting but doesn't seem to work for me :shrug:
-vim.opt.shell = "/bin/sh"
+    -- / search; case sensitive unless search query contains caps
+    ignorecase = true,
+    smartcase = true,
 
--- default to spaces for indent
-vim.opt.shiftwidth = 2
-vim.opt.softtabstop = 2
+    -- swp in ~/.vim-tmp
+    backup = true,
+    swapfile = true,
+    backupdir = HOME .. "/.vim-tmp",
+    directory = HOME .. "/.vim-tmp",
 
--- make backspace normal
-vim.opt.backspace = "indent,eol,start"
+    -- highlight selected line
+    cursorline = true
+
+    -- line numbers
+    number = true
+
+    -- be more verbose about stuff generally
+    showcmd = true
+
+    -- briefly highlight matching brackets on close/open
+    showmatch = true
+
+    -- use sh for scripting
+    -- the fish conditional in this file,
+    --     https://github.com/tpope/vim-sensible/blob/master/plugin/sensible.vim#L64
+    -- looks tempting but doesn't seem to work for me :shrug:
+    shell = "/bin/sh"
+
+    -- default to spaces for indent
+    shiftwidth = 2
+    softtabstop = 2
+
+    -- make backspace normal
+    backspace = "indent,eol,start"
+}
+
+for k, v in pairs(vim_opts) do
+    vim.opt[k] = v
+end
+
+
 
 -- color scheme
 vim.opt.background = "dark"
 vim.cmd.colorscheme("gruvbox")
 
+
+-- do one of these but not both:
 -- italic comments (but doesn't work with termguicolors :( )
 vim.cmd.highlight("Comment cterm=italic")
-
 -- prettier colors but no cool italic comments
 -- -- vim.opt.termguicolors = false
 
@@ -149,19 +163,6 @@ require('nvim-treesitter.configs').setup {
 
 
 
--- require('telescope').load_extension('fzf')
--- local builtin = require('telescope.builtin')
--- local function find_files()
---   builtin.find_files({
---     find_command = {"fd", "--type=f", "--hidden", "--ignore", "--exclude=.git"},
---   }) 
--- end
--- nmap("<C-p>", find_files)
--- nmap("<leader>ff", find_files) 
--- nmap("<leader>fg", builtin.grep_string)
--- nmap("<leader>fc", builtin.treesitter)
--- nmap("<leader>fb", builtin.buffers)
--- nmap("<leader>fh", builtin.help_tags)
 
 -- grep
 vim.api.nvim_create_user_command("Rg", function(p) 
@@ -184,7 +185,7 @@ vim.api.nvim_create_user_command("Rg", function(p)
   }))
 end, {nargs="+"})
 
--- grep
+-- ctrlp
 nmap("<C-p>", function() 
   local file = vim.api.nvim_call_function("fzf#run", {{
     source = "fd --type=f --hidden --ignore --exclude=.git",
