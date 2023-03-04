@@ -68,26 +68,26 @@ local vim_opts = {
     directory = HOME .. "/.vim-tmp",
 
     -- highlight selected line
-    cursorline = true
+    cursorline = true,
 
     -- line numbers
-    number = true
+    number = true,
 
     -- be more verbose about stuff generally
-    showcmd = true
+    showcmd = true,
 
     -- briefly highlight matching brackets on close/open
-    showmatch = true
+    showmatch = true,
 
     -- use sh for scripting
     -- the fish conditional in this file,
     --     https://github.com/tpope/vim-sensible/blob/master/plugin/sensible.vim#L64
     -- looks tempting but doesn't seem to work for me :shrug:
-    shell = "/bin/sh"
+    shell = "/bin/sh",
 
     -- default to spaces for indent
-    shiftwidth = 2
-    softtabstop = 2
+    shiftwidth = 2,
+    softtabstop = 2,
 
     -- make backspace normal
     backspace = "indent,eol,start"
