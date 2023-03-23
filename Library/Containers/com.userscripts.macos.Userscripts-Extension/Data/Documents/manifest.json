@@ -1,0 +1,68 @@
+{
+  "settings" : {
+    "active" : "true",
+    "sortOrder" : "lastModifiedDesc",
+    "showInvisibles" : "true",
+    "lint" : "false",
+    "descriptions" : "true",
+    "languageCode" : "en",
+    "tabSize" : "4",
+    "log" : "false",
+    "autoCloseBrackets" : "true",
+    "autoHint" : "true",
+    "showCount" : "true"
+  },
+  "declarativeNetRequest" : [
+
+  ],
+  "blacklist" : [
+
+  ],
+  "match" : {
+
+  },
+  "include" : {
+    "\/^https?:\/\/[^\/]+\/(?:album|track)\/[^\/]+\\\/?$\/" : [
+      "Import Bandcamp releases to MusicBrainz.js"
+    ],
+    "\/^https?:\/\/web\\.archive\\.org\/web\/\\d+\/https?:\/\/[^\/]+\/(?:album|track)\/[^\/]+\\\/?$\/" : [
+      "Import Bandcamp releases to MusicBrainz.js"
+    ],
+    "http*:\/\/*.discogs.com\/*release\/*" : [
+      "Import Discogs releases to MusicBrainz.js"
+    ],
+    "http*:\/\/www.discogs.com\/*" : [
+      "Import Discogs releases to MusicBrainz.js"
+    ]
+  },
+  "exclude-match" : {
+
+  },
+  "require" : {
+    "Import Discogs releases to MusicBrainz.js" : [
+      "https%3A%2F%2Fajax.googleapis.com%2Fajax%2Flibs%2Fjquery%2F2.1.4%2Fjquery.min.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Fmbimport.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Flogger.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Fmblinks.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Fmbimportstyle.js"
+    ],
+    "Import Bandcamp releases to MusicBrainz.js" : [
+      "https%3A%2F%2Fajax.googleapis.com%2Fajax%2Flibs%2Fjquery%2F2.2.4%2Fjquery.min.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Fmbimport.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Flogger.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Fmblinks.js",
+      "https%3A%2F%2Fraw.githubusercontent.com%2Fmurdos%2Fmusicbrainz-userscripts%2Fmaster%2Flib%2Fmbimportstyle.js"
+    ]
+  },
+  "disabled" : [
+
+  ],
+  "exclude" : {
+    "http*:\/\/www.discogs.com\/release\/add" : [
+      "Import Discogs releases to MusicBrainz.js"
+    ],
+    "http*:\/\/*.discogs.com\/*release\/*?f=xml*" : [
+      "Import Discogs releases to MusicBrainz.js"
+    ]
+  }
+}
