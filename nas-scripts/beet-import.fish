@@ -1,5 +1,11 @@
 #!/usr/bin/env fish
 
+if test "$machine_name" != "thor"
+	echo "must run on thor"
+	exit 1
+end
+
+
 set import_flags "-l beet-import.log"
 if contains -- --quiet $argv
 	set import_flags "-ql beet-import.log"

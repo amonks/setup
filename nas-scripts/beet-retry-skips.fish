@@ -1,5 +1,11 @@
 #!/usr/bin/env fish
 
+if test "$machine_name" != "thor"
+	echo "must run on thor"
+	exit 1
+end
+
+
 set batchsize 5
 set infile "$HOME/beet-skips.log"
 set outfile "$HOME/beet-corrected.log"

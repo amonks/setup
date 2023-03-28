@@ -1,5 +1,11 @@
 #!/usr/bin/env fish
 
+if test "$machine_name" != "thor"
+	echo "must run on thor"
+	exit 1
+end
+
+
 # Set fan mode: raw 0x30 0x45 0x01 [x]
 # [x] Modes:      CPU Zone  Peripheral Zone
 #                 Target    Target 
