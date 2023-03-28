@@ -1,10 +1,12 @@
 #!/usr/bin/env fish
 
-set batchsize 10
+set batchsize 5
 set infile "$HOME/beet-skips.log"
 set outfile "$HOME/beet-corrected.log"
 set bookmarkfile "$HOME/beet-retry-bookmark.stamp"
 set todo (cat $infile | wc -l | string trim)
+
+
 
 function set-bookmark --argument-names value
 	echo $value > $bookmarkfile
@@ -29,21 +31,44 @@ if ! test -f $bookmarkfile
 	set-bookmark 0
 end
 
-while test (get-bookmark) -lt $todo
-	set batch 
-	for alb in (get-next-batch)
-		echo "  $alb"
-		set -a batch "$alb"
+
+
+# ========== do the thing ============
+
+# if a line number was passed; skip the bookmark stuff and just
+# handle that one line
+if test -n "$argv[1]"
+	set lineno "$argv[1]"
+	set batch (cat $infile | tail -n +$lineno | head -n1)
+	echo "$batch"
+	if ! yes-or-no "import only this album"
+		exit 1
 	end
-	echo importing (count $batch) albums
-
-	beet import $batch
-	or exit 1
-
-	for alb in $batch
-		echo $alb >> $outfile
-	end
-
-	beet convert
-	report-batch
+	beet import "$batch"
+	exit $status
 end
+
+
+# build batch for import
+set batch 
+for alb in (get-next-batch)
+	echo "  $alb"
+	set -a batch "$alb"
+end
+echo importing (count $batch) albums
+
+
+# actually do import
+beet import $batch
+or exit 1
+
+
+# mark these albums as imported
+for alb in $batch
+	echo $alb >> $outfile
+end
+report-batch
+
+
+# ring a bell
+bell 10
