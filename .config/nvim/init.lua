@@ -61,6 +61,9 @@ local vim_opts = {
     ignorecase = true,
     smartcase = true,
 
+    -- use rg for grep
+    grepprg = "rg --vimgrep --no-heading --smart-case",
+
     -- swp in ~/.vim-tmp
     backup = true,
     swapfile = true,
