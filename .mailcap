@@ -1,0 +1,3 @@
+text/plain; bat --paging=always %s
+text/html; ~/.config/neomutt/view-attachment.bash %s html
+
