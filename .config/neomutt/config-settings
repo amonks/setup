@@ -1,0 +1,34 @@
+# vim: filetype=muttrc
+#
+# adapted from: 
+# https://gideonwolfe.com/posts/workflow/neomutt/intro/
+
+set editor = "nvim"
+
+set my_name = "Andrew Monks"
+set imap_check_subscribed
+
+# set preferred view modes
+auto_view text/html
+alternative_order text/html text/plain
+
+set sidebar_visible
+set envelope_from
+set edit_headers      # show headers when composing
+set fast_reply        # skip to compose when replying
+set forward_format = "Fwd: %s"           # subject when forwarding
+set forward_decode    # decode when forwarding
+set attribution = "On %d, %n wrote:"     # quoting header
+set reply_to          # reply to Reply-to: header
+set reverse_name      # use inbound To: as From: when replying
+set include           # include quote in replies
+set forward_quote     # include message in forwards
+# set text_flowed       # ???
+unset sig_dashes      # no dashes before sig
+unset mark_old        # un/read is adequate granularity
+# set timeout = 0       # ???
+
+set header_cache_backend = lmdb
+set header_cache = "~/.cache/neomutt/headers/"
+# set message_cache_dir = "~/.cache/neomutt/messages/"
+

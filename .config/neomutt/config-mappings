@@ -1,0 +1,55 @@
+# vim: filetype=muttrc
+#
+# adapted from: 
+# https://gideonwolfe.com/posts/workflow/neomutt/intro/
+#
+# vim keybinds! k and j to go up and down, and l and C-o to move
+# forwards and back pages.
+#
+# Open the sidebar with B. J and K to navigate, O to open selection
+
+# General rebindings
+bind attach <return> view-mailcap
+bind attach l view-mailcap
+bind editor <space> noop
+bind pager c imap-fetch-mail
+bind index G last-entry
+bind index g noop
+bind index gg first-entry
+bind pager,attach \Co exit
+bind pager j next-line
+bind pager k previous-line
+bind pager l view-attachments
+bind index D delete-message
+bind index U undelete-message
+bind index L limit
+bind index h noop
+bind index l display-message
+bind browser h goto-parent
+bind browser l select-entry
+bind pager,browser gg top-page
+bind pager,browser G bottom-page
+bind index,pager,browser d half-down
+bind index,pager,browser u half-up
+bind index,pager R group-reply
+bind index \031 previous-undeleted	# Mouse wheel
+bind index \005 next-undeleted		# Mouse wheel
+bind pager \031 previous-line		# Mouse wheel
+bind pager \005 next-line		# Mouse wheel
+bind editor <Tab> complete-query
+
+
+# sidebar mappings
+bind index,pager K sidebar-prev
+bind index,pager J sidebar-next
+bind index,pager O sidebar-open
+bind index,pager B sidebar-toggle-visible
+
+# global index and pager shortcuts
+bind index,pager @ compose-to-sender
+bind index,pager D purge-message
+bind index <tab> sync-mailbox
+bind index <space> collapse-thread
+
+# archive message macro
+macro index h ":set confirmappend=no delete=yes\n<tag-prefix><save-message>=Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "Archive message(s)"

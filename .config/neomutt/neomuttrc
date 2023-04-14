@@ -1,0 +1,11 @@
+# vim: filetype=muttrc
+#
+# adapted from: 
+# https://gideonwolfe.com/posts/workflow/neomutt/intro/
+
+source ~/.config/neomutt/config-settings
+source ~/.config/neomutt/config-mappings
+source ~/.config/neomutt/config-colors-gruvbox
+
+source ~/.config/neomutt/account-fastmail
+

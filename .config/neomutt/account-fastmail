@@ -1,0 +1,26 @@
+# vim: filetype=muttrc
+#
+# adapted from: 
+# https://gideonwolfe.com/posts/workflow/neomutt/intro/
+
+set realname = "Andrew Monks"
+
+set my_fastmail_app_specific_password = `cat ~/.config/neomutt/account-fastmail-password`
+set smtp_url = "smtp://monks@fastmail.com:$my_fastmail_app_specific_password@smtp.fastmail.com:587"
+set imap_user = "monks@fastmail.com"
+set imap_pass = $my_fastmail_app_specific_password
+
+set spoolfile = "imaps://imap.fastmail.com"
+set folder = $spoolfile
+
+unmailboxes *
+unmailboxes "imaps://imap.fastmail.com/samsara"
+named-mailboxes "Inbox" "imaps://imap.fastmail.com/INBOX"
+named-mailboxes "Triage" "imaps://imap.fastmail.com/INBOX/triage"
+named-mailboxes "Everything Else" "imaps://imap.fastmail.com/INBOX/everything else"
+named-mailboxes "Longreads" "imaps://imap.fastmail.com/INBOX/longreads"
+named-mailboxes "Archive" "imaps://imap.fastmail.com/Archive"
+named-mailboxes "Sent" "imaps://imap.fastmail.com/Sent"
+named-mailboxes "Spam" "imaps://imap.fastmail.com/Spam"
+named-mailboxes "Trash" "imaps://imap.fastmail.com/Trash"
+
