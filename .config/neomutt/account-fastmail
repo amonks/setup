@@ -6,6 +6,7 @@
 set realname = "Andrew Monks"
 
 set my_fastmail_app_specific_password = `cat ~/.config/neomutt/account-fastmail-password`
+set smtp_authenticators = plain
 set smtp_url = "smtp://monks@fastmail.com:$my_fastmail_app_specific_password@smtp.fastmail.com:587"
 set imap_user = "monks@fastmail.com"
 set imap_pass = $my_fastmail_app_specific_password

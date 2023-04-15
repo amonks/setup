@@ -1,0 +1,19 @@
+[general]
+status_path = "~/.config/vdirsyncer/status/"
+
+[pair contacts]
+a = "fastmail"
+b = "local"
+collections = ["from a", "from b"]
+conflict_resolution = "a wins"
+
+[storage fastmail]
+type = "carddav"
+url = "https://carddav.fastmail.com"
+username = "monks@fastmail.com"
+password.fetch = ["command", "cat", "~/.config/neomutt/account-fastmail-password"]
+
+[storage local]
+type = "filesystem"
+fileext = ".vcf"
+path = "~/contacts/"

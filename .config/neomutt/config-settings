@@ -28,7 +28,13 @@ unset sig_dashes      # no dashes before sig
 unset mark_old        # un/read is adequate granularity
 # set timeout = 0       # ???
 
+ignore *
+unignore From
+unignore To
+unignore Subject
+
 set header_cache_backend = lmdb
 set header_cache = "~/.cache/neomutt/headers/"
 # set message_cache_dir = "~/.cache/neomutt/messages/"
 
+set query_command = "khard email --parsable --search-in-source-files %s"
