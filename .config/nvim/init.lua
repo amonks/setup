@@ -19,7 +19,9 @@ require('packer').startup(function(use)
     use 'christoomey/vim-tmux-navigator' 
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
     use 'google/vim-searchindex'              -- show "N of M"
+    use 'HiPhish/nvim-ts-rainbow2'
     use 'jose-elias-alvarez/null-ls.nvim' 
+    -- use 'luochen1990/rainbow'
     use 'mbbill/undotree' 
     use 'morhetz/gruvbox' 
     use 'neovim/nvim-lspconfig' 
@@ -32,6 +34,7 @@ require('packer').startup(function(use)
     use 'tpope/vim-commentary'                -- gcc
     use 'tpope/vim-eunuch'                    -- :Rename (also renames buffer), :SudoWrite
                                               -- also, redetect filetype and chmod+x after writing #! line
+    use 'tpope/vim-fireplace'                 -- clojure repl
     use 'tpope/vim-fugitive'                  -- :Git blame
     use 'tpope/vim-repeat'                    -- make . repeat more things
     use 'tpope/vim-rsi'                       -- use bash-style insert bindings in commandline
@@ -49,7 +52,7 @@ local HOME = os.getenv("HOME")
 
 local vim_opts = {
     -- gq wrap width; otherwise wraps to window
-    textwidth = 70,
+    -- textwidth = 70,
 
     -- allow editing multiple files at once
     hidden = true,
@@ -100,12 +103,20 @@ for k, v in pairs(vim_opts) do
     vim.opt[k] = v
 end
 
+vim.cmd([[
+set foldmethod=syntax "syntax highlighting items specify folds  
+let javaScript_fold=1 "activate folding by JS syntax  
+let typeScript_fold=1 "activate folding by JS syntax  
+set foldlevelstart=99 "start file with all folds opened
+]])
 
 
 -- color scheme
 vim.opt.background = "dark"
 vim.cmd.colorscheme("gruvbox")
 
+-- rainbow parens
+vim.g.rainbow_active = 1
 
 -- do one of these but not both:
 -- italic comments (but doesn't work with termguicolors :( )
@@ -158,9 +169,12 @@ vmapcmd(";", ":")
 
 require('nvim-treesitter.configs').setup {
     highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
+        -- enable = true,
+        -- additional_vim_regex_highlighting = false,
     },
+    rainbow = {
+        enable = true,
+    }
 }
 
 
