@@ -15,7 +15,8 @@ alternative_order text/html text/plain
 set sidebar_visible
 set envelope_from
 set edit_headers      # show headers when composing
-set fast_reply        # skip to compose when replying
+# set fast_reply        # skip to compose when replying
+set auto_edit         # even faster than fast_reply
 set forward_format = "Fwd: %s"           # subject when forwarding
 set forward_decode    # decode when forwarding
 set attribution = "On %d, %n wrote:"     # quoting header
@@ -26,12 +27,21 @@ set forward_quote     # include message in forwards
 # set text_flowed       # ???
 unset sig_dashes      # no dashes before sig
 unset mark_old        # un/read is adequate granularity
-# set timeout = 0       # ???
+set timeout = 0       # ???
+set beep_new          # bell on new mail (is this bad?)
+
+unset confirm_append  # don't prompt when adding mail to mailbox
+set delete            # don't prompt when deleting mail
+set quit              # don't prompt when quitting
+
+set arrow_cursor
+set arrow_string = "➤"
 
 ignore *
 unignore From
 unignore To
 unignore Subject
+unignore Date
 
 set header_cache_backend = lmdb
 set header_cache = "~/.cache/neomutt/headers/"

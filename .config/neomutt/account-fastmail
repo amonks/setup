@@ -11,10 +11,12 @@ set smtp_url = "smtp://monks@fastmail.com:$my_fastmail_app_specific_password@smt
 set imap_user = "monks@fastmail.com"
 set imap_pass = $my_fastmail_app_specific_password
 
+set from = "Andrew Monks <a@monks.co>"
+
 set spoolfile = "imaps://imap.fastmail.com"
 set folder = $spoolfile
 
-unmailboxes *
+# unmailboxes *
 unmailboxes "imaps://imap.fastmail.com/samsara"
 named-mailboxes "Inbox" "imaps://imap.fastmail.com/INBOX"
 named-mailboxes "Triage" "imaps://imap.fastmail.com/INBOX/triage"
@@ -25,3 +27,4 @@ named-mailboxes "Sent" "imaps://imap.fastmail.com/Sent"
 named-mailboxes "Spam" "imaps://imap.fastmail.com/Spam"
 named-mailboxes "Trash" "imaps://imap.fastmail.com/Trash"
 
+set record = "imaps://imap.fastmail.com/Sent"

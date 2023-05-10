@@ -51,30 +51,41 @@ bind index,pager D purge-message
 bind index <tab> sync-mailbox
 bind index <space> collapse-thread
 
-# archive message macro
-macro index <f1> \
-  "<enter-command>set confirmappend=no delete=yes\n\
+# archive message
+macro index,pager <f1> \
+  "<enter-command>set confirmappend=no delete=yes beep=no\n\
   <tag-prefix><save-message>=Archive\n\
   <sync-mailbox>\
-  <enter-command>set confirmappend=yes delete=ask-yes\n" \
+  <enter-command>set confirmappend=yes delete=ask-yes beep=yes\n" \
   "Archive message(s)"
 
-# triage as ham macro
+# triage as Ham
 macro index,pager <f2> \
-  "<pipe-message>/Users/ajm/go/bin/contactadd<return>\
+  "<enter-command>set confirmappend=no delete=yes beep=no\n\
+  <pipe-message>/Users/ajm/go/bin/contactadd<return>\
   <shell-escape>/Users/ajm/Library/Python/3.9/bin/vdirsyncer sync<return>\
-  <enter-command>set confirmappend=no delete=yes\n\
   <tag-prefix><save-message>=Archive\n\
   <sync-mailbox>\
-  <enter-command>set confirmappend=yes delete=ask-yes\n" \
+  <enter-command>set confirmappend=yes delete=ask-yes beep=yes\n" \
   "Add the sender email address to contacts and archive"
 
-# triage as VIP macro
+# triage as VIP
 macro index,pager <f3> \
-  "<pipe-message>/Users/ajm/go/bin/contactadd -vip<return>\
+  "<enter-command>set confirmappend=no delete=yes beep=no\n\
+  <pipe-message>/Users/ajm/go/bin/contactadd -vip<return>\
   <shell-escape>/Users/ajm/Library/Python/3.9/bin/vdirsyncer sync<return>\
-  <enter-command>set confirmappend=no delete=yes\n\
   <tag-prefix><save-message>=Archive\n\
   <sync-mailbox>\
-  <enter-command>set confirmappend=yes delete=ask-yes\n" \
+  <enter-command>set confirmappend=yes delete=ask-yes beep=yes\n" \
   "Add the sender email address to contacts as VIP and archive"
+
+# triage as Blocked
+macro index,pager <f4> \
+  "<enter-command>set confirmappend=no delete=yes beep=no\n\
+  <pipe-message>/Users/ajm/go/bin/contactadd -blocked<return>\
+  <shell-escape>/Users/ajm/Library/Python/3.9/bin/vdirsyncer sync<return>\
+  <tag-prefix><save-message>=Archive\n\
+  <sync-mailbox>\
+  <enter-command>set confirmappend=yes delete=ask-yes beep=yes\n" \
+  "Add the sender email address to contacts as Blocked and archive"
+
