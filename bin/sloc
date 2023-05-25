@@ -1,7 +1,9 @@
 #!/usr/bin/env fish
 
 if test "$argv" = "--help"
-  echo "usage: sloc <COLUMN...>"
+  echo "sloc"
+  echo "sloc <COLUMN...>"
+  echo "sloc COLUMN <COLUMN|TOTAL...>"
   echo "COLUMN is one of (dir, ext, name, path, author, lines)"
   exit 0
 end
@@ -9,10 +11,23 @@ end
 git ls-files | gawk "!/.pdf\$/ && !/.lock\$/ && !/.mdx\$/" | xargs -n1 git --no-pager blame --show-name -- | gawk "
 BEGIN {
   split(\"$argv\", argv, \" \")
-  cols = \"\"
-  for (i in argv)        cols = cols toupper(argv[i]) \"\\t\"
-  if (cols !~ /LINES/)   cols = cols \"LINES\" \"\\t\"
-  print cols
+  header = \"\"
+  col_count = 0
+  for (i in argv) {
+    # skip total: it's not a column
+    if (argv[i] == \"total\") continue
+
+    col_count = col_count + 1
+    name = toupper(argv[i])
+    cols[col_count] = name
+    header = header name \"\\t\"
+  }
+  if (header !~ /LINES/) {
+    header = header \"LINES\" \"\\t\"
+    col_count += 1
+    cols[col_count] = \"LINES\"
+  }
+  print header
 }
 
 {
@@ -34,15 +49,35 @@ BEGIN {
   if (ext ~ \"/\")          ext = \"none\"
 
   key = \"\"
+  total = \"\"
+  part_count = 0
   for (i in argv) {
     arg = argv[i]
-    if (arg == \"dir\")      key = key   dir         \"\\t\"
-    if (arg == \"ext\")      key = key   ext         \"\\t\"
-    if (arg == \"author\")   key = key   name        \"\\t\"
-    if (arg == \"path\")     key = key   path        \"\\t\"
-    if (arg == \"lines\")    key = key   \"LINES\"   \"\\t\"
+    if (arg == \"total\") {
+      part_index = part_count + 1
+      if (part_index > col_count || part_index == 1) {
+        print \"ERROR: total can't be first or last column\"
+        exit 1
+      }
+
+
+      total_key = key
+      for (; part_index <= col_count; part_index++) {
+        col = cols[part_index]
+        if (col == \"LINES\") { total_key = total_key \"LINES\" \"\\t\" }
+        else                  { total_key = total_key \"*\"     \"\\t\" }
+      }
+      stats[total_key] += 1
+      continue
+    }
+    part_count = part_count + 1
+    if (arg == \"dir\")      { key = key   dir         \"\\t\" }
+    if (arg == \"ext\")      { key = key   ext         \"\\t\" }
+    if (arg == \"author\")   { key = key   name        \"\\t\" }
+    if (arg == \"path\")     { key = key   path        \"\\t\" }
+    if (arg == \"lines\")    { key = key   \"LINES\"   \"\\t\" }
   }
-  if (key !~ /LINES/)        key = key   \"LINES\"   \"\\t\"
+  if (key !~ /LINES/)        { key = key   \"LINES\"   \"\\t\" }
 
   stats[key] += 1
 }
