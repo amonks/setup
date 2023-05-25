@@ -1,5 +1,11 @@
 #!/usr/bin/env fish
 
+if test "$argv" = "--help"
+  echo "usage: sloc <COLUMN...>"
+  echo "COLUMN is one of (dir, ext, name, path, author, lines)"
+  exit 0
+end
+
 git ls-files | gawk "!/.pdf\$/ && !/.lock\$/ && !/.mdx\$/" | xargs -n1 git --no-pager blame --show-name -- | gawk "
 BEGIN {
   split(\"$argv\", argv, \" \")
@@ -41,12 +47,46 @@ BEGIN {
   stats[key] += 1
 }
 
+function compare_parts(_1, a, _2, b) {
+  split(a, a_parts, \"\\t\")
+  split(b, b_parts, \"\\t\")
+
+  if (length(a_parts) != length(b_parts)) {
+    return -1
+  }
+
+  for (i in a_parts) {
+    a_part = a_parts[i]
+    b_part = b_parts[i]
+
+    is_numeric = a_part ~ /[0-9]+/
+
+    if (is_numeric && (a_part + 0) > (b_part + 0)) {
+      return -1
+    }
+    if (!is_numeric && a_part < b_part) {
+      return -1
+    }
+    if (is_numeric && (a_part + 0) < (b_part + 0)) {
+      return 1
+    }
+    if (!is_numeric && a_part > b_part) {
+      return 1
+    }
+  }
+  return 0
+}
+
 END {
-  n = asorti(stats, stats_sorted)
-  for (i in stats_sorted) {
-    key = stats_sorted[i]
-    gsub(/LINES/, stats[key], key)
-    print key
+  for (k in stats) {
+    gsub(/LINES/, stats[k], k)
+    rows[k] = k
+  }
+
+  asort(rows, sorted, \"compare_parts\")
+
+  for (i in sorted) {
+    print sorted[i]
   }
 }" | column -t
 
