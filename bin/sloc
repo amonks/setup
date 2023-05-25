@@ -1,0 +1,52 @@
+#!/usr/bin/env fish
+
+git ls-files | gawk "!/.pdf\$/ && !/.lock\$/ && !/.mdx\$/" | xargs -n1 git --no-pager blame --show-name -- | gawk "
+BEGIN {
+  split(\"$argv\", argv, \" \")
+  cols = \"\"
+  for (i in argv)        cols = cols toupper(argv[i]) \"\\t\"
+  if (cols !~ /LINES/)   cols = cols \"LINES\" \"\\t\"
+  print cols
+}
+
+{
+  path = \$2
+  
+  name = substr(\$3, 2)
+  if (name == \"Not\") name = \"uncommitted\"
+
+  split(path, parts, \"/\")
+  dir = \"root\"
+  if (length(parts) > 1)            dir = parts[1] 
+  if (substr(dir, 1, 1) == \".\")   dir = \"root\"
+
+  split(path, parts, \".\")
+  ext = parts[length(parts)]
+  if (length(parts) == 1)   ext = \"none\"
+  if (dir == \"bin\")       ext = \"bash\"
+  if (dir == \"root\")      ext = \"config\"
+  if (ext ~ \"/\")          ext = \"none\"
+
+  key = \"\"
+  for (i in argv) {
+    arg = argv[i]
+    if (arg == \"dir\")      key = key   dir         \"\\t\"
+    if (arg == \"ext\")      key = key   ext         \"\\t\"
+    if (arg == \"author\")   key = key   name        \"\\t\"
+    if (arg == \"path\")     key = key   path        \"\\t\"
+    if (arg == \"lines\")    key = key   \"LINES\"   \"\\t\"
+  }
+  if (key !~ /LINES/)        key = key   \"LINES\"   \"\\t\"
+
+  stats[key] += 1
+}
+
+END {
+  n = asorti(stats, stats_sorted)
+  for (i in stats_sorted) {
+    key = stats_sorted[i]
+    gsub(/LINES/, stats[key], key)
+    print key
+  }
+}" | column -t
+
