@@ -4,6 +4,8 @@ vim.cmd([[
         silent execute '!git clone --depth 1 https://github.com/wbthomason/packer.nvim ' . clone_dir
     endif
     unlet clone_dir
+
+    filetype plugin indent on
 ]])
 
 
@@ -17,6 +19,7 @@ require('packer').startup(function(use)
 
     use 'airblade/vim-gitgutter'
     use 'christoomey/vim-tmux-navigator' 
+    use 'dhruvasagar/vim-table-mode'          -- markdown tables
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
     use 'google/vim-searchindex'              -- show "N of M"
     use 'HiPhish/nvim-ts-rainbow2'
@@ -36,6 +39,7 @@ require('packer').startup(function(use)
                                               -- also, redetect filetype and chmod+x after writing #! line
     use 'tpope/vim-fireplace'                 -- clojure repl
     use 'tpope/vim-fugitive'                  -- :Git blame
+    use 'masukomi/vim-markdown-folding'
     use 'tpope/vim-repeat'                    -- make . repeat more things
     use 'tpope/vim-rsi'                       -- use bash-style insert bindings in commandline
     use 'tpope/vim-sleuth'                    -- automatically detect indent
@@ -127,6 +131,8 @@ vim.cmd.highlight("Comment cterm=italic")
 -- use comma as leader
 vim.g.mapleader = ","
 
+vim.g.markdown_fold_override_foldtext = 0
+
 
 
 
@@ -169,7 +175,7 @@ vmapcmd(";", ":")
 
 require('nvim-treesitter.configs').setup {
     highlight = {
-        -- enable = true,
+        enable = true,
         -- additional_vim_regex_highlighting = false,
     },
     rainbow = {
