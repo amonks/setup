@@ -23,7 +23,9 @@ end
 set pool mypool
 
 echo running $periodicity backup for $pool
-echo retaining a maximum of $max_retained_snapshots $periodicity snapshots
+if test "$delete" = "true"
+	echo retaining a maximum of $max_retained_snapshots $periodicity snapshots
+end
 
 set now (date +%Y-%m-%d-%H:%M:%S)
 
