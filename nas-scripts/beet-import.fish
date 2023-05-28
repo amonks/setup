@@ -11,12 +11,14 @@ if contains -- --quiet $argv
 	set import_flags "-ql beet-import.log"
 end
 
+set flac_path ~/whatbox/files/flac
+
 set list_file (mktemp)
-exa --sort newest --reverse /mypool/data/mirror/whatbox/files/flac > $list_file
+exa --sort newest --reverse $flac_path > $list_file
 nvim $list_file
 set albums
 for album in (cat $list_file)
-	set -a albums "/mypool/data/mirror/whatbox/files/flac/$album"
+	set -a albums "$flac_path/$album"
 end
 rm $list_file
 
