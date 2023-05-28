@@ -1,8 +1,10 @@
 #!/usr/bin/env fish
 
+set delete true
+
 if test -f /home/ajm/.backup.lock
-	echo "not snapshotting during backup"
-	exit 1
+	echo "backup in progress -- retaining infinite snapsohts"
+	set delete false
 end
 
 set periodicity $argv[1]
@@ -29,8 +31,11 @@ set snapshot_name $pool@$periodicity-$now
 echo creating snapshot $snapshot_name
 zfs snapshot -r $snapshot_name
 
-set snapshot_count (zfs list -t snapshot | grep $periodicity | cut -d' ' -f1 | cut -d'@' -f2 | sort | uniq | wc -l | string trim)
+if test "$delete" = "false"
+	exit 0
+end
 
+set snapshot_count (zfs list -t snapshot | grep $periodicity | cut -d' ' -f1 | cut -d'@' -f2 | sort | uniq | wc -l | string trim)
 while true
 	if test $snapshot_count -gt $max_retained_snapshots
 		set first_snapshot_tag (zfs list -t snapshot | grep $periodicity | cut -d' ' -f1 | cut -d'@' -f2 | sort | uniq | head -n 1)

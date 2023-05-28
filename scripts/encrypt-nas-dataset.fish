@@ -154,7 +154,7 @@ sudo zfs create -o encryption=on -o compression=on -o atime=off \
         syncoid "mypool/data/PARENT" "mypool/tank/PARENT"
 
     # encrypt the data
-    sudo ./backup-scripts/managed-syncoid.fish \
+    sudo ./scripts/managed-syncoid.fish \
         --no-commands --no-sync-snap \
         "mypool/data/$dataset" "mypool/tank/$dataset"
 

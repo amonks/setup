@@ -30,6 +30,6 @@ end
 echo importing (count $albums) albums
 beet import $import_flags $albums
 
-and ~/nas-scripts/beet-convert-mp3s.fish
+and ~/scripts/beet-convert-mp3s.fish
 and sudo service forked-daapd restart
 
