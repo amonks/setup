@@ -1,0 +1,126 @@
+#!/usr/bin/env gawk -f
+
+function usage () {
+  print "sloc"
+  print "sloc COLUMN..."
+  print "sloc COLUMN <COLUMN|total>... COLUMN"
+  print "COLUMN is one of (dir, ext, name, path, author, lines)"
+}
+
+BEGIN {
+  delete ARGV[0]
+  for (i in ARGV) {
+    args[i] = ARGV[i]
+    delete ARGV[i]
+  }
+
+  header = ""
+  col_count = 0
+  for (i in args) {
+    if (args[i] ~ /help/) { usage() ; exit 0 }
+
+    # skip total: it's not a column
+    if (args[i] == "total") continue
+
+    col_count = col_count + 1
+    name = toupper(args[i])
+    cols[col_count] = name
+    header = header name "\t"
+  }
+  if (header !~ /LINES/) {
+    header = header "LINES\t"
+    col_count += 1
+    cols[col_count] = "LINES"
+  }
+  print header
+}
+
+{
+  path = $2
+  
+  name = substr($3, 2)
+  if (name == "Not")               name = "uncommitted"
+
+  split(path, parts, "/")
+  dir = "root"
+  if (length(parts) > 1)           dir = parts[1] 
+  if (substr(dir, 1, 1) == ".")    dir = "root"
+
+  split(path, parts, ".")
+  ext = parts[length(parts)]
+  if (length(parts) == 1)          ext = "none"
+  if (dir == "bin")                ext = "bash"
+  if (dir == "root")               ext = "config"
+  if (ext ~ "/")                   ext = "none"
+
+
+  key = ""
+  total = ""
+  part_count = 0
+  for (i in args) {
+    arg = args[i]
+    if (arg == "total") {
+      part_index = part_count + 1
+      if (part_index > col_count || part_index == 1) {
+        print "ERROR: total can't be first or last column"
+        exit 1
+      }
+
+
+      total_key = key
+      for (; part_index <= col_count; part_index++) {
+        col = cols[part_index]
+        if (col == "LINES") { total_key = total_key "LINES" "\t" }
+        else                { total_key = total_key "*"     "\t" }
+      }
+      stats[total_key] += 1
+      continue
+    }
+    part_count = part_count + 1
+    if      (arg == "dir")    { key = key dir     "\t" }
+    else if (arg == "ext")    { key = key ext     "\t" }
+    else if (arg == "author") { key = key name    "\t" }
+    else if (arg == "path")   { key = key path    "\t" }
+    else if (arg == "lines")  { key = key "LINES" "\t" }
+    else { print "Error: invalid column '" arg "'" ; usage() ; exit 1 }
+  }
+  if (key !~ /LINES/)         { key = key "LINES" "\t" }
+
+  stats[key] += 1
+}
+
+function compare_parts(_1, a, _2, b) {
+  split(a, a_parts, "\t")
+  split(b, b_parts, "\t")
+
+  if (length(a_parts) != length(b_parts)) {
+    return -1
+  }
+
+  for (i in a_parts) {
+    a_part = a_parts[i]
+    b_part = b_parts[i]
+
+    is_numeric = a_part ~ /[0-9]+/
+
+    if ( is_numeric && (a_part + 0)    >    (b_part + 0) )    return -1
+    if (!is_numeric &&  a_part         <     b_part      )    return -1
+    if ( is_numeric && (a_part + 0)    <    (b_part + 0) )    return  1
+    if (!is_numeric &&  a_part         >     b_part      )    return  1
+  }
+  return 0
+}
+
+END {
+  for (k in stats) {
+    gsub(/LINES/, stats[k], k)
+    rows[k] = k
+  }
+
+  asort(rows, sorted, "compare_parts")
+
+  for (i in sorted) {
+    print sorted[i]
+  }
+}
+
