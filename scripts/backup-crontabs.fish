@@ -6,17 +6,17 @@ if test (whoami) != "root"
 end
 
 set home /Users/ajm
-if ! test -d $home
+set crondir /var/at/tabs
+set usrgrp ajm:staff
+if test -d /usr/home/ajm
 	set home /usr/home/ajm
-end
-if ! test -d $home
-	echo "could not find home folder"
-	exit 1
+	set crondir /var/cron/tabs
+	set usrgrp ajm:ajm
 end
 
-if test -d /var/cron/tabs
+if test -d $crondir
 	rm -rf $home/crontabs
-	cp -r /var/cron/tabs $home/crontabs
-	chown -R ajm:ajm crontabs
+	cp -r $crondir $home/crontabs
+	chown -R $usrgrp $home/crontabs
 end
 
