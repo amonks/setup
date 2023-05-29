@@ -44,7 +44,10 @@ else
 	end
 
 	echo "mounting whatbox"
-	sshfs -o idmap=user root@57269.zfs.rsync.net: ~/whatbox
+	umount ~/whatbox
+	rm -rf ~/whatbox
+	mkdir -p ~/whatbox
+	sshfs -o idmap=user whatbox: ~/whatbox
 	if test $status -ne 0
 		echo "error"
 		exit 1
