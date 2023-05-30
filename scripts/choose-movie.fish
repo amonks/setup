@@ -6,5 +6,5 @@ if test "$machine_name" != "thor"
 end
 
 
-exa -rs created /mypool/data/mirror/whatbox/files/movies | fzf | sed -e 's|^|sftp://ajm@thor/mypool/data/mirror/whatbox/files/movies/|'
+exa -rs created /mypool/tank/movies | fzf
 

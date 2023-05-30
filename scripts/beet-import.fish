@@ -11,7 +11,7 @@ if contains -- --quiet $argv
 	set import_flags "-ql beet-import.log"
 end
 
-set flac_path ~/whatbox/files/flac
+set flac_path ~/mnt/whatbox/files/flac
 
 set list_file (mktemp)
 exa --sort newest --reverse $flac_path > $list_file

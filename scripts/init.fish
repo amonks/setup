@@ -31,8 +31,8 @@ else
 	end
 end
 
-if test -d ~/whatbox/files
-	echo "whatbox already mounted"
+if test -d ~/mnt/whatbox/files
+	echo "~/mnt/whatbox already mounted"
 else
 	echo "loading fusefs"
 	set out (sudo kldload fusefs 2>&1)
@@ -43,17 +43,17 @@ else
 		end
 	end
 
-	echo "mounting whatbox"
-	umount ~/whatbox
-	rm -rf ~/whatbox
-	mkdir -p ~/whatbox
-	sshfs -o idmap=user whatbox: ~/whatbox
+	echo "mounting ~/mnt/whatbox"
+	umount ~/mnt/whatbox
+	rm -rf ~/mnt/whatbox
+	mkdir -p ~/mnt/whatbox
+	sshfs -o idmap=user whatbox: ~/mnt/whatbox
 	if test $status -ne 0
 		echo "error"
 		exit 1
 	end
-	if ! test -d ~/whatbox/files
-		echo "mount failed -- whatbox/files not found"
+	if ! test -d ~/mnt/whatbox/files
+		echo "mount failed -- ~/mnt/whatbox/files not found"
 		exit 1
 	end
 end
