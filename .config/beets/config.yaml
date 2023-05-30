@@ -18,7 +18,7 @@ zero:
   update_database: true
 
 convert:
-  command: /usr/home/ajm/nas-scripts/convert-to-mp3.sh $source $dest
+  command: /usr/home/ajm/scripts/convert-to-mp3.sh $source $dest
   extension: mp3
   dest: /mypool/tank/music/mp3/
 
