@@ -16,6 +16,7 @@ rsync -ha --progress \
   --include "/Library/Preferences/*" \
   --exclude "/Library/*" \
   --exclude "/Music/Library-v0/*" \
+  --exclude "/whatbox/*" \
   --exclude "tailscaled.state" \
   --exclude ".DS_Store" \
   --exclude ".viminfo" \
