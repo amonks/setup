@@ -5,6 +5,8 @@ vim.cmd([[
     endif
     unlet clone_dir
 
+    autocmd BufWritePre * :%s/\s\+$//e
+
     filetype plugin indent on
 ]])
 
