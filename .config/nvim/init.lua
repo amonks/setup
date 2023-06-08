@@ -20,16 +20,16 @@ require('packer').startup(function(use)
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- fast syntax highlighting
 
     use 'airblade/vim-gitgutter'
-    use 'christoomey/vim-tmux-navigator' 
+    use 'christoomey/vim-tmux-navigator'
     use 'dhruvasagar/vim-table-mode'          -- markdown tables
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
     use 'google/vim-searchindex'              -- show "N of M"
     use 'HiPhish/nvim-ts-rainbow2'
-    use 'jose-elias-alvarez/null-ls.nvim' 
+    use 'jose-elias-alvarez/null-ls.nvim'
     -- use 'luochen1990/rainbow'
-    use 'mbbill/undotree' 
-    use 'morhetz/gruvbox' 
-    use 'neovim/nvim-lspconfig' 
+    use 'mbbill/undotree'
+    use 'morhetz/gruvbox'
+    use 'neovim/nvim-lspconfig'
     use 'nvim-lua/plenary.nvim'               -- dependency of many lua plugins
     use 'junegunn/fzf'                        -- ctrlp, search -- telescope seems cool but the implementation is insane
     use 'stefandtw/quickfix-reflector.vim'    -- find-and-replace
@@ -110,9 +110,9 @@ for k, v in pairs(vim_opts) do
 end
 
 vim.cmd([[
-set foldmethod=syntax "syntax highlighting items specify folds  
-let javaScript_fold=1 "activate folding by JS syntax  
-let typeScript_fold=1 "activate folding by JS syntax  
+set foldmethod=syntax "syntax highlighting items specify folds
+let javaScript_fold=1 "activate folding by JS syntax
+let typeScript_fold=1 "activate folding by JS syntax
 set foldlevelstart=99 "start file with all folds opened
 ]])
 
