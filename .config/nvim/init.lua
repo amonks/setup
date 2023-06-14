@@ -20,6 +20,7 @@ require('packer').startup(function(use)
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- fast syntax highlighting
 
     use 'airblade/vim-gitgutter'
+    use 'overcache/NeoSolarized'
     use 'christoomey/vim-tmux-navigator'
     use 'dhruvasagar/vim-table-mode'          -- markdown tables
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
@@ -117,18 +118,14 @@ set foldlevelstart=99 "start file with all folds opened
 ]])
 
 
--- color scheme
-vim.opt.background = "dark"
-vim.cmd.colorscheme("gruvbox")
-
 -- rainbow parens
 vim.g.rainbow_active = 1
 
--- do one of these but not both:
--- italic comments (but doesn't work with termguicolors :( )
-vim.cmd.highlight("Comment cterm=italic")
--- prettier colors but no cool italic comments
--- -- vim.opt.termguicolors = false
+
+-- color scheme
+vim.opt.termguicolors = true
+vim.opt.background = "dark"
+vim.cmd.colorscheme("gruvbox")
 
 -- use comma as leader
 vim.g.mapleader = ","
