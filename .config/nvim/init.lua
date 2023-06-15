@@ -1,3 +1,5 @@
+require("libmap")
+
 vim.cmd([[
     let clone_dir = stdpath('config') . '/pack/packer/start/packer.nvim'
     if !filereadable(clone_dir)
@@ -126,6 +128,17 @@ vim.g.rainbow_active = 1
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
 vim.cmd.colorscheme("gruvbox")
+vim.cmd.highlight("Comment cterm=italic")
+
+nmap("<F6>", function ()
+  if vim.opt.background:get() == "light" then
+      vim.cmd.colorscheme("gruvbox")
+      vim.opt.background = "dark"
+  else
+      vim.cmd.colorscheme("NeoSolarized")
+      vim.opt.background = "light"
+  end
+end)
 
 -- use comma as leader
 vim.g.mapleader = ","
@@ -134,30 +147,6 @@ vim.g.markdown_fold_override_foldtext = 0
 
 
 
-
--- keyboard mapping helpers
-
-local function map(mode, shortcut, command, extra)
-    opts = { noremap = true, silent = true }
-    for k,v in pairs(extra or {}) do
-        opts[k] = v
-    end
-    vim.keymap.set(mode, shortcut, command, opts)
-end
-local function nmap(shortcut, command, extra) map('n', shortcut, command, extra) end
-local function imap(shortcut, command, extra) map('i', shortcut, command, extra) end
-local function vmap(shortcut, command, extra) map('v', shortcut, command, extra) end
-
-local function mapcmd(mode, shortcut, command, extra)
-    opts = { noremap = true, silent = true }
-    for k,v in pairs(extra or {}) do
-        opts[k] = v
-    end
-    vim.api.nvim_set_keymap(mode, shortcut, command, opts)
-end
-local function nmapcmd(shortcut, command, extra) map('n', shortcut, command, extra) end
-local function imapcmd(shortcut, command, extra) map('i', shortcut, command, extra) end
-local function vmapcmd(shortcut, command, extra) map('v', shortcut, command, extra) end
 
 -- no shift to enter command mode, just use semicolon
 nmapcmd(";", ":")
