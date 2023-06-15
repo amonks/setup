@@ -1,68 +1,68 @@
 [branch "master"]
-  rebase = true
+	rebase = true
 
 [merge "ours"]
-  driver = true
+	driver = true
 
 [user]
-  email = a@monks.co
-  name = monks
+	email = a@monks.co
+	name = monks
 
 [filter "lfs"]
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-  process = git-lfs filter-process
-  required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
 
 [help]
-  autocorrect = 1
+	autocorrect = 1
 
 [core]
-  editor = nvim
-  excludesfile = ~/.global_gitignore
-  # pager = delta --theme=zenburn
+	editor = nvim
+	excludesfile = ~/.global_gitignore
+	# pager = delta --theme=zenburn
 
 [alias]
-  r = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"git commit --amend \\\"--date=$(date)\\\" --no-edit\" ; }; f"
-  ri = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase -i $target && git rebase $target --exec \"git commit --amend \\\"--date=$(date)\\\" --no-edit\" ; }; f"
-  i = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase -i $target ; }; f"
-  p = "!f() { branch=$(git rev-parse --abbrev-ref HEAD) ; while ! git push --force-with-lease --set-upstream -- origin $branch ; do echo retrying push ; done ; }; f"
-  rp = "!f() { git r && git p ; }; f"
-  rip = "!f() { git ri && git p ; }; f"
+	r = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"git commit --amend \\\"--date=$(date)\\\" --no-edit\" ; }; f"
+	ri = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase -i $target && git rebase $target --exec \"git commit --amend \\\"--date=$(date)\\\" --no-edit\" ; }; f"
+	i = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase -i $target ; }; f"
+	p = "!f() { branch=$(git rev-parse --abbrev-ref HEAD) ; while ! git push --force-with-lease --set-upstream -- origin $branch ; do echo retrying push ; done ; }; f"
+	rp = "!f() { git r && git p ; }; f"
+	rip = "!f() { git ri && git p ; }; f"
 
-  each = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"$@; git add . && git commit --amend --no-edit\" ; }; f"
-  troy-each = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"cd $BACKEND_ROOT/mobile/Troy; $@; cd $BACKEND_ROOT; git add . && git commit --amend --no-edit\" ; }; f"
+	each = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"$@; git add . && git commit --amend --no-edit\" ; }; f"
+	troy-each = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target --exec \"cd $BACKEND_ROOT/mobile/Troy; $@; cd $BACKEND_ROOT; git add . && git commit --amend --no-edit\" ; }; f"
 
-  ri-test = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target -i --exec \"regen && git add . && git commit --amend --no-edit\" && git r ; }; f"
+	ri-test = "!f() { git fetch && target=$(git safe-rebase-target) && git rebase $target -i --exec \"regen && git add . && git commit --amend --no-edit\" && git r ; }; f"
 
-  safe-rebase-target = "!f() { safe-rebase-target; }; f"
-  master = "!f() { git status --porcelain && git fetch && git checkout master && git reset --hard $(git safe-rebase-target) ; }; f"
-  devbox = "!f() { git fetch && git checkout $(ssh devbox 'cd ~/co/backend && git rev-parse --short HEAD'); }; f"
+	safe-rebase-target = "!f() { safe-rebase-target; }; f"
+	master = "!f() { git status --porcelain && git fetch && git checkout master && git reset --hard $(git safe-rebase-target) ; }; f"
+	devbox = "!f() { git fetch && git checkout $(ssh devbox 'cd ~/co/backend && git rev-parse --short HEAD'); }; f"
 
-  clone-my = "!f() { repo=\"$1\" ; git clone git@github.com:amonks/$repo.git; }; f"
+	clone-my = "!f() { repo=\"$1\" ; git clone git@github.com:amonks/$repo.git; }; f"
 
-  # check out a new branch from safe master
-  new-branch = "!f() { git fetch && git checkout -b $1 && git reset --hard $(git safe-rebase-target); }; f"
+	# check out a new branch from safe master
+	new-branch = "!f() { git fetch && git checkout -b $1 && git reset --hard $(git safe-rebase-target); }; f"
 
-  # diff branch by message
-  miff = "!f() { commit-message-diff $1 $2 | column -t -s'\t' ; }; f"
+	# diff branch by message
+	miff = "!f() { commit-message-diff $1 $2 | column -t -s'\t' ; }; f"
 
-  # commit
-  c = "commit -pv"
+	# commit
+	c = "commit -pv"
 
-  stat = "show --stat"
-  uncommit = "reset HEAD~"
+	stat = "show --stat"
+	uncommit = "reset HEAD~"
 
-  #
-  summon = "!f() { b=$1&& git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b ; }; f"
-  branches = "branch --sort=-committerdate"
-  touching = "rev-list --all --format=%B"
-  choose = "!f() { git branches | fzf | sed 's/^\\* //g' | xargs echo -n ; }; f"
-  change = "!f() { b=`git choose` && git checkout $b ; }; f"
+	#
+	summon = "!f() { b=$1&& git fetch origin +refs/heads/$b:refs/remotes/origin/$b $b:$b ; }; f"
+	branches = "branch --sort=-committerdate"
+	touching = "rev-list --all --format=%B"
+	choose = "!f() { git branches | fzf | sed 's/^\\* //g' | xargs echo -n ; }; f"
+	change = "!f() { b=`git choose` && git checkout $b ; }; f"
 
-  backtrack = "rebase -i HEAD~10"
+	backtrack = "rebase -i HEAD~10"
 
 [gc]
-  auto = 0
+	auto = 0
 [init]
 	defaultBranch = main
