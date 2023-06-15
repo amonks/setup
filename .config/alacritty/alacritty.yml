@@ -1,12 +1,26 @@
 scrolling:
   history: 100000
 font:
-  normal:
-    family: Operator Mono Lig
-    style: Book
   size: 16.0
   offset:
-    y: 18
+    y: 15
+
+  normal:
+    family: Operator Mono
+    style: Light
+
+  italic:
+    family: Triplicate OT
+    style: B Italic
+
+  bold:
+    family: Operator Mono
+    style: Book
+
+  bold_italic:
+    family: Triplicate OT
+    style: B Bold Italic
+
 bell:
   command:
     program: osascript
