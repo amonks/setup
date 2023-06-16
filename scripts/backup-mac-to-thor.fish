@@ -14,6 +14,7 @@ rsync -ha --progress \
   --include "/Library/Keychains/*" \
   --include "/Library/Application?Support/*" \
   --include "/Library/Preferences/*" \
+  --exclude "/Library/Fonts" \
   --exclude "/Library/*" \
   --exclude "/Music/Library-v0/*" \
   --exclude "/mnt/*" \
