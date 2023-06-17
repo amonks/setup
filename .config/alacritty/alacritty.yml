@@ -1,5 +1,17 @@
 scrolling:
   history: 100000
+
+colors:
+  primary:
+    # BG_SET
+    background: '0x000000' # dark mode
+
+    # FG_SET
+    foreground: '0xE8DCB7' # dark mode
+
+  normal:
+    black: "0x555555"
+
 font:
   size: 16.0
   offset:

@@ -126,17 +126,20 @@ vim.g.rainbow_active = 1
 
 -- color scheme
 vim.opt.termguicolors = true
-vim.opt.background = "dark"
-vim.cmd.colorscheme("gruvbox")
+vim.opt.background = "light"
+vim.cmd.colorscheme("NeoSolarized")
+vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
 vim.cmd.highlight("Comment cterm=italic")
 
 nmap("<F6>", function ()
   if vim.opt.background:get() == "light" then
       vim.cmd.colorscheme("gruvbox")
       vim.opt.background = "dark"
+      vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
   else
       vim.cmd.colorscheme("NeoSolarized")
       vim.opt.background = "light"
+      vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
   end
 end)
 
