@@ -126,21 +126,37 @@ vim.g.rainbow_active = 1
 
 -- color scheme
 vim.opt.termguicolors = true
-vim.opt.background = "light"
-vim.cmd.colorscheme("NeoSolarized")
-vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
 vim.cmd.highlight("Comment cterm=italic")
 
+function set_light_mode()
+    vim.cmd.colorscheme("NeoSolarized")
+    vim.opt.background = "light"
+    vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
+    vim.cmd.highlight("Comment cterm=italic")
+end
+
+function set_dark_mode()
+    vim.cmd.colorscheme("gruvbox")
+    vim.opt.background = "dark"
+    vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
+    vim.cmd.highlight("Comment cterm=italic")
+end
+
+function sync_theme()
+    vim.fn.system("grep 'light mode' ~/.config/alacritty/alacritty.yml")
+    if vim.v.shell_error == 0 then
+        set_light_mode()
+    else
+        set_dark_mode()
+    end
+end
+
+sync_theme()
+
 nmap("<F6>", function ()
-  if vim.opt.background:get() == "light" then
-      vim.cmd.colorscheme("gruvbox")
-      vim.opt.background = "dark"
-      vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
-  else
-      vim.cmd.colorscheme("NeoSolarized")
-      vim.opt.background = "light"
-      vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
-  end
+    print("hello?" .. vim.fn.system("osascript -e 'tell app \"System Events\" to tell appearance preferences to set dark mode to true'"))
+    print("hello?" .. vim.fn.system("fish -c toggle-night-mode"))
+    sync_theme()
 end)
 
 -- use comma as leader
