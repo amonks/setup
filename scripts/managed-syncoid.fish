@@ -9,24 +9,26 @@ if test -z "$_flag_dry_run"
     end
 end
 
-set target $argv
-if test -z "$target"
-    echo error: no target specified
-    exit 1
+set target "/"$argv
+if test "$target" = "/"
+    echo "no target specified. sync everything?"
+    read -P 'OK? '
+    set target ""
 end
 
 set syncoid_args --sshkey /usr/home/ajm/.ssh/id_ed25519 \
+    --recursive \
     --no-commands \
     --no-sync-snap \
-    --sendoptions='w' 
+    --sendoptions='w'
 
 if test -n "$_flag_recursive"
     set -a syncoid_args --recursive
 end
 
 set -a syncoid_args \
-    mypool/tank/$target \
-    root@57269.zfs.rsync.net:data1/thor/tank/$target
+    mypool/tank$target \
+    root@57269.zfs.rsync.net:data1/thor/tank$target
 
 echo managing syncoid command:
 echo syncoid $syncoid_args
