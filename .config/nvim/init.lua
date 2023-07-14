@@ -277,7 +277,6 @@ local on_attach = function(client, bufnr)
     nmap("<C-k>", vim.lsp.buf.signature_help, extra)
     imap("<C-k>", vim.lsp.buf.signature_help, extra)
 
-    -- nmap("?", vim.diagnostic.open_float, extra)
     nmap("[d", vim.diagnostic.goto_prev, extra)
     nmap("]d", vim.diagnostic.goto_next, extra)
 
