@@ -27,7 +27,7 @@ require('packer').startup(function(use)
     use 'dhruvasagar/vim-table-mode'          -- markdown tables
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
     use 'google/vim-searchindex'              -- show "N of M"
-    use 'HiPhish/nvim-ts-rainbow2'
+    -- use 'HiPhish/nvim-ts-rainbow2'
     use 'jose-elias-alvarez/null-ls.nvim'
     -- use 'luochen1990/rainbow'
     use 'mbbill/undotree'
@@ -121,43 +121,34 @@ set foldlevelstart=99 "start file with all folds opened
 
 
 -- rainbow parens
-vim.g.rainbow_active = 1
+-- vim.g.rainbow_active = 1
 
 
 -- color scheme
+
 vim.opt.termguicolors = true
-vim.cmd.highlight("Comment cterm=italic")
 
-function set_light_mode()
-    vim.cmd.colorscheme("NeoSolarized")
-    vim.opt.background = "light"
-    vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
-    vim.cmd.highlight("Comment cterm=italic")
-end
-
-function set_dark_mode()
-    vim.cmd.colorscheme("gruvbox")
-    vim.opt.background = "dark"
-    vim.cmd([[hi Normal guibg=NONE ctermbg=NONE]])
-    vim.cmd.highlight("Comment cterm=italic")
+function set_theme(theme)
+    vim.opt.background = theme
+    vim.cmd.colorscheme("monks")
 end
 
 function sync_theme()
     vim.fn.system("grep 'light mode' ~/.config/alacritty/alacritty.yml")
     if vim.v.shell_error == 0 then
-        set_light_mode()
+        set_theme("light")
     else
-        set_dark_mode()
+        set_theme("dark")
     end
 end
-
 sync_theme()
 
 nmap("<F6>", function ()
-    print("hello?" .. vim.fn.system("osascript -e 'tell app \"System Events\" to tell appearance preferences to set dark mode to true'"))
-    print("hello?" .. vim.fn.system("fish -c toggle-night-mode"))
+    vim.fn.system("fish -c toggle-night-mode")
     sync_theme()
 end)
+
+
 
 -- use comma as leader
 vim.g.mapleader = ","
@@ -182,6 +173,7 @@ vmapcmd(";", ":")
 
 require('nvim-treesitter.configs').setup {
     ensure_installed = {
+        "go",
         "bash",
         "comment",
         "fish",
@@ -195,9 +187,9 @@ require('nvim-treesitter.configs').setup {
         enable = true,
         -- additional_vim_regex_highlighting = false,
     },
-    rainbow = {
-        enable = true,
-    }
+    -- rainbow = {
+    --     enable = true,
+    -- }
 }
 
 
