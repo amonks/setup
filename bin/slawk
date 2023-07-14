@@ -37,21 +37,37 @@ BEGIN {
 
 {
   path = $2
-  
+
   name = substr($3, 2)
   if (name == "Not")               name = "uncommitted"
 
   split(path, parts, "/")
   dir = "root"
-  if (length(parts) > 1)           dir = parts[1] 
+  if (length(parts) > 1)           dir = parts[1]
   if (substr(dir, 1, 1) == ".")    dir = "root"
 
   split(path, parts, ".")
   ext = parts[length(parts)]
-  if (length(parts) == 1)          ext = "none"
+  if (ext == "gif" || ext == "png" || ext == "jpg" ||
+      ext == "csv" || ext == "db" || ext == "wal" || ext == "shm") {
+        next
+  }
+  # if (length(parts) == 1)          ext = "none"
+  # if (ext ~ "/")                   ext = "none"
   if (dir == "bin")                ext = "bash"
-  if (dir == "root")               ext = "config"
-  if (ext ~ "/")                   ext = "none"
+
+  if (ext ~ /ignore$/)             ext = "config"
+  if (ext ~ /rc$/)                 ext = "config"
+
+  if (ext == "Dockerfile")         ext = "config"
+  if (ext == "json")               ext = "config"
+  if (ext == "mod")                ext = "config"
+  if (ext == "sum")                ext = "config"
+  if (ext == "toml")               ext = "config"
+  if (ext == "yaml")               ext = "config"
+  if (ext == "yml")                ext = "config"
+
+  if (ext == "README")             ext = "txt"
 
 
   key = ""
