@@ -23,7 +23,7 @@ font:
 
   italic:
     family: Triplicate OT
-    style: B Italic
+    style: B Regular
 
   bold:
     family: Operator Mono
