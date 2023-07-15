@@ -41,7 +41,7 @@
 	main-remote = "!f() { echo "origin/$(git main-branch)" ; }; f"
 
 	main = "!f() { git status --porcelain && git fetch && git checkout $(git main-branch) && git reset --hard $(git main-remote) ; }; f"
-	master = "!f() { git main }; f"
+	master = "!f() { git main ; }; f"
 
 	devbox = "!f() { git fetch && git checkout $(ssh devbox 'cd ~/co/backend && git rev-parse --short HEAD'); }; f"
 
