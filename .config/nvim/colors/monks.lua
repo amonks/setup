@@ -50,12 +50,12 @@ cyan    = "#2aa198"
 green   = "#719e07"
 
 
-prose    = { italic=true, fg=violet }
-code     = { fg=base00 }
+prose    = { italic=true, bold=true, fg=base03 }
+code     = { fg=base02 }
 ctrlflow = { fg=red }
-usertext = { fg=violet, italic=true }
+usertext = { italic=true }
 marked   = { bg=highlighter }
-name     = { fg=base00 }
+name     = { fg=code.fg }
 
 
 vim.cmd([[
@@ -84,7 +84,7 @@ hi("CursorLineNr",{ fg=blue })
 
 -- Text
 
-hi("Normal",      { fg=base00, bg="NONE" })
+hi("Normal",      { fg=code.fg, bg="NONE" })
 
 hi("Comment",     prose)
 hi("Title",       code)
@@ -96,6 +96,7 @@ hi("Define",      code)
 hi("Macro",       code)
 hi("String",      usertext)
 hi("SpecialChar", usertext)
+hi("@none.tsx",   usertext)
 hi("Character",   code)
 hi("Number",      code)
 hi("Boolean",     code)
@@ -112,7 +113,7 @@ hi("Operator",    code)
 hi("Keyword",     code)
 hi("@keyword.return", ctrlflow)
 hi("@keyword.defer",  ctrlflow)
-hi("Exception",   code)
+hi("Exception",   ctrlflow)
 
 hi("Identifier",  name)
 hi("@namespace.go",  code)
