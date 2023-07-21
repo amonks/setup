@@ -16,6 +16,7 @@ _base2   = "#eee8d5"
 _base3   = "#fdf6e3"
 
 if vim.opt.background._value == "light" then
+    highlighter  = "#FFFF00"
     base03 = _base03
     base03 = _base03
     base02 = _base02
@@ -26,6 +27,7 @@ if vim.opt.background._value == "light" then
     base2 = _base2
     base3 = _base3
 elseif vim.opt.background._value == "dark" then
+    highlighter  = _base01
     base03 = _base3
     base03 = _base3
     base02 = _base2
@@ -39,7 +41,6 @@ else
     base00="#FF00FF"
 end
 
-highlighter  = "#FFFF00"
 yellow  = "#b58900"
 orange  = "#cb4b16"
 red     = "#dc322f"
@@ -50,12 +51,14 @@ cyan    = "#2aa198"
 green   = "#719e07"
 
 
+ui       = { bg=base2, fg=base02 }
 prose    = { italic=true, bold=true, fg=base03 }
 code     = { fg=base02 }
-ctrlflow = { fg=red }
 usertext = { italic=true }
 marked   = { bg=highlighter }
-name     = { fg=code.fg }
+ctrlflow_break      = { fg=magenta }
+ctrlflow_internal   = { fg=yellow }
+ctrlflow_concurrent = { fg=cyan }
 
 
 vim.cmd([[
@@ -72,15 +75,22 @@ end
 
 -- UI Chrome
 
-hi("StatusLine", { bg=base2, fg=base01 })
-hi("StatusLineNC", { bg=base2, fg=base00 })
-hi("CursorLine",  { bg="NONE" })
-hi("Pmenu",       { bg=base2, fg=base01 })
+hi("SignColumn", ui)
+hi("GitGutterAdd", {bg=ui.bg, fg=green})
+hi("GitGutterChange", {bg=ui.bg, fg=yellow})
+hi("GitGutterDelete", {bg=ui.bg, fg=red})
 
-hi("Visual",      { bg=highlighter })
+hi("StatusLine",   ui)                      -- focused window
+hi("StatusLineNC", { bg=ui.bg, fg=base00 }) -- non-focused window
 
-hi("LineNr",      code)
-hi("CursorLineNr",{ fg=blue })
+hi("CursorLine",   { bg="NONE" })
+hi("Pmenu",        { bg=ui.bg, fg=base01 }) -- popups
+
+hi("Visual",       marked)
+
+-- hi("LineNr",       { fg=base2, italic=true })
+-- hi("CursorLineNr", { fg=blue, italic=true })
+
 
 -- Text
 
@@ -88,10 +98,10 @@ hi("Normal",      { fg=code.fg, bg="NONE" })
 
 hi("Comment",     prose)
 hi("Title",       code)
-hi("TODO",        { bg=highlighter })
+hi("TODO",        marked)
 hi("Special",     code) -- PUNCTUATION
 
-hi("Constant",    name)
+hi("Constant",    code)
 hi("Define",      code)
 hi("Macro",       code)
 hi("String",      usertext)
@@ -102,26 +112,36 @@ hi("Number",      code)
 hi("Boolean",     code)
 hi("Float",       code)
 
-hi("Function",    code)
-hi("Parameter",   code)
+hi("Function",     code)
+hi("Parameter",    code)
 hi("@constructor", code)
 
+hi("Statement",   code)
 hi("Conditional", code)
 hi("Repeat",      code)
 hi("Label",       code)
 hi("Operator",    code)
 hi("Keyword",     code)
-hi("@keyword.return", ctrlflow)
-hi("@keyword.defer",  ctrlflow)
-hi("Exception",   ctrlflow)
 
-hi("Identifier",  name)
-hi("@namespace.go",  code)
-hi("Type",        code)
-hi("Typedef",     code)
-hi("StorageClass",code)
-hi("Structure",   code)
-hi("Include",     code)
-hi("PreProc",     code)
-hi("Debug",       code)
-hi("Tag",         code)
+hi("@keyword.function.go",  ctrlflow_break)
+hi("@keyword.return",       ctrlflow_break)
+hi("Exception",             ctrlflow_break)
+hi("@keyword.coroutine.go", ctrlflow_concurrent)
+hi("@keyword.coroutine.typescript", ctrlflow_concurrent)
+hi("@keyword.defer.go",     ctrlflow_concurrent)
+hi("Repeat",                ctrlflow_internal)
+hi("@keyword.continue.go",  ctrlflow_internal)
+hi("@keyword.break.go",     ctrlflow_internal)
+hi("@keyword.goto.go",      ctrlflow_internal)
+
+hi("Identifier",    code)
+
+hi("@namespace.go", code)
+hi("Type",          code)
+hi("Typedef",       code)
+hi("StorageClass",  code)
+hi("Structure",     code)
+hi("Include",       code)
+hi("PreProc",       code)
+hi("Debug",         code)
+hi("Tag",           code)

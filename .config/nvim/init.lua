@@ -86,7 +86,7 @@ local vim_opts = {
     cursorline = true,
 
     -- line numbers
-    number = true,
+    -- number = true,
 
     -- be more verbose about stuff generally
     showcmd = true,
