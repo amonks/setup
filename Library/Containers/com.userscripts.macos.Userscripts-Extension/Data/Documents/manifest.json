@@ -2,15 +2,15 @@
   "settings" : {
     "active" : "true",
     "sortOrder" : "lastModifiedDesc",
-    "showInvisibles" : "true",
+    "showCount" : "true",
     "lint" : "false",
-    "descriptions" : "true",
+    "showInvisibles" : "true",
     "languageCode" : "en",
-    "tabSize" : "4",
-    "log" : "false",
-    "autoCloseBrackets" : "true",
     "autoHint" : "true",
-    "showCount" : "true"
+    "log" : "false",
+    "tabSize" : "4",
+    "autoCloseBrackets" : "true",
+    "descriptions" : "true"
   },
   "declarativeNetRequest" : [
 
