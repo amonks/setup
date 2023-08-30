@@ -8,4 +8,8 @@ if test "$argv" = "--help"
   exit 0
 end
 
-git ls-files | gawk "!/.pdf\$/ && !/.lock\$/ && !/.mdx\$/" | tr \\n \\0 | xargs -0 -n1 git --no-pager blame --show-name -- | slawk $argv
+git ls-files | \
+  gawk "!/.pdf\$/ && !/.lock\$/ && !/.mdx\$/" | \
+  tr \\n \\0 | \
+  xargs -0 -n1 git --no-pager blame --show-name -- | \
+  slawk $argv

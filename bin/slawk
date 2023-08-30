@@ -43,6 +43,7 @@ BEGIN {
 
   split(path, parts, "/")
   dir = "root"
+  print(parts[0])
   if (length(parts) > 1)           dir = parts[1]
   if (substr(dir, 1, 1) == ".")    dir = "root"
 
