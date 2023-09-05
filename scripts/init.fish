@@ -10,6 +10,8 @@ if test "$machine_name" != "thor"
 	exit 1
 end
 
+rm ~/*.lock
+
 if test -f "/mypool/tank/movies/1933-I'm No Angel.mkv"
 	echo "zfs already mounted"
 else
