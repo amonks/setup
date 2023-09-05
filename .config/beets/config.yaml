@@ -1,6 +1,6 @@
 directory: /mypool/tank/music/flac
-# library: /mypool/tank/music/library.db
-library: /usr/home/ajm/beets.db
+library: /mypool/tank/music/library.db
+# library: /usr/home/ajm/beets.db
 plugins: embedart fetchart ftintitle zero mbsync convert mbsubmit
 
 musicbrainz:
