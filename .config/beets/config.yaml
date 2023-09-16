@@ -1,6 +1,5 @@
 directory: /mypool/tank/music/flac
 library: /mypool/tank/music/library.db
-# library: /usr/home/ajm/beets.db
 plugins: embedart fetchart ftintitle zero mbsync convert mbsubmit
 
 musicbrainz:
@@ -20,6 +19,7 @@ zero:
 convert:
   dest: /mypool/tank/music/mp3/
   format: v0
+  never_convert_lossy_files: yes
   formats:
     v0:
       command: /usr/home/ajm/scripts/convert-to-mp3.sh v0 "$source" "$dest"
