@@ -17,6 +17,7 @@ rsync -ha --progress \
   --exclude "/Library/Fonts" \
   --exclude "/Library/*" \
   --exclude "/Music/Library-v0/*" \
+  --exclude "/AppleInternal/*" \
   --exclude "/mnt/*" \
   --exclude "tailscaled.state" \
   --exclude ".DS_Store" \
