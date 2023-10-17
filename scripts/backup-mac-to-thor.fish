@@ -10,19 +10,20 @@ if test -z "$machine_user"
   exit 1
 end
 
-rsync -ha --progress \
-  --include "/Library/Keychains/*" \
+rsync --archive --human-readable --delete --progress \
   --include "/Library/Application?Support/*" \
+  --include "/Library/Keychains/*" \
   --include "/Library/Preferences/*" \
-  --exclude "/Library/Fonts" \
-  --exclude "/Library/*" \
-  --exclude "/Music/Library-v0/*" \
-  --exclude "/AppleInternal/*" \
-  --exclude "/mnt/*" \
-  --exclude "tailscaled.state" \
   --exclude ".DS_Store" \
-  --exclude ".viminfo" \
-  --exclude ".localized" \
   --exclude ".Trash" \
+  --exclude ".localized" \
+  --exclude ".viminfo" \
+  --exclude "/.zfs" \
+  --exclude "/AppleInternal" \
+  --exclude "/Library" \
+  --exclude "/Library/Fonts" \
+  --exclude "/Music/Library-v0" \
+  --exclude "/mnt" \
+  --exclude "tailscaled.state" \
   ~/ "thor-syncer:/mypool/tank/mirror/$machine_name/$machine_user"
 
