@@ -1,3 +1,0 @@
-paths:
-  default: $albumartist - $album%aunique{} ($year)/$track $title
-  comp: $album%aunique{} ($year)/$track $title
