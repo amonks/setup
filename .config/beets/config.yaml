@@ -1,5 +1,5 @@
-directory: /mypool/tank/music/flac
-library: /mypool/tank/music/library.db
+directory: /data/tank/music/flac
+library: /data/tank/music/library.db
 plugins: embedart fetchart ftintitle zero mbsync convert mbsubmit
 
 musicbrainz:
@@ -17,7 +17,7 @@ zero:
   update_database: true
 
 convert:
-  dest: /mypool/tank/music/mp3/
+  dest: /data/tank/music/mp3/
   format: v0
   never_convert_lossy_files: yes
   formats:

@@ -27,7 +27,7 @@ if test -n "$_flag_recursive"
 end
 
 set -a syncoid_args \
-    mypool/tank$target \
+    data/tank$target \
     root@57269.zfs.rsync.net:data1/thor/tank$target
 
 echo managing syncoid command:

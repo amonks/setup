@@ -20,7 +20,7 @@ if test -z $max_retained_snapshots
 	exit 1
 end
 
-set pool mypool
+set pool data
 
 echo running $periodicity backup for $pool
 if test "$delete" = "true"

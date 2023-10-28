@@ -29,7 +29,7 @@ async function main() {
     const { created_at, piece_id } = piece;
 
     const ymd = created_at.slice(0, 10);
-    const dir = `/mypool/tank/mirror/mail/${ymd}/${piece_id}/`;
+    const dir = `/data/tank/mirror/mail/${ymd}/${piece_id}/`;
     if (!(await stat(dir))) {
       await fs_mkdir(dir, { recursive: true });
     }

@@ -6,5 +6,5 @@ if test "$machine_name" != "thor"
 end
 
 
-exa -rs created /mypool/tank/movies | fzf
+exa -rs created /data/tank/movies | fzf
 

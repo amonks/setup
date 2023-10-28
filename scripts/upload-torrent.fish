@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
-set data_dir /mypool/tank/seeds/data
-set torrents_dir /mypool/tank/seeds/torrents
+set data_dir /data/tank/seeds/data
+set torrents_dir /data/tank/seeds/torrents
 
 set format $argv[1]
 set query $argv[2..-1]

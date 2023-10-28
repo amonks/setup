@@ -12,11 +12,11 @@ end
 
 rm ~/*.lock
 
-if test -f "/mypool/tank/movies/1933-I'm No Angel.mkv"
+if test -f "/data/tank/movies/1933-I'm No Angel.mkv" || true
 	echo "zfs already mounted"
 else
 	echo "loading key"
-	set out "$(sudo zfs load-key mypool/tank 2>&1)"
+	set out "$(sudo zfs load-key data/tank 2>&1)"
 	if test $status -ne 0
 		if ! string match '*Key already loaded*' "$out"
 			echo "error"
