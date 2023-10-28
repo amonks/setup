@@ -18,6 +18,7 @@ rsync --archive --human-readable --delete --progress \
   --exclude ".Trash" \
   --exclude ".localized" \
   --exclude ".viminfo" \
+  --exclude "/.cache" \
   --exclude "/.zfs" \
   --exclude "/AppleInternal" \
   --exclude "/Library" \
@@ -25,5 +26,5 @@ rsync --archive --human-readable --delete --progress \
   --exclude "/Music/Library-v0" \
   --exclude "/mnt" \
   --exclude "tailscaled.state" \
-  ~/ "thor-syncer:/mypool/tank/mirror/$machine_name/$machine_user"
+  ~/ "thor-syncer:/data/tank/mirror/$machine_name/$machine_user"
 
