@@ -63,6 +63,7 @@ function setup
         install-package --name dot --macport graphviz --apt graphviz --freebsdpkg graphviz
         install-package --name rlwrap
         install-package --name shellcheck --freebsdpkg hs-ShellCheck
+        install-package --name flyctl
     end
 
     if has-setup-option setup_node_environment || has-setup-option setup_neovim
