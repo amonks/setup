@@ -21,21 +21,22 @@ require('packer').startup(function(use)
 
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- fast syntax highlighting
 
+    -- use 'HiPhish/nvim-ts-rainbow2'
+    -- use 'luochen1990/rainbow'
     use 'airblade/vim-gitgutter'
-    use 'overcache/NeoSolarized'
     use 'christoomey/vim-tmux-navigator'
     use 'dhruvasagar/vim-table-mode'          -- markdown tables
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
     use 'google/vim-searchindex'              -- show "N of M"
-    -- use 'HiPhish/nvim-ts-rainbow2'
     use 'jose-elias-alvarez/null-ls.nvim'
-    -- use 'luochen1990/rainbow'
+    use 'junegunn/fzf'                        -- ctrlp, search -- telescope seems cool but the implementation is insane
     use 'mbbill/undotree'
     use 'morhetz/gruvbox'
     use 'neovim/nvim-lspconfig'
     use 'nvim-lua/plenary.nvim'               -- dependency of many lua plugins
-    use 'junegunn/fzf'                        -- ctrlp, search -- telescope seems cool but the implementation is insane
+    use 'overcache/NeoSolarized'
     use 'stefandtw/quickfix-reflector.vim'    -- find-and-replace
+    use 'vrischmann/tree-sitter-templ'
 
     -- tpope section (very based)
     use 'tpope/vim-abolish'                   -- :%Subvert/facilit{y,ies}/building{,s}/g, crs(nake)
@@ -169,16 +170,24 @@ vmapcmd(";", ":")
 
 
 
-
+require("nvim-treesitter.parsers").get_parser_configs().templ = {
+  install_info = {
+    url = "https://github.com/vrischmann/tree-sitter-templ.git",
+    files = {"src/parser.c", "src/scanner.c"},
+    branch = "master",
+  },
+}
+vim.treesitter.language.register('templ', 'templ')
 
 require('nvim-treesitter.configs').setup {
     ensure_installed = {
-        "go",
         "bash",
         "comment",
         "fish",
         "glsl",
+        "go",
         "ledger",
+        "templ",
         "terraform",
         "tsx",
         "typescript",
@@ -298,4 +307,5 @@ null_ls.setup({
 local lspconfig = require("lspconfig")
 lspconfig["tsserver"].setup({ on_attach = on_attach })
 lspconfig["gopls"].setup({ on_attach = on_attach })
+lspconfig["templ"].setup({ on_attach = on_attach })
 
