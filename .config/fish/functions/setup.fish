@@ -22,7 +22,7 @@ function setup
         install-package --name autojump
         install-package --name bash
         install-package --name bat --apt SKIP
-        install-package --name exa
+        install-package --name eza
         install-package --name fd
         install-package --name fzf --apt function:_install-fzf-on-apt-system
         install-package --name htop

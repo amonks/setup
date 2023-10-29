@@ -1,4 +1,4 @@
 function ls
-  alternate ls exa $argv
+  alternate ls eza $argv
 end
 
