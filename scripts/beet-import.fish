@@ -6,12 +6,12 @@ if test "$machine_name" != "thor"
 end
 
 
-set import_flags "-l beet-import.log"
+set import_flags "-l 'beet-import.log'"
 if contains -- --quiet $argv
-	set import_flags "-ql beet-import.log"
+	set import_flags "-ql 'beet-import.log'"
 end
 
-set flac_path ~/mnt/whatbox/files/flac
+set flac_path /data/dmz/whatbox/files/flac
 
 set list_file (mktemp)
 exa --sort newest --reverse $flac_path > $list_file
@@ -27,8 +27,9 @@ if test (count $albums) -eq "0"
 	exit 0
 end
 
-echo importing (count $albums) albums
+echo importing (count $albums) albums.
 beet import $import_flags $albums
 
+echo done importing. converting to mp3.
 and ~/scripts/beet-convert-mp3s.fish
 
