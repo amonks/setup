@@ -6,9 +6,9 @@ if test "$machine_name" != "thor"
 end
 
 
-set import_flags "-l 'beet-import.log'"
+set import_flags "-l" "beet-import.log"
 if contains -- --quiet $argv
-	set import_flags "-ql 'beet-import.log'"
+	set import_flags "-ql" "beet-import.log"
 end
 
 set flac_path /data/dmz/whatbox/files/flac
