@@ -1,6 +1,18 @@
 directory: /data/tank/music/flac
 library: /data/tank/music/library.db
-plugins: embedart fetchart ftintitle zero mbsync convert mbsubmit
+plugins: embedart fetchart ftintitle zero mbsync convert mbsubmit lastgenre
+
+lastgenre:
+  auto: yes
+  canonical: no
+  count: 3
+  force: yes
+  min_weight: 10
+  prefer_specific: no
+  source: album
+  separator: ', '
+  whitelist: yes
+  title_case: yes
 
 musicbrainz:
   extra_tags: [country, label]
