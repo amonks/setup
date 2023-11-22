@@ -1,6 +1,6 @@
 directory: /data/tank/music/flac
 library: /data/tank/music/library.db
-plugins: embedart fetchart ftintitle zero mbsync convert mbsubmit lastgenre
+plugins: embedart fetchart ftintitle mbsync convert mbsubmit lastgenre
 
 lastgenre:
   auto: yes
@@ -23,10 +23,6 @@ paths:
   comp: Compilations/$album%aunique{}/$track $title
 
 original_date: true
-
-zero:
-  fields: genre
-  update_database: true
 
 convert:
   dest: /data/tank/music/mp3/
