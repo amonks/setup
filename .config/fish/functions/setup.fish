@@ -13,6 +13,8 @@ function setup
         setup-ssh-key
     end
 
+    install-package --name rsync
+
     if has-setup-option setup_fancy_cli_tools
         function _install-fzf-on-apt-system
             git clone --depth 1 https://github.com/junegun/fzf.git ~/.fzf
@@ -47,7 +49,7 @@ function setup
 
     if has-setup-option setup_development_tools
         function _has_recent_git
-            git --version | grep -e 2.2 -e 2.3 1>/dev/null 2>&1
+            git --version | grep -e 2.2 -e 2.3 -e 2.4 -e 2.5 1>/dev/null 2>&1
         end
         function _install_git_on_apt
             sudo add-apt-repository ppa:git-core/ppa
@@ -63,7 +65,7 @@ function setup
         install-package --name dot --macport graphviz --apt graphviz --freebsdpkg graphviz
         install-package --name rlwrap
         install-package --name shellcheck --freebsdpkg hs-ShellCheck
-        install-package --name flyctl
+        install-package --name flyctl --freebsdpkg SKIP
     end
 
     if has-setup-option setup_node_environment || has-setup-option setup_neovim
@@ -149,23 +151,6 @@ function setup
 
     if test $system_type = macos; and has-setup-option setup_swift_environment
         install-package --name carthage --apt SKIP
-    end
-
-    if has-setup-option setup_emacs
-        function _has_new_emacs
-            emacs --version | grep 'GNU Emacs 28' 1>/dev/null 2>&1
-        end
-        function _install_emacs_on_apt
-            sudo add-apt-repository ppa:kelleyk/emacs
-            sudo apt-get update
-            sudo apt-get install emacs27
-            ln -s (which emacs27) ~/bin/emacs
-        end
-        install-package --name emacs --versioncheck _has_new_emacs --apt function:_install_emacs_on_apt
-        config submodule init
-        config submodule update
-        config submodule sync
-        doom sync
     end
 
     if has-setup-option setup_neovim

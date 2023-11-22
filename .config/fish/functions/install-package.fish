@@ -15,14 +15,14 @@ function install-package
         end
     end
 
-    echo Installing $_flag_name
-
     switch (system-type)
         case macos
             set -l package (with-default $_flag_name $_flag_macport)
             if test $package = SKIP
                 return
             end
+
+            echo Installing $_flag_name
 
             if string match -rq 'function:(?<fun>.*)' "$package"
                 $fun
@@ -36,6 +36,8 @@ function install-package
                 return
             end
 
+            echo Installing $_flag_name
+
             if string match -rq 'function:(?<fun>.*)' "$package"
                 $fun
             else
@@ -47,6 +49,8 @@ function install-package
             if test $package = SKIP
                 return
             end
+
+            echo Installing $_flag_name
 
             if string match -rq 'function:(?<fun>.*)' "$package"
                 $fun
