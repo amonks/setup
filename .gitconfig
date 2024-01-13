@@ -45,7 +45,8 @@
 
 	devbox = "!f() { git fetch && git checkout $(ssh devbox 'cd ~/co/backend && git rev-parse --short HEAD'); }; f"
 
-	gclone = "!f() { repo=\"$1\" ; git clone git@github.com:$repo.git; }; f"
+	clone-github = "!f() { repo=\"$1\" ; git clone git@github.com:$repo.git } ; f"
+	clone-my = "!f() { repo=\"$1\" ; git clone-github amonks/$1 ; } ; f"
 
 	# check out a new branch from safe main
 	new-branch = "!f() { git fetch && git checkout -b $1 && git reset --hard $(git main-remote); }; f"
