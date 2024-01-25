@@ -14,6 +14,8 @@ function setup
     end
 
     install-package --name rsync
+    install-package --name mbuffer --macport SKIP
+    install-package --name pv
 
     if has-setup-option setup_fancy_cli_tools
         function _install-fzf-on-apt-system
@@ -39,9 +41,9 @@ function setup
     end
 
     if has-setup-option setup_network_tools
+        install-package --name lsof
         install-package --name drill
         install-package --name iftop
-        install-package --name iotop --macport SKIP --freebsdpkg SKIP
         install-package --name mosh
         install-package --name mtr
         install-package --name prettyping
