@@ -1,5 +1,7 @@
 debug-fish-init start (status -f)
-  set -U fish_user_paths ~/bin \
+  set -U fish_user_paths \
+    ~/.fly/bin \
+    ~/bin \
     /usr/local/opt/ruby/bin \
     /usr/local/lib/ruby/gems/2.7.0/bin \
     /snap/bin \
