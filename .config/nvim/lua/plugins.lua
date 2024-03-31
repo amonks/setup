@@ -8,14 +8,10 @@ vim.cmd([[
 ]])
 
 require('packer').startup(function(use)
-    use {
-        'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' },
-        config = function() require('gitsigns').setup() end
-    }
+    use 'lewis6991/gitsigns.nvim'
 
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- fast syntax highlighting
 
-    use 'airblade/vim-gitgutter'              -- show added lines
     use 'christoomey/vim-tmux-navigator'      -- ctrl+j,k,l,m across tmux and vim panes (doesn't support nesting)
     use 'dhruvasagar/vim-table-mode'          -- markdown tables; use :TableModeToggle
     use 'easymotion/vim-easymotion'           -- type, eg, ,,j
@@ -43,3 +39,10 @@ require('packer').startup(function(use)
     use 'tpope/vim-vinegar'                   -- press - to go to netrw
 end)
 
+require('gitsigns').setup({
+    signs = {
+        add    = { text = "+" },
+        change = { text = "~" },
+        delete = { text = "-" },
+    },
+})
