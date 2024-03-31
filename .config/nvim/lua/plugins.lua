@@ -39,10 +39,3 @@ require('packer').startup(function(use)
     use 'tpope/vim-vinegar'                   -- press - to go to netrw
 end)
 
-require('gitsigns').setup({
-    signs = {
-        add    = { text = "+" },
-        change = { text = "~" },
-        delete = { text = "-" },
-    },
-})

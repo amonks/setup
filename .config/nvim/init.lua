@@ -18,3 +18,20 @@ vim.api.nvim_create_autocmd({"BufWritePre"}, {
 nmapcmd(";", ":")
 vmapcmd(";", ":")
 
+-- undotree with ctrl+u
+nmapcmd("<C-u>", ":UndotreeToggle<CR>")
+vmapcmd("<C-u>", ":UndotreeToggle<CR>")
+
+-- set up gitsigns
+require('gitsigns').setup({
+    -- tell it about config repo
+    worktrees = {
+        { toplevel = vim.env.HOME, gitdir = vim.env.HOME .. '/.cfg' },
+    },
+    -- use gitgutter's sigils
+    signs = {
+        add    = { text = "+" },
+        change = { text = "~" },
+        delete = { text = "-" },
+    },
+})
