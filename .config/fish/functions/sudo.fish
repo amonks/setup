@@ -1,5 +1,5 @@
 function sudo
-  if status --is-interactive
+  if test (status stack-trace | wc -l) -eq 1    # excludes scripts, even scripts run interactively
     switch $argv[1]
     case port
       switch $argv[2]
