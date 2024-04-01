@@ -31,7 +31,7 @@ function setup
         install-package --name fzf --apt function:_install-fzf-on-apt-system
         install-package --name htop
         install-package --name jq
-        install-package --name ncdu
+        # install-package --name ncdu
         install-package --name rg --macport ripgrep --freebsdpkg ripgrep
         install-package --name tree
     end
@@ -71,8 +71,18 @@ function setup
     end
 
     if has-setup-option setup_node_environment || has-setup-option setup_neovim
-        install-package --name node --macport nodejs14 --apt nodejs
-        install-package --name npm --macport npm8 --apt SKIP
+        install-package --name node --macport nodejs20 --apt nodejs
+        install-package --name yarn
+        install-package --name npm --macport npm10
+        if ! is-installed typescript-language-server
+            sudo npm i -g typescript-language-server
+        end
+        if ! is-installed prettierd
+            sudo npm i -g @fsouza/prettierd
+        end
+        if ! is-installed eslint_d
+            sudo npm i -g eslint_d
+        end
     end
 
     if has-setup-option setup_clojure_environment
