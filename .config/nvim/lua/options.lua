@@ -24,7 +24,7 @@ for k, v in pairs({
     directory = os.getenv("HOME") .. "/.vim-tmp",
 
     -- line numbers
-    number = true,
+    number = false,
     cursorline = false,
 
     -- be more verbose about stuff generally
