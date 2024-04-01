@@ -45,7 +45,7 @@
 
 	devbox = "!f() { git fetch && git checkout $(ssh devbox 'cd ~/co/backend && git rev-parse --short HEAD'); }; f"
 
-	clone-github = "!f() { repo=\"$1\" ; git clone git@github.com:$repo.git } ; f"
+	clone-github = "!f() { repo=\"$1\" ; git clone git@github.com:$repo.git ; } ; f"
 	clone-my = "!f() { repo=\"$1\" ; git clone-github amonks/$1 ; } ; f"
 
 	# check out a new branch from safe main
@@ -65,7 +65,7 @@
 	branches = "branch --sort=-committerdate"
 	touching = "rev-list --all --format=%B"
 	choose = "!f() { git branches | fzf | sed 's/^\\* //g' | xargs echo -n ; }; f"
-	change = "!f() { b=`git choose` && git checkout $b ; }; f"
+	change = "!f() { git checkout $(git choose); }; f"
 
 	backtrack = "rebase -i HEAD~10"
 
