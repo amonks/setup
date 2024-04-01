@@ -65,6 +65,9 @@ for k, v in pairs({
     -- used by masukomi/vim-markdown-folding; not sure what it does tho
     markdown_fold_override_foldtext = 0,
 
+    -- make markdown tables compatible with markdown
+    table_mode_corner = "|",
+
     -- use comma as leader
     mapleader = ",",
 }) do
