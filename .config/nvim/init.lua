@@ -35,3 +35,4 @@ require('gitsigns').setup({
         delete = { text = "-" },
     },
 })
+

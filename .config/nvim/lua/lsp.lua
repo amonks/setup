@@ -56,7 +56,15 @@ null_ls.setup({
 
 local lspconfig = require("lspconfig")
 lspconfig["tsserver"].setup({ on_attach = on_attach })
-lspconfig["gopls"].setup({ on_attach = on_attach })
 lspconfig["templ"].setup({ on_attach = on_attach })
-
+lspconfig["gopls"].setup({
+    on_attach = on_attach,
+    settings = {
+        gopls = {
+            env = {
+                GOFLAGS = "--tags=linux,wasm,js"
+            }
+        }
+    }
+})
 
