@@ -55,7 +55,7 @@ for k, v in pairs({
 end
 
 -- vim globals
--- equivalent to `let x=y` in viml
+-- equivalent to `let g.x=y` in viml
 for k, v in pairs({
     -- tell typescript.vim to set fold points
     -- am I even using typescript.vim? It isn't listed as a plugin; this might not do anything.
