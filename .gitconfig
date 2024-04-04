@@ -73,3 +73,5 @@
 	auto = 0
 [init]
 	defaultBranch = main
+[advice]
+	skippedCherryPicks = false
