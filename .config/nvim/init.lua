@@ -1,7 +1,7 @@
 -- require ./lua/XYZ.lua
+require("options")
 require("libmap")
 require("plugins")
-require("options")
 require("colors")
 require("treesitter")
 require("fzf")
