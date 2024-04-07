@@ -2,7 +2,7 @@
 -- equivalent to `set x=y` in viml
 for k, v in pairs({
     -- gq wrap width; otherwise wraps to window
-    -- textwidth = 70,
+    textwidth = 80,
 
     -- allow editing multiple files at once
     hidden = true,
@@ -53,6 +53,16 @@ for k, v in pairs({
 }) do
     vim.opt[k] = v
 end
+
+vim.opt.formatoptions:remove("t") -- do not auto-wrap
+vim.opt.formatoptions:append("c") -- do auto-wrap comments tho
+vim.opt.formatoptions:append("r") -- insert a new '//' after hitting <CR> within a comment in insert mode
+vim.opt.formatoptions:remove("o") -- but don't do so from o/O in normal mode
+vim.opt.formatoptions:append("q") -- format comments with gq
+vim.opt.formatoptions:remove("a") -- don't auto-wrap code
+vim.opt.formatoptions:append("n") -- recognize lists (and their extra left-margin) when formatting
+vim.opt.formatoptions:remove("2") -- don't indent the first line of a paragraph
+vim.opt.formatoptions:append("j") -- allow combining end-of-line comments onto one line
 
 -- vim globals
 -- equivalent to `let g.x=y` in viml
