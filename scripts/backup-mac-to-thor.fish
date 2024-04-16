@@ -10,6 +10,10 @@ if test -z "$machine_user"
   exit 1
 end
 
+if which fileproviderctl
+  materialize-icloud ~
+end
+
 rsync --archive --human-readable --delete --progress \
   --include "/Library/Application?Support/*" \
   --include "/Library/Keychains/*" \
