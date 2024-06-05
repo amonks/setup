@@ -21,7 +21,7 @@ end
 
 
 function install_1password
-  if test -d "/Applications/1Password.app"
+  if test -d "/Applications/1Password 7.app"
     return
   end
 
@@ -78,7 +78,7 @@ function install_divvy
   end
 
   echo "Installing Divvy"
-  
+
   curl --location "https://mizage.com/downloads/Divvy.zip" --output "divvy.zip"
   unzip "divvy.zip"
   mv "Divvy.app" "/Applications/Divvy.app"
