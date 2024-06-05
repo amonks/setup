@@ -14,7 +14,7 @@ if which fileproviderctl
   materialize-icloud ~
 end
 
-rsync --archive --human-readable --delete --progress \
+rsync --archive --human-readable --delete --progress --ignore-errors \
   --include "/Library/Application?Support/*" \
   --include "/Library/Keychains/*" \
   --include "/Library/Preferences/*" \
