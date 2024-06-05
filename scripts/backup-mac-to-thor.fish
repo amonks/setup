@@ -23,6 +23,7 @@ rsync --archive --human-readable --delete --progress --ignore-errors \
   --exclude ".localized" \
   --exclude ".viminfo" \
   --exclude "/.cache" \
+  --exclude "/.local/share/autojump" \
   --exclude "/.zfs" \
   --exclude "/AppleInternal" \
   --exclude "/Library" \
