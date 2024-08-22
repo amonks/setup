@@ -30,6 +30,6 @@ end
 echo importing (count $albums) albums.
 beet import $import_flags $albums
 
-echo done importing. converting to mp3.
+and echo done importing. converting to mp3.
 and ~/scripts/beet-convert-mp3s.fish
 

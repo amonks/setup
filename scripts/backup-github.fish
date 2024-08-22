@@ -26,6 +26,10 @@ end
 
 
 set backup_dir /data/tank/mirror/github
+if ! test -d $backup_dir
+  echo "BACKUP DIR OFFLINE"
+  exit 1
+end
 
 set orgs_response (gh api graphql -f query='
   {

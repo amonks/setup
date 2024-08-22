@@ -1,10 +1,5 @@
 #!/usr/bin/env fish
 
-		# pv --progress --timer --eta --rate --bytes --size=(get-size $sendcmd) |
-		# lzop |
-		# mbuffer -q -s 128k -m 16M |
-
-
 set lock_file /home/ajm/.backup.lock
 
 set sshkey    '/home/ajm/.ssh/id_ed25519'
@@ -22,88 +17,94 @@ set dataset   "$_flag_dataset"
 ########################################################################
 ########################################################################
 
-function sync --argument-names src dest
-	if has-resume $dest
-		if test -n "$fresh"
-			echo "  -- aborting unfinished send"
-			$sshcmd zfs receive -A $dest || return 1
-			sync $src $dest || return 1
-			return 0
-		end
+function sync --argument-names ds
+	set --local resume (get-resume $ds)
+	if test -n "$fresh" || test "$resume" = "stale"
+		echo "  -- aborting unfinished send"
+		$sshcmd zfs receive -A (dest $ds) || return 1
+		sync $ds || return 1
+		return 0
+	else if test $resume != "none"
 		echo "  -- resuming send"
-		echo "  -- from: '$src'"
-		echo "  -- to: '$dest'"
-		send-interrupted $dest (get-resume $dest) || return 1
-		sync $src $dest || return 1
+		send-interrupted $ds $resume || return 1
+		sync $ds || return 1
 		return 0
 	end
 
-	if remote-has $src
-		set --local from (get-remote-latest $src)
-		set --local to (get-local-latest $src)
+	set --local create false
+	if remote-has $ds
+		set --local from (get-remote-latest $ds)
+		set --local to (get-local-latest $ds)
 		if test "$from" = "$to"
 			echo "  -- nothing to do"
 			return 0
 		end
 
 		echo "  -- sending range"
-		echo "  -- from: '$src'"
-		echo "  -- to: '$dest'"
 		echo "  -- first: '$from'"
 		echo "  -- last: '$to'"
-		send-range $src $dest $from $to || return 1
+		send-range $ds $from $to || return 1
 		return 0
+	else
+		set create true
 	end
 
-	set --local snap (get-local-latest $src)
+	set --local snap (get-local-latest $ds)
 	echo "  -- sending snapshot"
-	echo "  -- from: '$src'"
-	echo "  -- to: '$dest'"
 	echo "  -- snap: '$snap'"
-	send-snap $src $dest $snap || return 1
+	send-snap $ds $snap $create || return 1
 	return 0
 end
 
-function send-range --argument-names src dest firstsnap lastsnap
-	if test -z "$src" || test -z "$dest" || test -z "$firstsnap" || test -z "$lastsnap"
-		echo "send-range expects 4 arguments"
+function send-range --argument-names ds firstsnap lastsnap
+	if test -z "$ds" || test -z "$firstsnap" || test -z "$lastsnap"
+		echo "send-range expects 3 arguments"
 		exit 1
 	end
 
-	send-with $dest -I $src@$firstsnap $src@$lastsnap
+	send-with $ds -I $ds@$firstsnap $ds@$lastsnap
 end
 
-function send-interrupted --argument-names dest token
-	if test -z "$dest" || test -z "$token"
-		echo "send-interrupted expects 1 argument"
+function send-interrupted --argument-names ds token
+	if test -z "$ds" || test -z "$token"
+		echo "send-interrupted expects 2 arguments"
 		exit 1
 	end
 
-	send-with $dest -t $token
+	send-with $ds -t $token
 end
 
-function send-snap --argument-names src dest snap
-	if test -z "$src" || test -z "$dest" || test -z "$snap"
-		echo "send-snap expcets 3 arguments"
+function send-snap --argument-names ds snap create
+	if test -z "$ds" || test -z "$snap"
+		echo "send-snap expcets 2 arguments"
 		exit 1
 	end
 
-	send-with $dest $src $snap
+	if test $create = true
+		send-with new $ds $ds $snap
+	else
+		send-with $ds $ds $snap
+	end
 end
 
 function send-with
-	set --local target $argv[1]
-	set --local sendargs $argv[2..-1]
-	set --local sendcmd zfs send --raw $sendargs
-	set --local remotepipe "mbuffer -q -s 128k -m16M | lzop -dfc | "
-	set --local remotepipe ""
-	set --local remotecmd "$remotepipe zfs receive -s -F $target"
-	if test -n "$norecv"
-		echo "  -- SENDING TO DEV NULL"
-		set remotecmd "$remotepipe cat > /dev/null"
+	set --local receiveflag "-F"
+	if test $argv[1] = new
+		set receiveflag ""
+		set --erase argv[1]
 	end
 
-	set --local size (get-size $sendcmd)
+	set --local ds $argv[1]
+	set --local target (dest $ds)
+	set --local sendargs $argv[2..-1]
+	set --local sendcmd zfs send --raw $sendargs
+	set --local remotecmd "zfs receive -s $receiveflag $target"
+	if test -n "$norecv"
+		echo "  -- SENDING TO DEV NULL"
+		set remotecmd "cat > /dev/null"
+	end
+
+	set --local size (get-size $sendcmd | gnumfmt --to=iec)b
 	echo "  -- size: $size"
 
 	echo "  -- cmd: $sendcmd | $sshcmd \"$remotecmd\""
@@ -148,16 +149,23 @@ function get-remote-latest --argument-names ds
 	return 1
 end
 
-function has-resume --argument-names ds
-	set --local resume (get-resume $ds)
-	if test "$resume" = "-"
-		return 1
-	end
-	return 0
+function dest --argument-names src
+	string replace data/tank data1/thor/tank $src
 end
 
 function get-resume --argument-names ds
-	$sshcmd "zfs list -o receive_resume_token -S name -d1 $ds | tail -1"
+	set --local target (dest $ds)
+	set --local resume ($sshcmd "zfs list -o receive_resume_token -S name -d1 $target | tail -1" 2>&1)
+	if test $resume = '-'
+		echo "none"
+		return 0
+	else if string match -q 'cannot resume*' "$(get-size zfs send --raw -t $resume 2>&1)"
+		echo "stale"
+		return 0
+	else
+		echo $resume
+		return 0
+	end
 end
 
 function unlock_backup
@@ -202,7 +210,7 @@ trap unlock_backup INT
 
 if test -n "$dataset"
 	echo "---- sync $dataset"
-	sync $dataset (string replace data/tank data1/thor/tank $dataset)
+	sync $dataset
 	if test $status -ne 0
 		unlock_backup
 		exit 1
@@ -212,7 +220,7 @@ end
 
 for ds in (zfs list -o name | grep tank)
 	echo "---- sync $ds..."
-	sync $ds (string replace data/tank data1/thor/tank $ds)
+	sync $ds
 	if test $status -ne 0
 		unlock_backup
 		exit 1

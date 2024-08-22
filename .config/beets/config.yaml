@@ -10,7 +10,7 @@ lastgenre:
   min_weight: 10
   prefer_specific: no
   source: album
-  separator: ', '
+  separator: ", "
   whitelist: yes
   title_case: yes
 
@@ -32,7 +32,3 @@ convert:
     v0:
       command: /usr/home/ajm/scripts/convert-to-mp3.sh v0 "$source" "$dest"
       extension: mp3
-    cbr320:
-      command: /usr/home/ajm/scripts/convert-to-mp3.sh 320 "$source" "$dest"
-      extension: mp3
-
