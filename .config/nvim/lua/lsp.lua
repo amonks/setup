@@ -63,7 +63,7 @@ lspconfig["gopls"].setup({
     settings = {
         gopls = {
             env = {
-                GOFLAGS = "--tags=linux,wasm,js"
+                GOFLAGS = "--tags=linux,wasm,js,fts5,sqlite_math_functions"
             }
         }
     }
