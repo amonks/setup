@@ -9,6 +9,8 @@ echo "Migrating macports."
 echo
 echo "First, installing Xcode command line tools."
 xcode-select --install
+echo "Second, installing first-launch Xcode extensions."
+sudo xcodebuild -runFirstLaunch
 echo
 read -p "Press enter to continue"
 echo
