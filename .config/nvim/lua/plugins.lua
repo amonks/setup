@@ -13,6 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+    'darfink/vim-plist',
     'christoomey/vim-tmux-navigator',     -- ctrl+j,k,l,m across tmux and vim panes (doesn't support nesting)
     'dhruvasagar/vim-table-mode',         -- markdown tables; use :TableModeToggle
     'easymotion/vim-easymotion',          -- type, eg, ,,j
