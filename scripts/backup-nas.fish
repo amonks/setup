@@ -6,7 +6,8 @@ set sshkey    '/home/ajm/.ssh/id_ed25519'
 set sshhost   'root@57269.zfs.rsync.net'
 set sshcmd    ssh -i $sshkey $sshhost
 
-argparse 'latest' 'dryrun' 'devnull' 'fresh' 'dataset=' -- $argv
+argparse 'latest' 'dryrun' 'devnull' 'fresh' 'new' 'dataset=' -- $argv
+set new       "$_flag_new"
 set dryrun    "$_flag_dryrun"
 set norecv    "$_flag_devnull"
 set fresh     "$_flag_fresh"
@@ -19,16 +20,20 @@ set dataset   "$_flag_dataset"
 
 function sync --argument-names ds
 	set --local resume (get-resume $ds)
-	if test -n "$fresh" || test "$resume" = "stale"
-		echo "  -- aborting unfinished send"
-		$sshcmd zfs receive -A (dest $ds) || return 1
-		sync $ds || return 1
-		return 0
-	else if test $resume != "none"
-		echo "  -- resuming send"
-		send-interrupted $ds $resume || return 1
-		sync $ds || return 1
-		return 0
+	if test -z "$new"
+		if test -n "$fresh" || test "$resume" = "stale"
+			echo "  -- aborting unfinished send"
+			$sshcmd zfs receive -A (dest $ds) || return 1
+			sync $ds || return 1
+			return 0
+		else if test $resume != "none"
+			echo "  -- resuming send"
+			send-interrupted $ds $resume || return 1
+			sync $ds || return 1
+			return 0
+		end
+	else
+		echo "  -- new send"
 	end
 
 	set --local create false
@@ -75,13 +80,13 @@ function send-interrupted --argument-names ds token
 end
 
 function send-snap --argument-names ds snap create
-	if test -z "$ds" || test -z "$snap"
-		echo "send-snap expcets 2 arguments"
+	if test -z "$ds" || test -z "$snap" || test -z "$create"
+		echo "send-snap expects 3 arguments"
 		exit 1
 	end
 
 	if test $create = true
-		send-with new $ds $ds $snap
+		send-with new $ds $ds@$snap
 	else
 		send-with $ds $ds $snap
 	end
@@ -128,6 +133,10 @@ function remote-has --argument-names ds
 	set latest (get-remote-latest $ds)
 	if test -z $latest
 		return 1
+	else if test "$latest" = "cannot open"
+		return 1
+	else
+		return 0
 	end
 end
 
