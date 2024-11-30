@@ -2,8 +2,8 @@ local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
 
 local on_attach = function(client, bufnr)
-    -- avoid formatting conflict between tsserver and prettier
-    if client.name == "tsserver" then
+    -- avoid formatting conflict between ts_ls and prettier
+    if client.name == "ts_ls" then
         client.server_capabilities.documentFormattingProvider = false
     end
 
@@ -50,12 +50,12 @@ null_ls.setup({
     on_attach = on_attach,
     sources = {
         null_ls.builtins.formatting.prettierd,
-        null_ls.builtins.diagnostics.eslint_d,
     },
 })
 
 local lspconfig = require("lspconfig")
-lspconfig["tsserver"].setup({ on_attach = on_attach })
+lspconfig["eslint"].setup({ on_attach = on_attach })
+lspconfig["ts_ls"].setup({ on_attach = on_attach })
 lspconfig["templ"].setup({ on_attach = on_attach })
 lspconfig["ruff"].setup({ on_attach = on_attach })
 lspconfig["gopls"].setup({

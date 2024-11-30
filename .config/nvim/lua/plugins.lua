@@ -18,7 +18,7 @@ require('lazy').setup({
     'dhruvasagar/vim-table-mode',         -- markdown tables; use :TableModeToggle
     'easymotion/vim-easymotion',          -- type, eg, ,,j
     'google/vim-searchindex',             -- show "N of M"
-    'jose-elias-alvarez/null-ls.nvim',    -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
+    'nvimtools/none-ls.nvim',             -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
     'junegunn/fzf',                       -- ctrlp, search -- telescope seems cool but the implementation is insane
     'lewis6991/gitsigns.nvim',            -- gitgutter
     'masukomi/vim-markdown-folding',      -- makes markdown headers foldable
@@ -28,6 +28,15 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',    -- fast syntax highlighting
     'stefandtw/quickfix-reflector.vim',   -- find-and-replace
     'vrischmann/tree-sitter-templ',       -- highlighting for go-templ
+
+    {
+      'gsuuon/model.nvim',
+      config = function()
+        require('model.providers.openai').initialize({
+          model = 'gpt-4o'
+        })
+      end
+    },
 
     -- tpope section (very based)
     'tpope/vim-abolish',                  -- :%Subvert/facilit{y,ies}/building{,s}/g, crs(nake)

@@ -75,3 +75,6 @@
 	defaultBranch = main
 [advice]
 	skippedCherryPicks = false
+[safe]
+	directory = /Users/ajm/Work
+	directory = /Users/ajm/Work/monks.co
