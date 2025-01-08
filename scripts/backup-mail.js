@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
-// # set earth_class_mail_api_key e7d4e888-26f7-4491-9524-2ee3290acd35
-// #
-// # curl https://api.earthclassmail.com/v1/bulk-download \
-// # 	-H "x-api-key: $earth_class_mail_api_key" \
+// # curl 'https://api.earthclassmail.com/v1/bulk-download?per_page=500' \
+// # 	-H "x-api-key: $EARTH_CLASS_MAIL_API_KEY" \
 // # 	-o mail.json
 
 const https = require("https");
 const fs = require("fs");
+const path = require("path");
 const child_process = require("child_process");
 const { promisify } = require("util");
 const fs_stat = promisify(fs.stat);
@@ -18,8 +17,23 @@ main().catch((e) => {
 });
 
 async function main() {
-  const data = await apiGet("v1/bulk-download")
-  // const data = fs.readFileSync("mail.json", "utf8");
+  let apiKey = process.env.EARTH_CLASS_MAIL_API_KEY;
+
+  if (!apiKey) {
+    const lines = fs
+      .readFileSync(path.join(__dirname, ".envrc"), { encoding: "utf8" })
+      .split("\n");
+    const line = lines.find((l) => l.includes("EARTH_CLASS_MAIL_API_KEY"));
+    const parts = line.split("=");
+    const key = parts[1].replaceAll('"', "");
+    apiKey = key;
+  }
+
+  if (!apiKey) {
+    throw Error("no api key");
+  }
+
+  const data = await apiGet(apiKey, "v1/bulk-download?per_page=500");
 
   const pieces = JSON.parse(data).data;
 
@@ -56,12 +70,10 @@ async function main() {
   }
 }
 
-async function apiGet(path) {
-  const earthClassMailApiKey = "e7d4e888-26f7-4491-9524-2ee3290acd35";
-
+async function apiGet(apiKey, path) {
   const httpOptions = {
     headers: {
-      "x-api-key": earthClassMailApiKey,
+      "x-api-key": apiKey,
     },
   };
 
@@ -74,7 +86,7 @@ async function apiGet(path) {
           rej(err);
         }
         res(response);
-      }
+      },
     );
   });
 
@@ -106,7 +118,7 @@ function download(url, target) {
           return;
         }
         res();
-      }
+      },
     );
   });
 }
