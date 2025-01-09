@@ -1,5 +1,5 @@
 function install-package
-    argparse 'n-name=' 'm-macport=' 'a-apt=' 'b-freebsdpkg=' 'c-versioncheck=' -- $argv
+    argparse 'n-name=' 'm-macport=' 'a-apt=' 'b-freebsdpkg=' 'c-versioncheck=' 'f-after=' -- $argv
 
     if test -z "$_flag_name"
         echo "required name not provided to install-package"
@@ -61,5 +61,9 @@ function install-package
         case '*'
             echo Could not install $_flag_name on (system-type)
 
+    end
+
+    if test -n $_flag_after
+        $_flag_after
     end
 end

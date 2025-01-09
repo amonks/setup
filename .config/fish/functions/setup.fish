@@ -17,6 +17,13 @@ function setup
     install-package --name mbuffer --macport SKIP
     install-package --name pv
 
+
+    function _after_install_atuin
+        atuin import auto
+        atuin login -u amonks
+    end
+    install-package --name atuin --after _after_install_atuin
+
     if has-setup-option setup_fancy_cli_tools
         function _install-fzf-on-apt-system
             git clone --depth 1 https://github.com/junegun/fzf.git ~/.fzf
