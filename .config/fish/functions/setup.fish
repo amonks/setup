@@ -205,4 +205,11 @@ function setup
             source ~/scripts/install-macos-apps.fish
         end
     end
+
+    if ! is-installed rootsync
+        pushd $HOME/rootsync
+            go install .
+        popd
+    end
+
 end
