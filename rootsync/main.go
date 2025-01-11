@@ -94,42 +94,30 @@ func printTree(path, prefix string, isLast bool) error {
 		return fmt.Errorf("failed to read directory: %w", err)
 	}
 
-	// Sort entries (directories first, then files)
 	sort.Slice(entries, func(i, j int) bool {
 		iIsDir := entries[i].IsDir()
 		jIsDir := entries[j].IsDir()
 		if iIsDir != jIsDir {
-			return iIsDir // Directories come first
+			return iIsDir
 		}
-		return entries[i].Name() < entries[j].Name() // Alphabetical within each type
+		return entries[i].Name() < entries[j].Name()
 	})
 
 	for i, entry := range entries {
 		isLastEntry := i == len(entries)-1
-
-		// Create the appropriate prefix for this entry
-		var connector string
+		connector := "├── "
 		if isLastEntry {
 			connector = "└── "
-		} else {
-			connector = "├── "
 		}
 
-		// Print the entry
 		fmt.Printf("%s%s%s\n", prefix, connector, entry.Name())
 
 		if entry.IsDir() {
-			// Calculate the new prefix for subdirectories
-			var newPrefix string
+			newPrefix := prefix + "│   "
 			if isLastEntry {
 				newPrefix = prefix + "    "
-			} else {
-				newPrefix = prefix + "│   "
 			}
-
-			// Recursively print subdirectory contents
-			err := printTree(filepath.Join(path, entry.Name()), newPrefix, isLastEntry)
-			if err != nil {
+			if err := printTree(filepath.Join(path, entry.Name()), newPrefix, isLastEntry); err != nil {
 				return err
 			}
 		}
@@ -190,27 +178,22 @@ func addPaths(patterns []string) error {
 }
 
 func remove(path string) error {
-	// Get absolute path of the source file/directory
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return fmt.Errorf("invalid path: %w", err)
 	}
 
-	// Ensure the path is within the source directory
 	if !strings.HasPrefix(absPath, sourceDir) {
 		return fmt.Errorf("path must be within source directory %s", sourceDir)
 	}
 
-	// Get the relative path from the source directory
 	relPath, err := filepath.Rel(sourceDir, absPath)
 	if err != nil {
 		return fmt.Errorf("failed to get relative path: %w", err)
 	}
 
-	// Construct the destination path
 	destPath := filepath.Join(destinationDir, relPath)
 
-	// Check if the destination exists
 	info, err := os.Stat(destPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -220,11 +203,9 @@ func remove(path string) error {
 	}
 
 	if info.IsDir() {
-		// For directories, remove them recursively but only from destination
 		return removeDirectory(destPath)
 	}
 
-	// Remove the single file from destination
 	if err := os.Remove(destPath); err != nil {
 		return fmt.Errorf("failed to remove file: %w", err)
 	}
@@ -233,7 +214,6 @@ func remove(path string) error {
 }
 
 func removeDirectory(dirPath string) error {
-	// Remove all contents of the directory
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		return fmt.Errorf("failed to read directory: %w", err)
@@ -252,7 +232,6 @@ func removeDirectory(dirPath string) error {
 		}
 	}
 
-	// Remove the empty directory itself
 	if err := os.Remove(dirPath); err != nil {
 		return fmt.Errorf("failed to remove directory %s: %w", dirPath, err)
 	}
@@ -261,18 +240,15 @@ func removeDirectory(dirPath string) error {
 }
 
 func add(path string) error {
-	// Get absolute path of the source
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return fmt.Errorf("invalid path: %w", err)
 	}
 
-	// Ensure the path is within the source directory
 	if !strings.HasPrefix(absPath, sourceDir) {
 		return fmt.Errorf("path must be within source directory %s", sourceDir)
 	}
 
-	// Check if the path exists
 	info, err := os.Stat(absPath)
 	if err != nil {
 		return fmt.Errorf("failed to access path: %w", err)
@@ -290,28 +266,24 @@ func addDirectory(dirPath string) error {
 			return err
 		}
 		if info.IsDir() {
-			return nil // Skip directories, they'll be created as needed
+			return nil
 		}
 		return addFile(path)
 	})
 }
 
 func addFile(filePath string) error {
-	// Get relative path from source directory
 	relPath, err := filepath.Rel(sourceDir, filePath)
 	if err != nil {
 		return fmt.Errorf("failed to get relative path: %w", err)
 	}
 
-	// Construct destination path
 	destPath := filepath.Join(destinationDir, relPath)
 
-	// Check if destination already exists
 	if _, err := os.Stat(destPath); !os.IsNotExist(err) {
 		return fmt.Errorf("destination file already exists: %s", destPath)
 	}
 
-	// Create destination directory if needed
 	if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
 		return fmt.Errorf("failed to create destination directory: %w", err)
 	}
@@ -328,7 +300,6 @@ func syncDirs() error {
 			return nil
 		}
 
-		// Get relative path from destination directory
 		relPath, err := filepath.Rel(destinationDir, path)
 		if err != nil {
 			return fmt.Errorf("failed to get relative path: %w", err)
@@ -337,9 +308,11 @@ func syncDirs() error {
 		sourcePath := filepath.Join(sourceDir, relPath)
 		destPath := path
 
+		fmt.Printf("Checking %s\n", relPath)
+
 		sourceInfo, err := os.Stat(sourcePath)
 		if os.IsNotExist(err) {
-			// File doesn't exist in source, copy from destination to source
+			fmt.Printf("  → copying to source (file missing in source)\n")
 			if err := os.MkdirAll(filepath.Dir(sourcePath), 0755); err != nil {
 				return fmt.Errorf("failed to create source directory: %w", err)
 			}
@@ -349,16 +322,16 @@ func syncDirs() error {
 			return fmt.Errorf("failed to stat source file: %w", err)
 		}
 
-		// Compare modification times to determine which file is newer
 		destInfo := info
 		if sourceInfo.ModTime().After(destInfo.ModTime()) {
-			// Source is newer, copy to destination
+			fmt.Printf("  → copying to destination (source is newer)\n")
 			return copyFile(sourcePath, destPath)
 		} else if destInfo.ModTime().After(sourceInfo.ModTime()) {
-			// Destination is newer, copy to source
+			fmt.Printf("  → copying to source (destination is newer)\n")
 			return copyFile(destPath, sourcePath)
 		}
 
+		fmt.Printf("  → no action needed (files are in sync)\n")
 		return nil
 	})
 }
@@ -385,7 +358,6 @@ func copyFile(src, dst string) error {
 		return fmt.Errorf("failed to copy file: %w", err)
 	}
 
-	// Preserve modification time
 	sourceInfo, err := os.Stat(src)
 	if err != nil {
 		return fmt.Errorf("failed to stat source file: %w", err)

@@ -5,7 +5,7 @@ function rootsync
       config add /usr/home/ajm/freebsd-root
     case brigid
       sudo rootsync --source=/ --destination=/Users/ajm/macos-root $argv
-      config add /Users/ajm/root
+      config add /Users/ajm/macos-root
     case '*'
       sudo rootsync $argv
   end
