@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# PROVIDE: backupd
+# REQUIRE: networking
+# KEYWORD:
+
+. /etc/rc.subr
+
+name="backupd"
+rcvar="backupd_enable"
+backupd_command="/home/ajm/go/bin/backupd"
+pidfile="/var/run/backupd/${name}.pid"
+command="/usr/sbin/daemon"
+command_args="-P ${pidfile} -r -f ${backupd_command}"
+
+load_rc_config $name
+: ${backupd_enable:=no}
+
+run_rc_command "$1"
+
