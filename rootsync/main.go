@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -313,6 +314,7 @@ func syncDirs() error {
 		sourceInfo, err := os.Stat(sourcePath)
 		if os.IsNotExist(err) {
 			fmt.Printf("  → copying to source (file missing in source)\n")
+			// File doesn't exist in source, copy from destination to source
 			if err := os.MkdirAll(filepath.Dir(sourcePath), 0755); err != nil {
 				return fmt.Errorf("failed to create source directory: %w", err)
 			}
