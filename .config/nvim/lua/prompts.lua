@@ -7,29 +7,22 @@ return function()
     model = 'gpt-4o'
   })
 
-  build_model = function(...)
+  build_model = function(model_builders)
     model = {}
-    for i,builder in ipairs(arg) do
+    for i,builder in ipairs(model_builders) do
       builder(model)
-    end
-    if model.builder ~= nil then
-      model.builder = function(input, context)
-        messages = {
-          { role = 'user', content = input },
-        }
-      end
     end
     return model
   end
 
-  prompt = function(...)
-    prompt_builders = arg
+  build_prompter = function(prompt_builders)
     return function(opt)
       opt.builder = function(input, context)
-        messages = {}
+        msgs = {}
         for i,builder in ipairs(prompt_builders) do
-          messages = builder(messages, input, context)
+          builder(msgs, input, context)
         end
+        return { messages = msgs }
       end
     end
   end
@@ -62,22 +55,45 @@ return function()
     opt.params = {
       model = "claud-3-5-sonnet-latest",
     }
+    assert(opt.builder ~= nil, "claude builder must be placed after prompt builder")
+    original_builder = opt.builder
+    opt.builder = function (msgs, input, context)
+      built = original_builder(msgs, input, context)
+      if built.messages[1].role == 'system' then
+        built.system = built.messages[1].content
+        table.remove(built.messages, 1)
+      end
+      return built
+    end
   end
 
-  default_prompt = build_model(
-    output_replace,
-    anthropic,
-    prompt(
-      system_prompt("You are an AI for programming in the Go language. Output only valid Go code, do not output markdown code blocks."),
-      selected_input
-    )
-  )
+  go_prompt = system_prompt("You are an AI for programming in the Go language. Output only valid Go code, do not output markdown code blocks.")
+
+  prompts = {}
+  prompts.gpt_append = build_model({
+    openai,
+    output_append,
+    build_prompter({
+      go_prompt,
+      selected_input,
+    })
+  })
+  prompts.gpt_buf = output_buffer(prompts.gpt_append)
+  prompts.gpt_rep = output_replace(prompts.gpt_append)
+
+  prompts.claude_append = build_model({
+    output_append,
+    build_prompter({
+      go_prompt,
+      selected_input,
+    }),
+    claude,
+  })
+  prompts.claude_buf = output_buffer(prompts.claude_append)
+  prompts.claude_rep = output_replace(prompts.claude_append)
 
   require('model').setup({
-    default_prompt = default_prompt,
-    prompts = {
-      append = output_append(default_prompt),
-      buffer = output_buffer(default_prompt),
-    }
+    default_prompt = prompts.claude_append,
+    prompts = prompts,
   })
 end
