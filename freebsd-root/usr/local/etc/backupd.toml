@@ -1,0 +1,23 @@
+[remote]
+  ssh_key = "/home/ajm/.ssh/id_ed25519"
+  ssh_host = "root@57269.zfs.rsync.net"
+  root = "data1/thor/tank"
+  [remote.policy]
+    hourly  = 0
+    daily   = 1
+    weekly  = 0
+    monthly = 12
+    yearly  = 1000
+    manual  = 1000
+
+[local]
+  root = "data/tank"
+  [local.policy]
+    hourly  = 72
+    daily   = 90
+    weekly  = 0
+    monthly = 12
+    yearly  = 1000
+    manual  = 1000
+
+
