@@ -29,8 +29,6 @@ require('lazy').setup({
     'stefandtw/quickfix-reflector.vim',   -- find-and-replace
     'vrischmann/tree-sitter-templ',       -- highlighting for go-templ
 
-    { 'gsuuon/model.nvim', config = require('prompts') },
-
     -- tpope section (very based)
     'tpope/vim-abolish',                  -- :%Subvert/facilit{y,ies}/building{,s}/g, crs(nake)
     'tpope/vim-commentary',               -- gcc

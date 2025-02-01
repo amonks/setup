@@ -66,6 +66,7 @@ local function open_output_buffer()
 
     -- Return to the previous window
     vim.cmd('wincmd p')
+    vim.cmd('normal gv')
 
     return out_buf
 end
@@ -82,7 +83,7 @@ local function execute_llm(model, prompt, text)
   local command = { 'bllm', '-m', model, prompt }
   local lineno = 0
 
-  local out_buf = nil
+  local out_buf = open_output_buffer()
 
   -- Define a callback function to handle stdout data
   local function handle_stdout(err, data)
@@ -98,10 +99,6 @@ local function execute_llm(model, prompt, text)
     lineno = lineno + #lines
 
     vim.schedule(function()
-      if out_buf == nil then
-        out_buf = open_output_buffer()
-      end
-
       vim.api.nvim_buf_set_lines(out_buf, this_lineno, this_lineno, false, lines)
     end)
   end
