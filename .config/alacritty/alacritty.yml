@@ -27,11 +27,11 @@ font:
 
   bold:
     family: Operator Mono
-    style: Book
+    style: Medium
 
   bold_italic:
     family: Triplicate OT
-    style: B Bold Italic
+    style: B Bold
 
 bell:
   command:

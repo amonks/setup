@@ -78,7 +78,7 @@ function setup
     end
 
     if has-setup-option setup_node_environment || has-setup-option setup_neovim
-        install-package --name node --macport nodejs20 --apt nodejs
+        install-package --name node --macport nodejs22 --apt nodejs
         install-package --name yarn
         install-package --name npm --macport npm10
         if ! is-installed typescript-language-server
@@ -212,4 +212,9 @@ function setup
         popd
     end
 
+    if ! is-installed linebuf
+        pushd $HOME/linebuf
+            go install .
+        popd
+    end
 end

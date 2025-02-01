@@ -63,7 +63,7 @@ function install-package
 
     end
 
-    if test -n $_flag_after
+    if test -n "$_flag_after"
         $_flag_after
     end
 end

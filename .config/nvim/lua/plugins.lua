@@ -19,7 +19,7 @@ require('lazy').setup({
     'easymotion/vim-easymotion',          -- type, eg, ,,j
     'google/vim-searchindex',             -- show "N of M"
     'nvimtools/none-ls.nvim',             -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
-    'junegunn/fzf',                       -- ctrlp, search -- telescope seems cool but the implementation is insane
+    "ibhagwan/fzf-lua",
     'lewis6991/gitsigns.nvim',            -- gitgutter
     'masukomi/vim-markdown-folding',      -- makes markdown headers foldable
     'mbbill/undotree',                    -- UndotreeToggle

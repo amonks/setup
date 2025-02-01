@@ -6,6 +6,7 @@ require("colors")
 require("treesitter")
 require("fzf")
 require("lsp")
+require("llm")
 
 -- don't save trailling whitespace
 vim.api.nvim_create_autocmd({"BufWritePre"}, {
