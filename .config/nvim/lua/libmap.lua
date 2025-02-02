@@ -1,24 +1,27 @@
+local M = {}
+
 -- keyboard mapping helpers
 
-function map(mode, shortcut, command, extra)
-    opts = { noremap = true, silent = true }
+M.map = function(mode, shortcut, command, extra)
+    local opts = { noremap = true, silent = true }
     for k,v in pairs(extra or {}) do
         opts[k] = v
     end
     vim.keymap.set(mode, shortcut, command, opts)
 end
-function nmap(shortcut, command, extra) map('n', shortcut, command, extra) end
-function imap(shortcut, command, extra) map('i', shortcut, command, extra) end
-function vmap(shortcut, command, extra) map('v', shortcut, command, extra) end
+M.nmap = function (shortcut, command, extra) M.map('n', shortcut, command, extra) end
+M.imap = function(shortcut, command, extra)  M.map('i', shortcut, command, extra) end
+M.vmap = function(shortcut, command, extra)  M.map('v', shortcut, command, extra) end
 
-function mapcmd(mode, shortcut, command, extra)
-    opts = { noremap = true, silent = true }
+M.mapcmd = function(mode, shortcut, command, extra)
+    local opts = { noremap = true, silent = true }
     for k,v in pairs(extra or {}) do
         opts[k] = v
     end
     vim.api.nvim_set_keymap(mode, shortcut, command, opts)
 end
-function nmapcmd(shortcut, command, extra) map('n', shortcut, command, extra) end
-function imapcmd(shortcut, command, extra) map('i', shortcut, command, extra) end
-function vmapcmd(shortcut, command, extra) map('v', shortcut, command, extra) end
+M.nmapcmd = function(shortcut, command, extra) M.mapcmd('n', shortcut, command, extra) end
+M.imapcmd = function(shortcut, command, extra) M.mapcmd('i', shortcut, command, extra) end
+M.vmapcmd = function(shortcut, command, extra) M.mapcmd('v', shortcut, command, extra) end
 
+return M

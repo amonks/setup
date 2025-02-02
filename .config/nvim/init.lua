@@ -15,13 +15,15 @@ vim.api.nvim_create_autocmd({"BufWritePre"}, {
 })
 
 
+local K = require('libmap')
+
 -- no shift to enter command mode, just use semicolon
-nmapcmd(";", ":")
-vmapcmd(";", ":")
+K.nmapcmd(";", ":")
+K.vmapcmd(";", ":")
 
 -- undotree with ctrl+u
-nmapcmd("<C-u>", ":UndotreeToggle<CR>")
-vmapcmd("<C-u>", ":UndotreeToggle<CR>")
+K.nmapcmd("<C-u>", ":UndotreeToggle<CR>")
+K.vmapcmd("<C-u>", ":UndotreeToggle<CR>")
 
 -- set up gitsigns
 require('gitsigns').setup({
