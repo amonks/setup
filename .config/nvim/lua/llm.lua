@@ -1,11 +1,12 @@
 local M = {}
 
+local A = require('async')
 local U = require('util')
 local K = require('libmap')
 
 local function get_models()
     local models = {}
-    local result = vim.system({'llm', 'models', 'list'}):wait()
+    local result = vim.system({ 'llm', 'models', 'list' }):wait()
     for line in result.stdout:gmatch("(.-)\n") do
         local model = line:match("^[^:]+: ([^%s]+)")
         table.insert(models, model)
@@ -24,7 +25,7 @@ local function execute_llm(model, prompt, text)
         if err ~= '' and err ~= nil then
             return
         end
-        if data == '' or data == nil then
+        if not data then
             return
         end
 
@@ -40,43 +41,40 @@ local function execute_llm(model, prompt, text)
     local function handle_exit(result)
         if result.code ~= 0 then
             vim.schedule(function()
-                -- Notify the user about the error
+                local errorMsg = ('Error executing command: %s\nExit code: %d'):format(table.concat(command, " "), result.code)
+                vim.notify(errorMsg, vim.log.levels.ERROR)
                 vim.notify(result.stderr, vim.log.levels.ERROR)
-                vim.notify('llm command exited with code ' .. result.code, vim.log.levels.ERROR)
             end)
         end
     end
 
     -- Set up the `vim.system` call to include the stdout callback and input for stdin
     vim.system(command, {
-        stdout = handle_stdout,  -- Use the callback for stdout
-        stdin = text,            -- Send the text to stdin
+        stdout = handle_stdout, -- Use the callback for stdout
+        stdin = text,           -- Send the text to stdin
         text = true,
     }, handle_exit)
 end
 
 -- Main function to prompt the LLM
-function M.prompt_llm()
-    local selected_text = U.get_visual_selection()
-    if selected_text == '' then
+M.prompt_llm = A.go(function(await)
+    local text = U.get_text()
+    if not text then
         return
     end
 
-    -- Prompt the user for input
-    vim.ui.input({ prompt = 'Enter prompt: ' }, function(prompt)
-        if prompt == nil or prompt == '' then
-            return
-        end
+    local prompt = await(A.input, { prompt = 'Enter prompt: ' })
+    if not prompt then
+        return
+    end
 
-        vim.ui.select(get_models(), {}, function(model)
-            if model == nil or model == '' then
-                return
-            end
+    local model = await(A.select, get_models(), {})
+    if not model then
+        return
+    end
 
-            execute_llm(model, prompt, selected_text)
-        end)
-    end)
-end
+    execute_llm(model, prompt, text)
+end)
 
 -- Create a user command to invoke the plugin
 vim.api.nvim_create_user_command('LLMPrompt', M.prompt_llm, { range = true })
