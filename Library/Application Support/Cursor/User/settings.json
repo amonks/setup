@@ -1,52 +1,20 @@
 {
-    "window.commandCenter": false,
-    "editor.fontFamily": "Operator Mono Light",
-    "editor.fontSize": 16,
-    "editor.lineHeight": 31,
-    "workbench.preferredDarkColorTheme": "Abyss",
-    "window.autoDetectHighContrast": false,
-    "window.autoDetectColorScheme": false,
-    "workbench.colorTheme": "Default High Contrast",
-    "editor.tokenColorCustomizations": {
-        "[Default High Contrast]": {
-            "functions": "#eee8d5",
-            "keywords": "#eee8d5",
-            "numbers": "#eee8d5",
-            "variables": "#eee8d5",
-            "types": "#eee8d5",
-            "strings": {
-                "foreground": "#eee8d5",
-                "fontStyle": "italic",
-            },
-            "comments": {
-                "foreground": "#ffffff",
-                "fontStyle": "italic"
-            },
-            "textMateRules": [
-                {
-                    "scope": [
-                        "keyword.package.go",
-                        "keyword.function.go",
-                        "keyword.var.go",
-                        "keyword.map.go",
-                        "constant.language", // language-defined, like `false`
-                    ],
-                    "settings": {
-                        "foreground": "#eee8d5",
-                    },
-                },
-                {
-                    "scope": ["keyword.control.go"],
-                    "settings": {
-                        "foreground": "#b58900",
-                    },
-                },
-            ],
-        },
-    },
-    "editor.bracketPairColorization.enabled": false,
-    "editor.renderLineHighlight": "none",
-    "editor.autoClosingBrackets": "never",
-    "editor.lineNumbers": "off",
-    "editor.guides.indentation": false
+  "window.commandCenter": false,
+  "editor.fontFamily": "Operator Mono",
+  "editor.fontSize": 16,
+  "editor.lineHeight": 31,
+  "workbench.preferredDarkColorTheme": "Abyss",
+  "window.autoDetectHighContrast": false,
+  "window.autoDetectColorScheme": false,
+  "editor.bracketPairColorization.enabled": false,
+  "editor.renderLineHighlight": "none",
+  "editor.autoClosingBrackets": "never",
+  "editor.lineNumbers": "off",
+  "editor.guides.indentation": false,
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "workbench.colorTheme": "No Colors",
+  "terminal.integrated.defaultProfile.osx": "fish",
+  "go.toolsManagement.autoUpdate": true
 }
