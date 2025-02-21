@@ -1,0 +1,68 @@
+{
+  "name": "No Colors",
+  "colors": {
+    "editor.background": "#000000",
+    "editor.foreground": "#EEE8D5"
+  },
+  "tokenColors": [
+    {
+      "name": "comment",
+      "scope": [
+        "comment"
+      ],
+      "settings": {
+        "foreground": "#ffffff",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "name": "foreground",
+      "scope": [
+        "variable.parameter",
+        "keyword.package.go",
+        "keyword.var.go",
+        "keyword.map.go",
+        "keyword.else.go",
+        "keyword.if.go",
+        "keyword.return.go",
+        "constant.language"
+      ],
+      "settings": {
+        "foreground": "#eee8d5"
+      }
+    },
+    {
+      "name": "break",
+      "scope": [
+        "keyword.func.go",
+        "keyword.panic.go",
+        "keyword.Fatal.go"
+      ],
+      "settings": {
+        "foreground": "#d33682"
+      }
+    },
+    {
+      "name": "concurrent",
+      "scope": [
+        "keyword.defer.go",
+        "keyword.go"
+      ],
+      "settings": {
+        "foreground": "#2aa198"
+      }
+    },
+    {
+      "name": "internal",
+      "scope": [
+        "keyword.for.go",
+        "keyword.break.go",
+        "keyword.goto.go",
+        "keyword.continue.go"
+      ],
+      "settings": {
+        "foreground": "#b58900"
+      }
+    }
+  ]
+}

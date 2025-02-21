@@ -1,0 +1,67 @@
+{
+    "scopeName": "go-keywords.injection",
+    "injectionSelector": "L:source.go",
+	"patterns": [
+		{
+			"include": "#keywords"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+                {
+                    "name": "keyword.Fatal.go",
+                    "match": "\\b(\\w+.Fatalf?)"
+                },
+                {
+                    "name": "keyword.func.go",
+                    "match": "\\b(func)\\b"
+                },
+                {
+                    "name": "keyword.range.go",
+                    "match": "\\b(range)\\b"
+                },
+                {
+                    "name": "keyword.continue.go",
+                    "match": "\\b(continue)\\b"
+                },
+                {
+                    "name": "keyword.goto.go",
+                    "match": "\\b(goto)\\s"
+                },
+                {
+                    "name": "keyword.break.go",
+                    "match": "\\b(break)\\b"
+                },
+                {
+                    "name": "keyword.if.go",
+                    "match": "\\b(if)\\b"
+                },
+                {
+                    "name": "keyword.else.go",
+                    "match": "\\b(else)\\b"
+                },
+                {
+                    "name": "keyword.for.go",
+                    "match": "\\b(for)\\b"
+                },
+                {
+                    "name": "keyword.return.go",
+                    "match": "\\b(return)\\b"
+                },
+				{
+					"name": "keyword.defer.go",
+					"match": "\\b(defer)\\b"
+				},
+				{
+					"name": "keyword.go",
+					"match": "\\b(go)\\b"
+				},
+				{
+					"name": "keyword.panic.go",
+					"match": "\\b(panic)"
+				}
+            ]
+		}
+	}
+}

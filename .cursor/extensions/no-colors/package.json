@@ -1,0 +1,33 @@
+{
+	"name": "no-colors",
+	"displayName": "no-colors",
+	"description": "",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.97.0"
+	},
+	"categories": [
+		"Themes"
+	],
+	"contributes": {
+		"themes": [
+			{
+				"label": "No Colors",
+				"uiTheme": "vs-dark",
+				"path": "./themes/NoColors.json"
+			}
+		],
+		"grammars": [
+			{
+				"scopeName": "go-keywords.injection",
+				"path": "./syntaxes/go-keywords-injection.json",
+				"injectTo": [
+					"source.go"
+				]
+			}
+		]
+	},
+	"__metadata": {
+		"size": 6216
+	}
+}
