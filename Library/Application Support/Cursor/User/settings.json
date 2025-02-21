@@ -16,5 +16,8 @@
   },
   "workbench.colorTheme": "No Colors",
   "terminal.integrated.defaultProfile.osx": "fish",
-  "go.toolsManagement.autoUpdate": true
+  "go.toolsManagement.autoUpdate": true,
+  "terminal.integrated.inheritEnv": false,
+  "remote.SSH.connectTimeout": 60,
+  "remote.SSH.enableRemoteCommand": true
 }
