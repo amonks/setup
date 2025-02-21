@@ -430,10 +430,58 @@ func TestHandleErrors(t *testing.T) {
 	}
 }
 
+func TestNewReadOnly(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create read-only manager
+	manager, err := beeter.NewReadOnly(beeter.Options{
+		DataDir:   env.dataDir,
+		AlbumsDir: env.albumsDir,
+	})
+	if err != nil {
+		t.Fatalf("Failed to create read-only manager: %v", err)
+	}
+	defer manager.Close()
+
+	// Verify data directory was created
+	info, err := os.Stat(env.dataDir)
+	if err != nil {
+		t.Fatalf("Data directory was not created: %v", err)
+	}
+	if !info.IsDir() {
+		t.Error("Data path is not a directory")
+	}
+	if info.Mode().Perm() != 0700 {
+		t.Errorf("Data directory permissions = %v, want %v", info.Mode().Perm(), 0700)
+	}
+
+	// Verify lock file does NOT exist
+	if _, err := os.Stat(filepath.Join(env.dataDir, "lock")); !os.IsNotExist(err) {
+		t.Error("Lock file was created in read-only mode")
+	}
+
+	// Verify database file exists
+	if _, err := os.Stat(filepath.Join(env.dataDir, "db.sqlite")); os.IsNotExist(err) {
+		t.Error("Database file was not created")
+	}
+
+	// Test concurrent access with read-only manager
+	manager2, err := beeter.NewReadOnly(beeter.Options{
+		DataDir:   env.dataDir,
+		AlbumsDir: env.albumsDir,
+	})
+	if err != nil {
+		t.Fatalf("Failed to create second read-only manager: %v", err)
+	}
+	defer manager2.Close()
+}
+
 func TestStats(t *testing.T) {
 	env := setupTestEnv(t)
 	defer env.cleanup()
 
+	// First create a regular manager to set up the data
 	manager, err := beeter.New(beeter.Options{
 		DataDir:   env.dataDir,
 		AlbumsDir: env.albumsDir,
@@ -441,7 +489,6 @@ func TestStats(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create manager: %v", err)
 	}
-	defer manager.Close()
 
 	// Add albums with different statuses
 	testTime := time.Now().UTC().Truncate(time.Second)
@@ -452,7 +499,20 @@ func TestStats(t *testing.T) {
 	manager.DB.AddNewAlbum("failed_album", testTime)
 	manager.DB.MarkAsFailed("failed_album")
 
-	stats, err := manager.Stats()
+	// Close the regular manager
+	manager.Close()
+
+	// Create a read-only manager to test stats
+	roManager, err := beeter.NewReadOnly(beeter.Options{
+		DataDir:   env.dataDir,
+		AlbumsDir: env.albumsDir,
+	})
+	if err != nil {
+		t.Fatalf("Failed to create read-only manager: %v", err)
+	}
+	defer roManager.Close()
+
+	stats, err := roManager.Stats()
 	if err != nil {
 		t.Fatalf("Failed to get stats: %v", err)
 	}

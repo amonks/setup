@@ -10,6 +10,8 @@ import (
 	"testing"
 	"time"
 
+	"beeter"
+	"beeter/internal/fixtures"
 	"beeter/internal/mockbeet"
 )
 
@@ -85,7 +87,10 @@ func runBinary(home string, args ...string) (string, error) {
 	cmd.Stderr = &stderr
 	cmd.Env = append(os.Environ(), "HOME="+home)
 	err := cmd.Run()
-	return strings.TrimSpace(stderr.String()), err
+	if err != nil {
+		return strings.TrimSpace(stderr.String()), err
+	}
+	return strings.TrimSpace(stdout.String()), err
 }
 
 func TestNoCommand(t *testing.T) {
@@ -327,6 +332,19 @@ func TestHandleErrorsCommand(t *testing.T) {
 	}
 }
 
+// CreateManager creates a new manager instance for testing
+func CreateManager(t *testing.T, dataDir, albumsDir string) *beeter.BeetImportManager {
+	t.Helper()
+	manager, err := beeter.New(beeter.Options{
+		DataDir:   dataDir,
+		AlbumsDir: albumsDir,
+	})
+	if err != nil {
+		t.Fatalf("Failed to create manager: %v", err)
+	}
+	return manager
+}
+
 func TestStatsCommand(t *testing.T) {
 	env := setupTestEnv(t)
 	defer env.cleanup()
@@ -334,7 +352,23 @@ func TestStatsCommand(t *testing.T) {
 	// Add albums with different statuses
 	testTime := time.Now().UTC().Truncate(time.Second)
 	runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "setup", "--cutoff-time", testTime.Format(time.RFC3339), "--previous-log", "")
-	runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "import")
+
+	// Create test albums
+	fixtures.CreateTestAlbums(t, env.albumsDir, testTime,
+		"imported_album",
+		"skipped_album",
+		"failed_album",
+	)
+
+	// Mark albums with different statuses
+	manager := CreateManager(t, env.dataDir, env.albumsDir)
+	manager.DB.AddNewAlbum("imported_album", testTime)
+	manager.DB.MarkAsImported("imported_album")
+	manager.DB.AddNewAlbum("skipped_album", testTime)
+	manager.DB.MarkAsSkipped("skipped_album")
+	manager.DB.AddNewAlbum("failed_album", testTime)
+	manager.DB.MarkAsFailed("failed_album")
+	manager.Close()
 
 	// Run stats command
 	output, err := runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "stats")
@@ -342,10 +376,60 @@ func TestStatsCommand(t *testing.T) {
 		t.Fatalf("Stats command failed: %v", err)
 	}
 
+	// Verify output
 	expectedOutputs := []string{"imported: 1", "skipped: 1", "failed: 1"}
 	for _, expected := range expectedOutputs {
 		if !strings.Contains(output, expected) {
 			t.Errorf("Expected output to contain %q, got %q", expected, output)
 		}
+	}
+}
+
+func TestStatsConcurrent(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// First run setup to add some data
+	testTime := time.Now().UTC().Truncate(time.Second)
+	runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "setup", "--cutoff-time", testTime.Format(time.RFC3339), "--previous-log", "")
+
+	// Create test albums and set their status
+	manager := CreateManager(t, env.dataDir, env.albumsDir)
+	manager.DB.AddNewAlbum("imported_album", testTime)
+	manager.DB.MarkAsImported("imported_album")
+	manager.DB.AddNewAlbum("skipped_album", testTime)
+	manager.DB.MarkAsSkipped("skipped_album")
+	manager.DB.AddNewAlbum("failed_album", testTime)
+	manager.DB.MarkAsFailed("failed_album")
+	manager.Close()
+
+	// Run stats command while another command is running
+	// First start a long-running command in the background
+	cmdChan := make(chan error)
+	go func() {
+		_, err := runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "import")
+		cmdChan <- err
+	}()
+
+	// Give the import command time to start and acquire the lock
+	time.Sleep(100 * time.Millisecond)
+
+	// Now run stats command - this should work even though import is running
+	output, err := runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "stats")
+	if err != nil {
+		t.Errorf("Stats command failed while import was running: %v", err)
+	}
+
+	// Verify stats output
+	expectedOutputs := []string{"imported: 1", "skipped: 1", "failed: 1"}
+	for _, expected := range expectedOutputs {
+		if !strings.Contains(output, expected) {
+			t.Errorf("Expected output to contain %q, got %q", expected, output)
+		}
+	}
+
+	// Wait for import command to finish
+	if err := <-cmdChan; err != nil {
+		t.Errorf("Import command failed: %v", err)
 	}
 }

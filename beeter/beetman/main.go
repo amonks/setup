@@ -43,8 +43,13 @@ func run() error {
 		opts.AlbumsDir = *albumsDir
 	}
 
-	// Create manager instance
-	manager, err := beeter.New(opts)
+	// Create manager instance based on command
+	var manager *beeter.BeetImportManager
+	if args[0] == "stats" {
+		manager, err = beeter.NewReadOnly(opts)
+	} else {
+		manager, err = beeter.New(opts)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to create manager: %w", err)
 	}

@@ -96,6 +96,37 @@ func New(opts Options) (*BeetImportManager, error) {
 	}, nil
 }
 
+// NewReadOnly creates a new BeetImportManager instance in read-only mode
+// This constructor does not acquire a lock and should only be used for read-only operations
+func NewReadOnly(opts Options) (*BeetImportManager, error) {
+	if err := ensureDirectoryExists(opts.DataDir); err != nil {
+		return nil, fmt.Errorf("initialization failed: %w", err)
+	}
+
+	// Open database
+	db, err := database.New(opts.DataDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+
+	// Create albums manager
+	albumsManager, err := albums.New(opts.AlbumsDir)
+	if err != nil {
+		db.Close()
+		return nil, fmt.Errorf("failed to create albums manager: %w", err)
+	}
+
+	return &BeetImportManager{
+		DB:       db,
+		DataDir:  opts.DataDir,
+		Lock:     nil,
+		IsLocked: false,
+		Albums:   albumsManager,
+		Importer: nil,
+		Parser:   log.New(opts.AlbumsDir),
+	}, nil
+}
+
 // Close releases resources held by the manager
 func (m *BeetImportManager) Close() error {
 	var errs []error
