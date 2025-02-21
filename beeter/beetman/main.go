@@ -24,6 +24,8 @@ func run() error {
 		fmt.Println("  setup         Initialize database and process existing albums")
 		fmt.Println("  import        Discover and import new albums (skipping those requiring interaction)")
 		fmt.Println("  handle-skips  Import previously skipped albums that need interaction")
+		fmt.Println("  handle-errors Retry failed albums one by one")
+		fmt.Println("  stats         Get album stats")
 		return fmt.Errorf("no command provided")
 	}
 
@@ -68,6 +70,20 @@ func run() error {
 
 	case "handle-skips":
 		return manager.HandleSkips()
+
+	case "handle-errors":
+		return manager.HandleErrors()
+
+	case "stats":
+		stats, err := manager.Stats()
+		if err != nil {
+			return fmt.Errorf("failed to get stats: %w", err)
+		}
+		fmt.Println("Album Stats:")
+		for status, count := range stats {
+			fmt.Printf("%s: %d\n", status, count)
+		}
+		return nil
 
 	default:
 		return fmt.Errorf("unknown command: %s", args[0])

@@ -135,3 +135,87 @@ func TestDatabaseConcurrentAccess(t *testing.T) {
 		t.Errorf("Found %d pending albums in first connection after marking as imported, want 0", len(pending))
 	}
 }
+
+func TestFailureCount(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "beet-import-manager-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	db, err := New(tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create database: %v", err)
+	}
+	defer db.Close()
+
+	// Add a new album
+	testTime := time.Now().UTC().Truncate(time.Second)
+	albumName := "test_album_failure"
+	if err := db.AddNewAlbum(albumName, testTime); err != nil {
+		t.Errorf("Failed to add new album: %v", err)
+	}
+
+	// Check initial failure count
+	count, err := db.GetFailureCount(albumName)
+	if err != nil {
+		t.Errorf("Failed to get failure count: %v", err)
+	}
+	if count != 0 {
+		t.Errorf("Initial failure count = %d, want 0", count)
+	}
+
+	// Increment failure count
+	if err := db.IncrementFailureCount(albumName); err != nil {
+		t.Errorf("Failed to increment failure count: %v", err)
+	}
+
+	// Check incremented failure count
+	count, err = db.GetFailureCount(albumName)
+	if err != nil {
+		t.Errorf("Failed to get failure count: %v", err)
+	}
+	if count != 1 {
+		t.Errorf("Failure count after increment = %d, want 1", count)
+	}
+}
+
+func TestGetAlbumStats(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "beet-import-manager-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	db, err := New(tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create database: %v", err)
+	}
+	defer db.Close()
+
+	// Add albums with different statuses
+	testTime := time.Now().UTC().Truncate(time.Second)
+	db.AddNewAlbum("pending_album", testTime)
+	db.MarkAsImported("pending_album")
+	db.AddNewAlbum("skipped_album", testTime)
+	db.MarkAsSkipped("skipped_album")
+	db.AddNewAlbum("failed_album", testTime)
+	db.MarkAsFailed("failed_album")
+
+	stats, err := db.GetAlbumStats()
+	if err != nil {
+		t.Fatalf("Failed to get album stats: %v", err)
+	}
+
+	expectedStats := map[string]int{
+		"imported": 1,
+		"skipped":  1,
+		"failed":   1,
+	}
+
+	for status, expectedCount := range expectedStats {
+		if count, ok := stats[status]; !ok || count != expectedCount {
+			t.Errorf("Stats for %s = %d, want %d", status, count, expectedCount)
+		}
+	}
+}

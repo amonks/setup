@@ -17,7 +17,7 @@ func TestParseSkippedAlbums(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	// Create a mock flac directory
-	albumsDir := filepath.Join(tmpDir, "flac")
+	albumsDir := filepath.Join(tmpDir, "files/flac")
 	if err := os.MkdirAll(albumsDir, 0755); err != nil {
 		t.Fatalf("Failed to create flac dir: %v", err)
 	}

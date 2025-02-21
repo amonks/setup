@@ -23,6 +23,7 @@ func NewLockManager(dataDir string) *LockManager {
 // AcquireLock attempts to acquire the lock file
 // Returns nil if successful, error otherwise
 func (l *LockManager) AcquireLock() error {
+	fmt.Printf("Acquiring lock at %s\n", l.lockPath)
 	var err error
 	l.lockFile, err = os.OpenFile(l.lockPath, os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
@@ -45,8 +46,10 @@ func (l *LockManager) AcquireLock() error {
 // ReleaseLock releases the lock file
 func (l *LockManager) ReleaseLock() error {
 	if l.lockFile == nil {
+		fmt.Printf("Lock file not found at %s\n", l.lockPath)
 		return nil
 	}
+	fmt.Printf("Releasing lock at %s\n", l.lockPath)
 
 	// Release the lock and close the file
 	err := syscall.Flock(int(l.lockFile.Fd()), syscall.LOCK_UN)

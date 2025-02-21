@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -60,12 +59,9 @@ func (m *Manager) GetNewAlbums(since time.Time) ([]string, error) {
 
 // GetAlbumPath returns the absolute path to the album directory
 func (m *Manager) GetAlbumPath(name string) (string, error) {
-	// Validate that the album name is relative and doesn't contain parent traversal
+	// Validate that the album name is relative
 	if filepath.IsAbs(name) {
 		return "", fmt.Errorf("album name must be relative: %s", name)
-	}
-	if strings.Contains(name, "..") {
-		return "", fmt.Errorf("album name cannot contain parent traversal: %s", name)
 	}
 
 	// Join the flac directory with the album name

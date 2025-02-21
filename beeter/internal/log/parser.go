@@ -31,7 +31,7 @@ func (p *Parser) ParseSkippedAlbums(logFile string) ([]string, error) {
 	}
 	defer file.Close()
 
-	var skipped []string
+	skipped := map[string]struct{}{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -48,20 +48,23 @@ func (p *Parser) ParseSkippedAlbums(logFile string) ([]string, error) {
 		path = filepath.Clean(path)
 
 		// Convert to relative path
-		if !filepath.IsAbs(path) {
-			panic("relative path???")
+		parts := strings.Split(path, "/files/flac/")
+		if len(parts) != 2 {
+			panic(fmt.Errorf("unexpected path: %s", path))
 		}
-		rel, err := filepath.Rel(p.albumsDir, path)
-		if err != nil {
-			panic(fmt.Errorf("failed to make path relative: %w", err))
-		}
+		path = parts[1]
 
-		skipped = append(skipped, rel)
+		skipped[path] = struct{}{}
 	}
 
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("error reading log file: %w", err)
 	}
 
-	return skipped, nil
+	out := make([]string, 0, len(skipped))
+	for path := range skipped {
+		out = append(out, path)
+	}
+
+	return out, nil
 }

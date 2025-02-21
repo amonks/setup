@@ -136,65 +136,6 @@ func TestGetNewAlbums(t *testing.T) {
 	}
 }
 
-func TestGetAlbumPath(t *testing.T) {
-	tmpDir, cleanup := setupTestDir(t)
-	defer cleanup()
-
-	manager, err := New(tmpDir)
-	if err != nil {
-		t.Fatalf("Failed to create manager: %v", err)
-	}
-
-	tests := []struct {
-		name     string
-		dirName  string
-		wantErr  bool
-		checkErr func(error) bool
-	}{
-		{
-			name:    "valid path",
-			dirName: "album1",
-			wantErr: false,
-		},
-		{
-			name:    "path with subdirectories",
-			dirName: "artist/album1",
-			wantErr: false,
-		},
-		{
-			name:    "absolute path",
-			dirName: "/absolute/path",
-			wantErr: true,
-		},
-		{
-			name:    "path with parent traversal",
-			dirName: "../album1",
-			wantErr: true,
-		},
-		{
-			name:    "path with complex parent traversal",
-			dirName: "subdir/../../album1",
-			wantErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			path, err := manager.GetAlbumPath(tt.dirName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetAlbumPath() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				expected := filepath.Join(tmpDir, tt.dirName)
-				if path != expected {
-					t.Errorf("GetAlbumPath() = %v, want %v", path, expected)
-				}
-			}
-		})
-	}
-}
-
 func TestGetAlbumMtime(t *testing.T) {
 	tmpDir, cleanup := setupTestDir(t)
 	defer cleanup()

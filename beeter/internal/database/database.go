@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS albums (
     discovery_time TEXT,
     mtime         TEXT,
     import_time   TEXT NULL,
-    status        TEXT
+    status        TEXT,
+    failure_count INTEGER DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_mtime ON albums(mtime);
@@ -97,6 +98,10 @@ func (s *SQLiteDB) GetImportedAlbums() ([]string, error) {
 	return s.getAlbumsByStatus("imported")
 }
 
+func (s *SQLiteDB) GetFailedAlbums() ([]string, error) {
+	return s.getAlbumsByStatus("failed")
+}
+
 func (s *SQLiteDB) getAlbumsByStatus(status string) ([]string, error) {
 	rows, err := s.db.Query("SELECT directory_name FROM albums WHERE status = ?", status)
 	if err != nil {
@@ -125,6 +130,10 @@ func (s *SQLiteDB) MarkAsSkipped(albums ...string) error {
 
 func (s *SQLiteDB) MarkAsPending(albums ...string) error {
 	return s.updateAlbumStatus(albums, "pending")
+}
+
+func (s *SQLiteDB) MarkAsFailed(albums ...string) error {
+	return s.updateAlbumStatus(albums, "failed")
 }
 
 func (s *SQLiteDB) updateAlbumStatus(albums []string, status string) error {
@@ -157,4 +166,54 @@ func (s *SQLiteDB) updateAlbumStatus(albums []string, status string) error {
 		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 	return nil
+}
+
+// IncrementFailureCount increments the failure count for a given album
+func (s *SQLiteDB) IncrementFailureCount(album string) error {
+	query := `
+		UPDATE albums 
+		SET failure_count = failure_count + 1
+		WHERE directory_name = ?
+	`
+	_, err := s.db.Exec(query, album)
+	if err != nil {
+		return fmt.Errorf("failed to increment failure count: %w", err)
+	}
+	return nil
+}
+
+// GetFailureCount retrieves the failure count for a given album
+func (s *SQLiteDB) GetFailureCount(album string) (int, error) {
+	var count int
+	query := `SELECT failure_count FROM albums WHERE directory_name = ?`
+	err := s.db.QueryRow(query, album).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get failure count: %w", err)
+	}
+	return count, nil
+}
+
+// GetAlbumStats returns the count of albums in each state
+func (s *SQLiteDB) GetAlbumStats() (map[string]int, error) {
+	stats := make(map[string]int)
+	query := `
+		SELECT status, COUNT(*) 
+		FROM albums 
+		GROUP BY status
+	`
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query album stats: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var status string
+		var count int
+		if err := rows.Scan(&status, &count); err != nil {
+			return nil, fmt.Errorf("failed to scan album stats: %w", err)
+		}
+		stats[status] = count
+	}
+	return stats, rows.Err()
 }

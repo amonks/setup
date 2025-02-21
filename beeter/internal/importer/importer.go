@@ -1,18 +1,21 @@
 package importer
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"beeter/internal/log"
 )
 
 // DefaultTimeout is the default timeout for import operations
-const DefaultTimeout = 30 * time.Minute
+const DefaultTimeout = 360 * time.Minute
 
 // Manager handles beet import operations
 type Manager struct {
@@ -80,11 +83,36 @@ func (m *Manager) ImportBatch(albums []string) ([]string, error) {
 	args := []string{"import", "--quiet", "-l", logFile}
 	args = append(args, absAlbums...)
 	cmd := exec.CommandContext(ctx, "beet", args...)
+
+	// Capture stderr
+	var stderr bytes.Buffer
+	var stdout bytes.Buffer
+	cmd.Stdout = io.MultiWriter(os.Stdout, &stdout)
+	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
+
+	var runErr error
 	if err := cmd.Run(); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
 			return nil, fmt.Errorf("import operation timed out after %v", m.timeout)
 		}
-		return nil, fmt.Errorf("beet import failed: %w", err)
+		runErr = err
+	}
+
+	// Check for error lines in output regardless of run error
+	output := stderr.String() + "\n" + stdout.String()
+	hasErrorLine := containsErrorLine(output)
+
+	if hasErrorLine {
+		// Return ImportError if error lines found
+		return nil, &ImportError{
+			err:    fmt.Errorf("error detected in output: %v", runErr),
+			failed: albums,
+		}
+	}
+
+	if runErr != nil {
+		// Return regular error if Run failed but no error lines
+		return nil, fmt.Errorf("beet import failed: %w", runErr)
 	}
 
 	// Parse log file to find skipped albums
@@ -117,14 +145,37 @@ func (m *Manager) ImportSkippedBatch(albums []string) error {
 	args := []string{"import", "-l", logFile}
 	args = append(args, albums...)
 	cmd := exec.CommandContext(ctx, "beet", args...)
+
+	// Capture stderr while still showing output to user
+	var stderr bytes.Buffer
+	var stdout bytes.Buffer
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = io.MultiWriter(os.Stdout, &stdout)
+	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
+
+	var runErr error
 	if err := cmd.Run(); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
 			return fmt.Errorf("import operation timed out after %v", m.timeout)
 		}
-		return fmt.Errorf("beet import failed: %w", err)
+		runErr = err
+	}
+
+	// Check for error lines in output regardless of run error
+	output := stderr.String() + "\n" + stdout.String()
+	hasErrorLine := containsErrorLine(output)
+
+	if hasErrorLine {
+		// Return ImportError if error lines found
+		return &ImportError{
+			err:    fmt.Errorf("error detected in output: %v", runErr),
+			failed: albums,
+		}
+	}
+
+	if runErr != nil {
+		// Return regular error if Run failed but no error lines
+		return fmt.Errorf("beet import failed: %w", runErr)
 	}
 
 	return nil
@@ -143,4 +194,33 @@ func (m *Manager) cleanupLogFile(logFile string) error {
 	}
 
 	return nil
+}
+
+// ImportError represents an import operation that failed
+type ImportError struct {
+	err    error
+	failed []string
+}
+
+func (e *ImportError) Error() string {
+	return fmt.Sprintf("import failed: %v", e.err)
+}
+
+// FailedAlbums returns the list of albums that failed to import
+func (e *ImportError) FailedAlbums() []string {
+	return e.failed
+}
+
+// containsErrorLine checks if the output contains any lines starting with "error"
+func containsErrorLine(output string) bool {
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "error") {
+			return true
+		}
+		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "traceback") {
+			return true
+		}
+	}
+	return false
 }

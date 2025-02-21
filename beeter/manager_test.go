@@ -37,7 +37,7 @@ func setupTestEnv(t *testing.T) *testEnv {
 	}
 
 	// Create flac directory
-	albumsDir := filepath.Join(tmpDir, "flac")
+	albumsDir := filepath.Join(tmpDir, "files/flac")
 	if err := os.MkdirAll(albumsDir, 0755); err != nil {
 		os.RemoveAll(tmpDir)
 		t.Fatalf("Failed to create flac directory: %v", err)
@@ -386,6 +386,87 @@ func TestHandleSkips(t *testing.T) {
 	}
 	if len(skipped) != 0 {
 		t.Errorf("Found %d skipped albums after handle-skips, want 0", len(skipped))
+	}
+}
+
+func TestHandleErrors(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create test albums
+	testAlbums := []string{
+		"failed_album1",
+		"failed_album2",
+	}
+	fixtures.CreateTestAlbums(t, env.albumsDir, time.Now(), testAlbums...)
+
+	// Create manager
+	manager := CreateManager(t, env.dataDir, env.albumsDir)
+	defer manager.Close()
+
+	// Mark albums as failed
+	failedPaths := make([]string, len(testAlbums))
+	for i, album := range testAlbums {
+		failedPaths[i] = filepath.Join(env.albumsDir, album)
+	}
+	if err := manager.DB.MarkAsFailed(failedPaths...); err != nil {
+		t.Fatalf("Failed to mark albums as failed: %v", err)
+	}
+
+	// Run handle-errors
+	cleanup := mockbeet.Mock(t, env.dataDir)
+	defer cleanup()
+	if err := manager.HandleErrors(); err != nil {
+		t.Fatalf("HandleErrors failed: %v", err)
+	}
+
+	// Verify all albums are now imported or skipped
+	failed, err := manager.DB.GetFailedAlbums()
+	if err != nil {
+		t.Fatalf("Failed to get failed albums: %v", err)
+	}
+	if len(failed) != 0 {
+		t.Errorf("Found %d failed albums after handle-errors, want 0", len(failed))
+	}
+}
+
+func TestStats(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	manager, err := beeter.New(beeter.Options{
+		DataDir:   env.dataDir,
+		AlbumsDir: env.albumsDir,
+	})
+	if err != nil {
+		t.Fatalf("Failed to create manager: %v", err)
+	}
+	defer manager.Close()
+
+	// Add albums with different statuses
+	testTime := time.Now().UTC().Truncate(time.Second)
+	manager.DB.AddNewAlbum("pending_album", testTime)
+	manager.DB.MarkAsImported("pending_album")
+	manager.DB.AddNewAlbum("skipped_album", testTime)
+	manager.DB.MarkAsSkipped("skipped_album")
+	manager.DB.AddNewAlbum("failed_album", testTime)
+	manager.DB.MarkAsFailed("failed_album")
+
+	stats, err := manager.Stats()
+	if err != nil {
+		t.Fatalf("Failed to get stats: %v", err)
+	}
+
+	expectedStats := map[string]int{
+		"imported": 1,
+		"skipped":  1,
+		"failed":   1,
+	}
+
+	for status, expectedCount := range expectedStats {
+		if count, ok := stats[status]; !ok || count != expectedCount {
+			t.Errorf("Stats for %s = %d, want %d", status, count, expectedCount)
+		}
 	}
 }
 

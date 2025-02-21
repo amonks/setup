@@ -17,7 +17,7 @@ func setupTestDir(t *testing.T) (string, string, func()) {
 	}
 
 	// Create test albums directory
-	albumsDir := filepath.Join(tmpDir, "albums")
+	albumsDir := filepath.Join(tmpDir, "files/flac")
 	if err := os.MkdirAll(albumsDir, 0755); err != nil {
 		t.Fatalf("Failed to create albums directory: %v", err)
 	}

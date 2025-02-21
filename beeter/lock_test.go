@@ -8,11 +8,7 @@ import (
 
 func TestLockManager(t *testing.T) {
 	// Create a temporary directory for testing
-	tmpDir, err := os.MkdirTemp("", "beet-import-manager-test-*")
-	if err != nil {
-		t.Fatalf("Failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	// Create a new lock manager
 	lockManager := NewLockManager(tmpDir)
@@ -58,6 +54,7 @@ func TestLockManagerConcurrent(t *testing.T) {
 
 	// Create channels for synchronization
 	acquired := make(chan bool)
+	released := make(chan bool)
 	done := make(chan bool)
 
 	// Start first goroutine that holds the lock
@@ -73,9 +70,11 @@ func TestLockManagerConcurrent(t *testing.T) {
 		// Hold the lock for a moment
 		<-done
 
+		t.Logf("Releasing lock in first goroutine")
 		if err := lockManager.ReleaseLock(); err != nil {
 			t.Errorf("Failed to release lock in first goroutine: %v", err)
 		}
+		released <- true
 	}()
 
 	// Wait for first goroutine to acquire lock
@@ -85,14 +84,21 @@ func TestLockManagerConcurrent(t *testing.T) {
 
 	// Try to acquire lock in second goroutine
 	lockManager2 := NewLockManager(tmpDir)
+	t.Logf("Acquiring lock in second goroutine (expecting failure)")
 	if err := lockManager2.AcquireLock(); err == nil {
 		t.Fatalf("Expected error when acquiring lock in second goroutine, got nil")
 	}
 
 	// Signal first goroutine to release lock
+	t.Logf("Signaling first goroutine to release lock")
 	done <- true
 
+	// Wait for first goroutine to release lock
+	<-released
+	t.Logf("First goroutine should have released lock")
+
 	// Now should be able to acquire lock
+	t.Logf("Acquiring lock in second goroutine (expecting success)")
 	if err := lockManager2.AcquireLock(); err != nil {
 		t.Fatalf("Failed to acquire lock after release: %v", err)
 	}

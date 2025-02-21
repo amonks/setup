@@ -51,7 +51,7 @@ func setupTestEnv(t *testing.T) *testEnv {
 
 	// Create test directories
 	dataDir := filepath.Join(homeDir, "data")
-	albumsDir := filepath.Join(homeDir, "flac")
+	albumsDir := filepath.Join(homeDir, "files/flac")
 
 	// Create data and flac directories
 	if err := os.MkdirAll(dataDir, 0755); err != nil {
@@ -286,5 +286,66 @@ func TestHandleSkipsCommand(t *testing.T) {
 		"handle-skips")
 	if err != nil {
 		t.Errorf("Handle-skips command failed: %v\nOutput: %s", err, output)
+	}
+}
+
+func TestHandleErrorsCommand(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create test albums
+	testAlbums := []string{
+		"failed_album1",
+		"failed_album2",
+	}
+	for _, album := range testAlbums {
+		albumPath := filepath.Join(env.albumsDir, album)
+		if err := os.MkdirAll(albumPath, 0755); err != nil {
+			t.Fatalf("Failed to create album directory: %v", err)
+		}
+	}
+
+	// First run setup to mark albums as failed
+	logFile := filepath.Join(env.dataDir, "previous.log")
+	var logContent strings.Builder
+	for _, album := range testAlbums {
+		logContent.WriteString(fmt.Sprintf("fail %s; test fail condition\n", filepath.Join(env.albumsDir, album)))
+	}
+	if err := os.WriteFile(logFile, []byte(logContent.String()), 0644); err != nil {
+		t.Fatalf("Failed to create previous log: %v", err)
+	}
+
+	// Run handle-errors command with mock beet
+	cleanup := mockbeet.Mock(t, env.dataDir)
+	defer cleanup()
+	output, err := runBinary(env.homeDir,
+		"--data-dir", env.dataDir,
+		"--flac-dir", env.albumsDir,
+		"handle-errors")
+	if err != nil {
+		t.Errorf("Handle-errors command failed: %v\nOutput: %s", err, output)
+	}
+}
+
+func TestStatsCommand(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Add albums with different statuses
+	testTime := time.Now().UTC().Truncate(time.Second)
+	runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "setup", "--cutoff-time", testTime.Format(time.RFC3339), "--previous-log", "")
+	runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "import")
+
+	// Run stats command
+	output, err := runBinary(env.homeDir, "--data-dir", env.dataDir, "--flac-dir", env.albumsDir, "stats")
+	if err != nil {
+		t.Fatalf("Stats command failed: %v", err)
+	}
+
+	expectedOutputs := []string{"imported: 1", "skipped: 1", "failed: 1"}
+	for _, expected := range expectedOutputs {
+		if !strings.Contains(output, expected) {
+			t.Errorf("Expected output to contain %q, got %q", expected, output)
+		}
 	}
 }

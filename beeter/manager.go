@@ -139,7 +139,7 @@ func (m *BeetImportManager) Setup(cutoffTime string, previousLog string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get albums: %w", err)
 	}
-	fmt.Printf("Setup: found albums: %v\n", albums)
+	fmt.Printf("Setup: found %d albums\n", len(albums))
 
 	// Parse previous log file to identify skipped albums
 	var skippedMap map[string]bool
@@ -149,7 +149,7 @@ func (m *BeetImportManager) Setup(cutoffTime string, previousLog string) error {
 		if err != nil {
 			return fmt.Errorf("failed to parse previous log: %w", err)
 		}
-		fmt.Printf("Setup: found skipped albums: %v\n", skipped)
+		fmt.Printf("Setup: found %d skipped albums\n", len(skipped))
 
 		// Create map for quick lookup, converting back to relative paths
 		skippedMap = make(map[string]bool, len(skipped))
@@ -159,8 +159,11 @@ func (m *BeetImportManager) Setup(cutoffTime string, previousLog string) error {
 	}
 
 	// Process each album
-	for _, album := range albums {
-		fmt.Printf("Setup: processing album: %s\n", album)
+	for i, album := range albums {
+		if i%100 == 0 {
+			fmt.Printf("Setup: processing album %d of %d: %s\n", i, len(albums), album)
+		}
+
 		mtime, err := m.Albums.GetAlbumMtime(album)
 		if err != nil {
 			return fmt.Errorf("failed to get album mtime: %w", err)
@@ -169,13 +172,14 @@ func (m *BeetImportManager) Setup(cutoffTime string, previousLog string) error {
 		if err := m.DB.AddNewAlbum(album, mtime); err != nil {
 			return fmt.Errorf("failed to add new album: %w", err)
 		}
-		if mtime.After(cutoff) {
-			if err := m.DB.MarkAsPending(album); err != nil {
-				return fmt.Errorf("failed to mark album as pending: %w", err)
-			}
-		} else if skippedMap[album] {
+
+		if skippedMap[album] {
 			if err := m.DB.MarkAsSkipped(album); err != nil {
 				return fmt.Errorf("failed to mark album as skipped: %w", err)
+			}
+		} else if mtime.After(cutoff) {
+			if err := m.DB.MarkAsPending(album); err != nil {
+				return fmt.Errorf("failed to mark album as pending: %w", err)
 			}
 		} else {
 			if err := m.DB.MarkAsImported(album); err != nil {
@@ -200,7 +204,7 @@ func (m *BeetImportManager) Import() error {
 	if err != nil {
 		return fmt.Errorf("failed to get new albums: %w", err)
 	}
-	fmt.Printf("Import: found new albums: %v\n", newAlbums)
+	fmt.Printf("Import: found %d new albums\n", len(newAlbums))
 
 	// Add new albums to database
 	for _, album := range newAlbums {
@@ -224,7 +228,7 @@ func (m *BeetImportManager) Import() error {
 		if len(pending) == 0 {
 			break
 		}
-		fmt.Printf("Import: processing pending albums: %v\n", pending)
+		fmt.Printf("Import: processing %d pending albums\n", len(pending))
 
 		// Process batch
 		batch := pending
@@ -232,22 +236,34 @@ func (m *BeetImportManager) Import() error {
 			batch = batch[:batchSize]
 		}
 
+		fmt.Println("Importing batch")
+
 		// Import batch
 		skipped, err := m.Importer.ImportBatch(batch)
 		if err != nil {
+			// Check if this is an ImportError containing failed albums
+			if importErr, ok := err.(*importer.ImportError); ok {
+				fmt.Printf("Import: %d albums failed to import\n", len(importErr.FailedAlbums()))
+				if err := m.DB.MarkAsFailed(importErr.FailedAlbums()...); err != nil {
+					return fmt.Errorf("failed to mark albums as failed: %w", err)
+				}
+				continue // Continue with next batch
+			}
 			return fmt.Errorf("failed to import batch: %w", err)
 		}
-		fmt.Printf("Import: skipped albums from batch: %v\n", skipped)
+		fmt.Printf("Import: skipped %d albums from batch\n", len(skipped))
 
 		// Update status
 		imported := make([]string, 0, len(batch))
 		skippedMap := make(map[string]bool)
 		for _, album := range skipped {
 			skippedMap[album] = true
+			fmt.Println("skipped: ", album)
 		}
 		for _, album := range batch {
 			if !skippedMap[album] {
 				imported = append(imported, album)
+				fmt.Println("imported: ", album)
 			}
 		}
 
@@ -285,12 +301,58 @@ func (m *BeetImportManager) HandleSkips() error {
 
 		// Import batch with interaction
 		if err := m.Importer.ImportSkippedBatch(batch); err != nil {
+			// Check if this is an ImportError containing failed albums
+			if importErr, ok := err.(*importer.ImportError); ok {
+				fmt.Printf("Import: %d albums failed to import\n", len(importErr.FailedAlbums()))
+				if err := m.DB.MarkAsFailed(importErr.FailedAlbums()...); err != nil {
+					return fmt.Errorf("failed to mark albums as failed: %w", err)
+				}
+				continue // Continue with next batch
+			}
 			return fmt.Errorf("failed to import skipped batch: %w", err)
 		}
 
 		// Mark as imported
 		if err := m.DB.MarkAsImported(batch...); err != nil {
 			return fmt.Errorf("failed to mark albums as imported: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// HandleErrors retries failed albums one by one
+func (m *BeetImportManager) HandleErrors() error {
+	// Get all failed albums
+	failedAlbums, err := m.DB.GetFailedAlbums()
+	if err != nil {
+		return fmt.Errorf("failed to get failed albums: %w", err)
+	}
+
+	// Retry each failed album
+	for _, album := range failedAlbums {
+		fmt.Printf("Retrying album: %s\n", album)
+
+		// Attempt to import the album
+		skipped, err := m.Importer.ImportBatch([]string{album})
+		if err != nil {
+			// Increment failure count if it fails again
+			if err := m.DB.IncrementFailureCount(album); err != nil {
+				return fmt.Errorf("failed to increment failure count: %w", err)
+			}
+			fmt.Printf("Album %s failed again\n", album)
+			continue
+		}
+
+		// Update status based on import result
+		if len(skipped) > 0 {
+			if err := m.DB.MarkAsSkipped(album); err != nil {
+				return fmt.Errorf("failed to mark album as skipped: %w", err)
+			}
+		} else {
+			if err := m.DB.MarkAsImported(album); err != nil {
+				return fmt.Errorf("failed to mark album as imported: %w", err)
+			}
 		}
 	}
 
@@ -309,4 +371,9 @@ func ensureDirectoryExists(dir string) error {
 	}
 
 	return nil
+}
+
+// Stats returns the number of albums in each state
+func (m *BeetImportManager) Stats() (map[string]int, error) {
+	return m.DB.GetAlbumStats()
 }
