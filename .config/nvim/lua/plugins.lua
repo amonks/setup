@@ -52,5 +52,37 @@ require('lazy').setup({
     'tpope/vim-sleuth',                   -- automatically detect indent
     'tpope/vim-surround',                 -- ysiW"
     'tpope/vim-vinegar',                  -- press - to go to netrw
+
+    {
+        'milanglacier/minuet-ai.nvim',
+        config = function()
+            require('minuet').setup {
+                provider = 'openai_fim_compatible',
+                n_completions = 1,
+                context_window = 512,
+                request_timeout = 30,
+                provider_options = {
+                    openai_fim_compatible = {
+                        api_key = 'TERM',
+                        name = 'Ollama',
+                        end_point = 'http://localhost:11434/v1/completions',
+                        model = 'qwen2.5-coder:7b',
+                    },
+                },
+                virtualtext = {
+                    auto_trigger_ft = {'go'},
+                    keymap = {
+                        accept = '<C-n>',
+                        accept_line = nil,
+                        accept_n_lines = nil,
+                        prev = nil,
+                        next = nil,
+                        dismiss = nil,
+                    },
+                },
+            }
+        end,
+    }
+
 })
 
