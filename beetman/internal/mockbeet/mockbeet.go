@@ -31,9 +31,6 @@ func setup(t *testing.T, tmpDir string) {
 	// Create mock beet script
 	mockScript := `#!/usr/bin/env fish
 
-# Log all arguments to stderr for test verification
-# echo "$argv" >&2
-
 # Parse arguments
 set -l quiet 0
 set -l log_file ""
@@ -45,6 +42,9 @@ while test (count $argv) -gt 0
         case "import"
             set command "import"
             set -e argv[1]
+        case "rm"
+            set command "rm"
+            set -e argv[1]
         case "--quiet"
             set quiet 1
             set -e argv[1]
@@ -53,60 +53,74 @@ while test (count $argv) -gt 0
             set -e argv[1]
             set -e argv[1]
         case "*"
-            set -a albums $argv[1]
-            set -e argv[1]
+            if test "$command" = "rm"
+                # For rm command, treat remaining args as query
+                set query $argv[1]
+                set -e argv[1]
+            else
+                # For import command, treat as album paths
+                set -a albums $argv[1]
+                set -e argv[1]
+            end
     end
 end
 
-# If no log file specified, error out
-if test -z "$log_file"
-    echo "Error: no log file specified" >&2
-    exit 1
+# Handle rm command
+if test "$command" = "rm"
+    # Mock successful removal
+    exit 0
 end
 
-# If not an import command, error out
-if test "$command" != "import"
-    echo "Error: unknown command" >&2
-    exit 1
-end
-
-# Create log file directory if it doesn't exist
-mkdir -p (dirname "$log_file")
-
-# Create or truncate log file
-echo -n > "$log_file"
-
-# Process each album
-set -l has_error 0
-for album in $albums
-    # Skip non-existent albums
-    if not test -d "$album"
-        echo "skip $album; does not exist" >> "$log_file"
-        continue
+# Handle import command
+if test "$command" = "import"
+    # If no log file specified, error out
+    if test -z "$log_file"
+        echo "Error: no log file specified" >&2
+        exit 1
     end
 
-    # Skip albums with "skip" in their name
-    if string match -q "*skip*" "$album"
-        echo "skip $album; test skip condition" >> "$log_file"
-        continue
+    # Create log file directory if it doesn't exist
+    mkdir -p (dirname "$log_file")
+
+    # Create or truncate log file
+    echo -n > "$log_file"
+
+    # Process each album
+    set -l has_error 0
+    for album in $albums
+        # Skip non-existent albums
+        if not test -d "$album"
+            echo "skip $album; does not exist" >> "$log_file"
+            continue
+        end
+
+        # Skip albums with "skip" in their name
+        if string match -q "*skip*" "$album"
+            echo "skip $album; test skip condition" >> "$log_file"
+            continue
+        end
+
+        # Check for error albums
+        if string match -q "*error*" "$album"
+            set has_error 1
+            continue
+        end
+
+        # Otherwise, mark as added
+        echo "added $album" >> "$log_file"
     end
 
-    # Check for error albums
-    if string match -q "*error*" "$album"
-        set has_error 1
-        continue
+    # Exit with error if any album had "error" in its name
+    if test "$has_error" = "1"
+        exit 1
     end
 
-    # Otherwise, mark as added
-    echo "added $album" >> "$log_file"
+    exit 0
 end
 
-# Exit with error if any album had "error" in its name
-if test "$has_error" = "1"
-    exit 1
-end
-
-exit 0`
+# Unknown command
+echo "Error: unknown command" >&2
+exit 1`
 
 	// Create mock beet executable
 	mockPath := filepath.Join(tmpDir, "beet")

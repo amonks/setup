@@ -150,6 +150,16 @@ func TestMockBeetBehavior(t *testing.T) {
 			},
 			wantExit: 0,
 		},
+		{
+			name:     "remove command",
+			args:     []string{"rm", "album:test"},
+			wantExit: 0,
+		},
+		{
+			name:     "remove with empty query",
+			args:     []string{"rm", ""},
+			wantExit: 0,
+		},
 	}
 
 	for _, tt := range tests {

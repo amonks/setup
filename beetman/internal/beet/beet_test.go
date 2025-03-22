@@ -1,4 +1,4 @@
-package importer
+package beet
 
 import (
 	"os"
@@ -322,6 +322,44 @@ func TestImportSkippedBatch(t *testing.T) {
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ImportSkippedBatch() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+		})
+	}
+}
+
+func TestRemove(t *testing.T) {
+	tmpDir, albumsDir, cleanup := setupTestDir(t)
+	defer cleanup()
+
+	manager, err := New(tmpDir, albumsDir)
+	if err != nil {
+		t.Fatalf("Failed to create manager: %v", err)
+	}
+
+	tests := []struct {
+		name    string
+		query   string
+		wantErr bool
+	}{
+		{
+			name:    "simple query",
+			query:   "album:test",
+			wantErr: false,
+		},
+		{
+			name:    "empty query",
+			query:   "",
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cleanup := mockbeet.Mock(t, tmpDir)
+			defer cleanup()
+			err := manager.Remove(tt.query)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Remove() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

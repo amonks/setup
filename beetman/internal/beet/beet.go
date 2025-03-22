@@ -1,4 +1,4 @@
-package importer
+package beet
 
 import (
 	"bytes"
@@ -223,4 +223,20 @@ func containsErrorLine(output string) bool {
 		}
 	}
 	return false
+}
+
+// Remove executes 'beet rm' with the given argument
+func (m *Manager) Remove(query string) error {
+	cmd := exec.Command("beet", "rm", query)
+
+	// Connect standard IO
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("beet remove failed: %w", err)
+	}
+
+	return nil
 }

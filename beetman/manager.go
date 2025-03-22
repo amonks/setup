@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"beeter/internal/albums"
+	"beeter/internal/beet"
 	"beeter/internal/database"
-	"beeter/internal/importer"
 	"beeter/internal/log"
 )
 
@@ -46,7 +46,7 @@ type BeetImportManager struct {
 	Lock     *LockManager
 	IsLocked bool
 	Albums   *albums.Manager
-	Importer *importer.Manager
+	Beet     *beet.Manager
 	Parser   *log.Parser
 }
 
@@ -78,7 +78,7 @@ func New(opts Options) (*BeetImportManager, error) {
 	}
 
 	// Create importer manager
-	importManager, err := importer.New(filepath.Join(opts.DataDir, "tmp"), opts.AlbumsDir)
+	beetManager, err := beet.New(filepath.Join(opts.DataDir, "tmp"), opts.AlbumsDir)
 	if err != nil {
 		db.Close()
 		lock.ReleaseLock()
@@ -91,7 +91,7 @@ func New(opts Options) (*BeetImportManager, error) {
 		Lock:     lock,
 		IsLocked: true,
 		Albums:   albumsManager,
-		Importer: importManager,
+		Beet:     beetManager,
 		Parser:   log.New(opts.AlbumsDir),
 	}, nil
 }
@@ -122,7 +122,7 @@ func NewReadOnly(opts Options) (*BeetImportManager, error) {
 		Lock:     nil,
 		IsLocked: false,
 		Albums:   albumsManager,
-		Importer: nil,
+		Beet:     nil,
 		Parser:   log.New(opts.AlbumsDir),
 	}, nil
 }
@@ -270,10 +270,10 @@ func (m *BeetImportManager) Import() error {
 		fmt.Println("Importing batch")
 
 		// Import batch
-		skipped, err := m.Importer.ImportBatch(batch)
+		skipped, err := m.Beet.ImportBatch(batch)
 		if err != nil {
 			// Check if this is an ImportError containing failed albums
-			if importErr, ok := err.(*importer.ImportError); ok {
+			if importErr, ok := err.(*beet.ImportError); ok {
 				fmt.Printf("Import: %d albums failed to import\n", len(importErr.FailedAlbums()))
 				if err := m.DB.MarkAsFailed(importErr.FailedAlbums()...); err != nil {
 					return fmt.Errorf("failed to mark albums as failed: %w", err)
@@ -331,9 +331,9 @@ func (m *BeetImportManager) HandleSkips() error {
 		batch := skipped[i:end]
 
 		// Import batch with interaction
-		if err := m.Importer.ImportSkippedBatch(batch); err != nil {
+		if err := m.Beet.ImportSkippedBatch(batch); err != nil {
 			// Check if this is an ImportError containing failed albums
-			if importErr, ok := err.(*importer.ImportError); ok {
+			if importErr, ok := err.(*beet.ImportError); ok {
 				fmt.Printf("Import: %d albums failed to import\n", len(importErr.FailedAlbums()))
 				if err := m.DB.MarkAsFailed(importErr.FailedAlbums()...); err != nil {
 					return fmt.Errorf("failed to mark albums as failed: %w", err)
@@ -362,10 +362,26 @@ func (m *BeetImportManager) HandleErrors() error {
 
 	// Retry each failed album
 	for _, album := range failedAlbums {
+		fmt.Printf("Processing failed album: %s\n", album)
+
+		// Prompt for removal query
+		fmt.Print("Enter beet remove query (press Enter to skip removal): ")
+		var query string
+		if _, err := fmt.Scanln(&query); err != nil && err.Error() != "unexpected newline" {
+			return fmt.Errorf("failed to read query: %w", err)
+		}
+
+		// If query provided, run removal
+		if query != "" {
+			if err := m.Beet.Remove(query); err != nil {
+				return fmt.Errorf("failed to remove entries: %w", err)
+			}
+		}
+
 		fmt.Printf("Retrying album: %s\n", album)
 
 		// Attempt to import the album
-		skipped, err := m.Importer.ImportBatch([]string{album})
+		skipped, err := m.Beet.ImportBatch([]string{album})
 		if err != nil {
 			// Increment failure count if it fails again
 			if err := m.DB.IncrementFailureCount(album); err != nil {
