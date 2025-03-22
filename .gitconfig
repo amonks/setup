@@ -1,5 +1,34 @@
+[column]
+        ui = auto
+
+[branch]
+        sort = -committerdate
+
+[tag]
+        sort = version:refname
+
+[init]
+        defaultBranch = main
+
+[diff]
+        algorithm = histogram
+        colorMoved = plain
+        mnemonicPrefix = true
+        renames = true
+
+[push]
+        default = simple
+        autoSetupRemote = true
+        followTags = true
+
+[fetch]
+        prune = true
+        pruneTags = true
+        all = true
+
 [branch "main"]
 	rebase = true
+
 [branch "master"]
 	rebase = true
 
@@ -10,11 +39,24 @@
 	email = a@monks.co
 	name = monks
 
+[gc]
+	auto = 0
+
+[init]
+	defaultBranch = main
+
+[advice]
+	skippedCherryPicks = false
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[safe]
+	directory = /Users/ajm/Work
+	directory = /Users/ajm/Work/monks.co
 
 [help]
 	autocorrect = 1
@@ -69,12 +111,3 @@
 
 	backtrack = "rebase -i HEAD~10"
 
-[gc]
-	auto = 0
-[init]
-	defaultBranch = main
-[advice]
-	skippedCherryPicks = false
-[safe]
-	directory = /Users/ajm/Work
-	directory = /Users/ajm/Work/monks.co
