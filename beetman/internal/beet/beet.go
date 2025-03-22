@@ -9,20 +9,15 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"beeter/internal/log"
 )
-
-// DefaultTimeout is the default timeout for import operations
-const DefaultTimeout = 360 * time.Minute
 
 // Manager handles beet import operations
 type Manager struct {
 	tempDir   string
 	albumsDir string
 	parser    *log.Parser
-	timeout   time.Duration
 }
 
 // New creates a new importer manager
@@ -45,17 +40,11 @@ func New(tempDir string, albumsDir string) (*Manager, error) {
 		tempDir:   tempDir,
 		albumsDir: albumsDir,
 		parser:    log.New(albumsDir),
-		timeout:   DefaultTimeout,
 	}, nil
 }
 
-// SetTimeout sets the timeout for import operations
-func (m *Manager) SetTimeout(timeout time.Duration) {
-	m.timeout = timeout
-}
-
 // ImportBatch imports a batch of albums in quiet mode
-func (m *Manager) ImportBatch(albums []string) ([]string, error) {
+func (m *Manager) ImportBatch(ctx context.Context, albums []string) ([]string, error) {
 	if len(albums) > 0 && filepath.IsAbs(albums[0]) {
 		return nil, fmt.Errorf("albums must be relative paths")
 	}
@@ -70,10 +59,6 @@ func (m *Manager) ImportBatch(albums []string) ([]string, error) {
 		return nil, err
 	}
 	defer m.cleanupLogFile(logFile)
-
-	// Create context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), m.timeout)
-	defer cancel()
 
 	// Run beet import
 	absAlbums := make([]string, len(albums))
@@ -93,7 +78,7 @@ func (m *Manager) ImportBatch(albums []string) ([]string, error) {
 	var runErr error
 	if err := cmd.Run(); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
-			return nil, fmt.Errorf("import operation timed out after %v", m.timeout)
+			return nil, fmt.Errorf("import operation timed out")
 		}
 		runErr = err
 	}
@@ -124,8 +109,13 @@ func (m *Manager) ImportBatch(albums []string) ([]string, error) {
 	return skipped, nil
 }
 
-// ImportSkippedBatch imports a batch of previously skipped albums with interaction
-func (m *Manager) ImportSkippedBatch(albums []string) error {
+// ImportBatchInteractively imports a batch of albums with interaction; `beet`
+// will prompt the user for details about each album in the batch.
+func (m *Manager) ImportBatchInteractively(ctx context.Context, albums []string) error {
+	if len(albums) > 0 && filepath.IsAbs(albums[0]) {
+		return fmt.Errorf("albums must be relative paths")
+	}
+
 	if len(albums) == 0 {
 		return nil
 	}
@@ -137,13 +127,13 @@ func (m *Manager) ImportSkippedBatch(albums []string) error {
 	}
 	defer m.cleanupLogFile(logFile)
 
-	// Create context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), m.timeout)
-	defer cancel()
-
 	// Run beet import with interaction
+	absAlbums := make([]string, len(albums))
+	for i, album := range albums {
+		absAlbums[i] = filepath.Join(m.albumsDir, album)
+	}
 	args := []string{"import", "-l", logFile}
-	args = append(args, albums...)
+	args = append(args, absAlbums...)
 	cmd := exec.CommandContext(ctx, "beet", args...)
 
 	// Capture stderr while still showing output to user
@@ -156,7 +146,7 @@ func (m *Manager) ImportSkippedBatch(albums []string) error {
 	var runErr error
 	if err := cmd.Run(); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
-			return fmt.Errorf("import operation timed out after %v", m.timeout)
+			return fmt.Errorf("import operation timed out")
 		}
 		runErr = err
 	}
@@ -226,8 +216,9 @@ func containsErrorLine(output string) bool {
 }
 
 // Remove executes 'beet rm' with the given argument
-func (m *Manager) Remove(query string) error {
-	cmd := exec.Command("beet", "rm", query)
+func (m *Manager) Remove(ctx context.Context, query string) error {
+	args := append([]string{"rm"}, strings.Fields(query)...)
+	cmd := exec.CommandContext(ctx, "beet", args...)
 
 	// Connect standard IO
 	cmd.Stdout = os.Stdout
@@ -235,6 +226,9 @@ func (m *Manager) Remove(query string) error {
 	cmd.Stdin = os.Stdin
 
 	if err := cmd.Run(); err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("remove operation timed out")
+		}
 		return fmt.Errorf("beet remove failed: %w", err)
 	}
 

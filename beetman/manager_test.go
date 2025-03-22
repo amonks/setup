@@ -2,8 +2,11 @@ package beeter_test
 
 import (
 	"beeter"
+	"context"
+	"database/sql"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -279,7 +282,7 @@ func TestImport(t *testing.T) {
 	// Run import
 	cleanup := mockbeet.Mock(t, env.dataDir)
 	defer cleanup()
-	if err := manager.Import(); err != nil {
+	if err := manager.Import(t.Context()); err != nil {
 		t.Fatalf("Import failed: %v", err)
 	}
 
@@ -363,19 +366,14 @@ func TestHandleSkips(t *testing.T) {
 	manager := CreateManager(t, env.dataDir, env.albumsDir)
 	defer manager.Close()
 
-	// Mark albums as skipped
-	skippedPaths := make([]string, len(testAlbums))
-	for i, album := range testAlbums {
-		skippedPaths[i] = filepath.Join(env.albumsDir, album)
-	}
-	if err := manager.DB.MarkAsSkipped(skippedPaths...); err != nil {
+	if err := manager.DB.MarkAsSkipped(testAlbums...); err != nil {
 		t.Fatalf("Failed to mark albums as skipped: %v", err)
 	}
 
 	// Run handle-skips
 	cleanup := mockbeet.Mock(t, env.dataDir)
 	defer cleanup()
-	if err := manager.HandleSkips(); err != nil {
+	if err := manager.HandleSkips(t.Context()); err != nil {
 		t.Fatalf("HandleSkips failed: %v", err)
 	}
 
@@ -386,6 +384,106 @@ func TestHandleSkips(t *testing.T) {
 	}
 	if len(skipped) != 0 {
 		t.Errorf("Found %d skipped albums after handle-skips, want 0", len(skipped))
+	}
+}
+
+func TestRetrySkips(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create test albums that DON'T have "skip" in their name
+	// to avoid the mock beet implementation marking them as skipped
+	testAlbums := []string{"retry_album1", "skip_this_album"}
+	fixtures.CreateTestAlbums(t, env.albumsDir, time.Now(), testAlbums...)
+
+	// Create a manager
+	manager := CreateManager(t, env.dataDir, env.albumsDir)
+
+	// Add albums to the database and mark them as skipped
+	for _, album := range testAlbums {
+		if err := manager.DB.AddNewAlbum(album, time.Now()); err != nil {
+			t.Fatalf("Failed to add album: %v", err)
+		}
+		if err := manager.DB.MarkAsSkipped(album); err != nil {
+			t.Fatalf("Failed to mark album as skipped: %v", err)
+		}
+	}
+
+	// Verify albums were added and marked as skipped
+	skipped, err := manager.DB.GetSkippedAlbums()
+	if err != nil {
+		t.Fatalf("Failed to get skipped albums: %v", err)
+	}
+	if len(skipped) != len(testAlbums) {
+		t.Fatalf("Expected %d skipped albums, got %d", len(testAlbums), len(skipped))
+	}
+
+	// Run retry-skips
+	cleanup := mockbeet.Mock(t, env.dataDir)
+	defer cleanup()
+	if err := manager.RetrySkips(t.Context()); err != nil {
+		t.Fatalf("RetrySkips failed: %v", err)
+	}
+
+	// Verify albums were processed
+	// The mock implementation should now simulate successful import
+	skipped, err = manager.DB.GetSkippedAlbums()
+	if err != nil {
+		t.Fatalf("Failed to get skipped albums: %v", err)
+	}
+
+	imported, err := manager.DB.GetImportedAlbums()
+	if err != nil {
+		t.Fatalf("Failed to get imported albums: %v", err)
+	}
+
+	// At least one album should have been imported
+	if len(imported) == 0 {
+		t.Errorf("No albums were imported after retry-skips")
+	}
+
+	// The total count should remain the same
+	if len(skipped)+len(imported) != len(testAlbums) {
+		t.Errorf("Expected %d total albums, got %d skipped and %d imported",
+			len(testAlbums), len(skipped), len(imported))
+	}
+
+	// Create a new connection to the database to check values directly
+	db, err := sql.Open("sqlite3", filepath.Join(env.dataDir, "db.sqlite"))
+	if err != nil {
+		t.Fatalf("Failed to open database: %v", err)
+	}
+	defer db.Close()
+
+	// Verify status of test albums
+	for _, album := range testAlbums {
+		expectedStatus := "imported"
+		if strings.Contains(album, "skip") {
+			expectedStatus = "skipped"
+
+			// For skipped albums, verify that import_time was updated
+			var importTime string
+			err = db.QueryRow("SELECT import_time FROM albums WHERE directory_name = ?",
+				album).Scan(&importTime)
+			if err != nil {
+				t.Errorf("Failed to get import_time for skipped album: %v", err)
+				continue
+			}
+			if importTime == "" {
+				t.Errorf("import_time was not set for skipped album %s that retained its status", album)
+			}
+		}
+
+		var status string
+		err = db.QueryRow("SELECT status FROM albums WHERE directory_name = ?",
+			album).Scan(&status)
+		if err != nil {
+			t.Errorf("Failed to get status for album: %v", err)
+			continue
+		}
+		if status != expectedStatus {
+			t.Errorf("Album %s has status %q, expected %q", album, status, expectedStatus)
+		}
 	}
 }
 
@@ -416,7 +514,7 @@ func TestHandleErrors(t *testing.T) {
 	// Run handle-errors
 	cleanup := mockbeet.Mock(t, env.dataDir)
 	defer cleanup()
-	if err := manager.HandleErrors(); err != nil {
+	if err := manager.HandleErrors(t.Context()); err != nil {
 		t.Fatalf("HandleErrors failed: %v", err)
 	}
 
@@ -528,6 +626,132 @@ func TestStats(t *testing.T) {
 			t.Errorf("Stats for %s = %d, want %d", status, count, expectedCount)
 		}
 	}
+}
+
+func TestHandleSkip(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create test albums with patterns for our search
+	testAlbums := []string{
+		"skipped_album_with_sobb_mall",
+		"skipped_album_sobb_only",
+		"skipped_album_mall_only",
+		"skipped_album_neither",
+	}
+	fixtures.CreateTestAlbums(t, env.albumsDir, time.Now(), testAlbums...)
+
+	// Create a manager
+	manager := CreateManager(t, env.dataDir, env.albumsDir)
+	defer manager.Close()
+
+	// Add albums to the database and mark them as skipped
+	for _, album := range testAlbums {
+		if err := manager.DB.AddNewAlbum(album, time.Now()); err != nil {
+			t.Fatalf("Failed to add album: %v", err)
+		}
+		if err := manager.DB.MarkAsSkipped(album); err != nil {
+			t.Fatalf("Failed to mark album as skipped: %v", err)
+		}
+	}
+
+	// Verify albums were added and marked as skipped
+	skipped, err := manager.DB.GetSkippedAlbums()
+	if err != nil {
+		t.Fatalf("Failed to get skipped albums: %v", err)
+	}
+	if len(skipped) != len(testAlbums) {
+		t.Fatalf("Expected %d skipped albums, got %d", len(testAlbums), len(skipped))
+	}
+
+	// Test cases
+	tests := []struct {
+		name      string
+		query     []string
+		wantMatch []string
+	}{
+		{
+			name:      "single term",
+			query:     []string{"sobb"},
+			wantMatch: []string{"skipped_album_with_sobb_mall", "skipped_album_sobb_only"},
+		},
+		{
+			name:      "multiple terms",
+			query:     []string{"sobb", "mall"},
+			wantMatch: []string{"skipped_album_with_sobb_mall"},
+		},
+		{
+			name:      "case insensitive",
+			query:     []string{"SOBB"},
+			wantMatch: []string{"skipped_album_with_sobb_mall", "skipped_album_sobb_only"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Reset database state for each test
+			for _, album := range testAlbums {
+				if err := manager.DB.MarkAsSkipped(album); err != nil {
+					t.Fatalf("Failed to mark album as skipped: %v", err)
+				}
+			}
+
+			// Mock beet for this test
+			cleanup := mockbeet.Mock(t, env.dataDir)
+			defer cleanup()
+
+			// Run handle-skip with the query
+			ctx := context.Background()
+			err := manager.HandleSkip(ctx, tt.query)
+			if err != nil {
+				t.Errorf("HandleSkip() error = %v", err)
+				return
+			}
+
+			// Verify the right albums were imported
+			imported, err := manager.DB.GetImportedAlbums()
+			if err != nil {
+				t.Fatalf("Failed to get imported albums: %v", err)
+			}
+
+			// Check that all expected matches were imported
+			importedMap := make(map[string]bool)
+			for _, album := range imported {
+				importedMap[album] = true
+			}
+
+			if len(imported) != len(tt.wantMatch) {
+				t.Errorf("HandleSkip() imported %d albums, want %d", len(imported), len(tt.wantMatch))
+			}
+
+			for _, album := range tt.wantMatch {
+				if !importedMap[album] {
+					t.Errorf("HandleSkip() did not import %q", album)
+				}
+			}
+
+			// Verify non-matching albums are still skipped
+			stillSkipped, err := manager.DB.GetSkippedAlbums()
+			if err != nil {
+				t.Fatalf("Failed to get skipped albums: %v", err)
+			}
+
+			// Expect number of skipped albums to be reduced by the number of matches
+			expectedSkipped := len(testAlbums) - len(tt.wantMatch)
+			if len(stillSkipped) != expectedSkipped {
+				t.Errorf("After HandleSkip() found %d still skipped, want %d",
+					len(stillSkipped), expectedSkipped)
+			}
+		})
+	}
+
+	// Test handling no search terms
+	t.Run("no search terms", func(t *testing.T) {
+		err := manager.HandleSkip(context.Background(), []string{})
+		if err == nil {
+			t.Error("Expected error for empty search terms, got nil")
+		}
+	})
 }
 
 func CreateManager(t *testing.T, dataDir, albumsDir string) *beeter.BeetImportManager {

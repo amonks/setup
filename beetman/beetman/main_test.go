@@ -294,6 +294,65 @@ func TestHandleSkipsCommand(t *testing.T) {
 	}
 }
 
+func TestRetrySkipsCommand(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create test albums that DON'T have "skip" in their name
+	// to avoid the mock beet implementation marking them as skipped
+	testAlbums := []string{
+		"retry_album1",
+		"retry_album2",
+	}
+	fixtures.CreateTestAlbums(t, env.albumsDir, time.Now(), testAlbums...)
+
+	// First run setup to mark albums as skipped
+	logFile := filepath.Join(env.dataDir, "previous.log")
+	var logContent strings.Builder
+	for _, album := range testAlbums {
+		logContent.WriteString(fmt.Sprintf("skip %s; test skip condition\n", filepath.Join(env.albumsDir, album)))
+	}
+	if err := os.WriteFile(logFile, []byte(logContent.String()), 0644); err != nil {
+		t.Fatalf("Failed to create previous log: %v", err)
+	}
+
+	// Set up database with skipped albums
+	manager := CreateManager(t, env.dataDir, env.albumsDir)
+	for _, album := range testAlbums {
+		if err := manager.DB.AddNewAlbum(album, time.Now()); err != nil {
+			t.Fatalf("Failed to add album: %v", err)
+		}
+		if err := manager.DB.MarkAsSkipped(album); err != nil {
+			t.Fatalf("Failed to mark album as skipped: %v", err)
+		}
+	}
+	manager.Close()
+
+	// Run retry-skips command with mock beet
+	cleanup := mockbeet.Mock(t, env.dataDir)
+	defer cleanup()
+	output, err := runBinary(env.homeDir,
+		"--data-dir", env.dataDir,
+		"--flac-dir", env.albumsDir,
+		"retry-skips")
+	if err != nil {
+		t.Errorf("Retry-skips command failed: %v\nOutput: %s", err, output)
+	}
+
+	// Verify at least one album was imported
+	manager2 := CreateManager(t, env.dataDir, env.albumsDir)
+	defer manager2.Close()
+
+	imported, err := manager2.DB.GetImportedAlbums()
+	if err != nil {
+		t.Fatalf("Failed to get imported albums: %v", err)
+	}
+
+	if len(imported) == 0 {
+		t.Errorf("No albums were imported after retry-skips command")
+	}
+}
+
 func TestHandleErrorsCommand(t *testing.T) {
 	env := setupTestEnv(t)
 	defer env.cleanup()
@@ -432,4 +491,58 @@ func TestStatsConcurrent(t *testing.T) {
 	if err := <-cmdChan; err != nil {
 		t.Errorf("Import command failed: %v", err)
 	}
+}
+
+func TestHandleSkipCommand(t *testing.T) {
+	env := setupTestEnv(t)
+	defer env.cleanup()
+
+	// Create manager with some skipped albums for testing
+	manager, err := beeter.New(beeter.Options{
+		DataDir:   env.dataDir,
+		AlbumsDir: env.albumsDir,
+	})
+	if err != nil {
+		t.Fatalf("Failed to create manager: %v", err)
+	}
+
+	// Add a skipped album
+	if err := manager.DB.AddNewAlbum("skipped_album_with_sobb_mall", time.Now()); err != nil {
+		t.Fatalf("Failed to add album: %v", err)
+	}
+	if err := manager.DB.MarkAsSkipped("skipped_album_with_sobb_mall"); err != nil {
+		t.Fatalf("Failed to mark album as skipped: %v", err)
+	}
+
+	manager.Close() // Close manager to release lock
+
+	// Test with no search term
+	t.Run("no search term", func(t *testing.T) {
+		cmd := exec.Command(binaryPath, "--data-dir="+env.dataDir, "--flac-dir="+env.albumsDir, "handle-skip")
+		output, err := cmd.CombinedOutput()
+		if err == nil {
+			t.Error("Expected error for missing search term, got nil")
+			t.Logf("Output: %s", output)
+		}
+	})
+
+	// Test with search term
+	t.Run("with search term", func(t *testing.T) {
+		cmd := exec.Command(binaryPath, "--data-dir="+env.dataDir, "--flac-dir="+env.albumsDir, "handle-skip", "sobb")
+
+		// Mock the beet executable for this test
+		cleanup := mockbeet.Mock(t, env.dataDir)
+		defer cleanup()
+
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Errorf("Failed to run handle-skip command: %v", err)
+			t.Logf("Output: %s", output)
+		}
+
+		// Check that output contains expected message
+		if !strings.Contains(string(output), "found 1 matching skipped albums") {
+			t.Errorf("Output didn't contain expected message, got: %s", output)
+		}
+	})
 }

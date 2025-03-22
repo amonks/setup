@@ -1,6 +1,7 @@
 package beet
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -76,33 +77,8 @@ func TestNew(t *testing.T) {
 				if manager.parser == nil {
 					t.Error("New() parser is nil")
 				}
-				if manager.timeout != DefaultTimeout {
-					t.Errorf("New() timeout = %v, want %v", manager.timeout, DefaultTimeout)
-				}
 			}
 		})
-	}
-}
-
-func TestSetTimeout(t *testing.T) {
-	tmpDir, albumsDir, cleanup := setupTestDir(t)
-	defer cleanup()
-
-	manager, err := New(tmpDir, albumsDir)
-	if err != nil {
-		t.Fatalf("Failed to create manager: %v", err)
-	}
-
-	// Test default timeout
-	if manager.timeout != DefaultTimeout {
-		t.Errorf("Default timeout = %v, want %v", manager.timeout, DefaultTimeout)
-	}
-
-	// Test setting custom timeout
-	customTimeout := 15 * time.Minute
-	manager.SetTimeout(customTimeout)
-	if manager.timeout != customTimeout {
-		t.Errorf("Custom timeout = %v, want %v", manager.timeout, customTimeout)
 	}
 }
 
@@ -247,7 +223,8 @@ func TestImportBatch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cleanup := mockbeet.Mock(t, tmpDir)
 			defer cleanup()
-			skipped, err := manager.ImportBatch(tt.albums)
+			ctx := context.Background()
+			skipped, err := manager.ImportBatch(ctx, tt.albums)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ImportBatch() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -274,7 +251,7 @@ func TestImportBatch(t *testing.T) {
 	}
 }
 
-func TestImportSkippedBatch(t *testing.T) {
+func TestImportBatchInteractively(t *testing.T) {
 	tmpDir, albumsDir, cleanup := setupTestDir(t)
 	defer cleanup()
 
@@ -318,7 +295,8 @@ func TestImportSkippedBatch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cleanup := mockbeet.Mock(t, tmpDir)
 			defer cleanup()
-			err := manager.ImportSkippedBatch(tt.albums)
+			ctx := context.Background()
+			err := manager.ImportBatchInteractively(ctx, tt.albums)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ImportSkippedBatch() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -357,7 +335,8 @@ func TestRemove(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cleanup := mockbeet.Mock(t, tmpDir)
 			defer cleanup()
-			err := manager.Remove(tt.query)
+			ctx := context.Background()
+			err := manager.Remove(ctx, tt.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Remove() error = %v, wantErr %v", err, tt.wantErr)
 			}

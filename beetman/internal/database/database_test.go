@@ -219,3 +219,62 @@ func TestGetAlbumStats(t *testing.T) {
 		}
 	}
 }
+
+func TestUpdateStatusTimestamp(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "beet-import-manager-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	db, err := New(tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create database: %v", err)
+	}
+	defer db.Close()
+
+	// Add a test album
+	albumName := "timestamp_test_album"
+	testTime := time.Now().UTC().Truncate(time.Second)
+	if err := db.AddNewAlbum(albumName, testTime); err != nil {
+		t.Errorf("Failed to add new album: %v", err)
+	}
+
+	// Mark as skipped to set initial status
+	if err := db.MarkAsSkipped(albumName); err != nil {
+		t.Errorf("Failed to mark album as skipped: %v", err)
+	}
+
+	// Record the current timestamp
+	var initialImportTime string
+	err = db.db.QueryRow("SELECT import_time FROM albums WHERE directory_name = ?", albumName).Scan(&initialImportTime)
+	if err != nil {
+		t.Fatalf("Failed to get initial import time: %v", err)
+	}
+
+	// Wait a bit to ensure timestamp difference
+	time.Sleep(100 * time.Millisecond)
+
+	// Update just the timestamp
+	if err := db.UpdateStatusTimestamp(albumName); err != nil {
+		t.Errorf("Failed to update status timestamp: %v", err)
+	}
+
+	// Verify timestamp was updated but status remains the same
+	var status string
+	var newImportTime string
+	err = db.db.QueryRow("SELECT status, import_time FROM albums WHERE directory_name = ?", albumName).Scan(&status, &newImportTime)
+	if err != nil {
+		t.Fatalf("Failed to get updated album data: %v", err)
+	}
+
+	// Check status is still skipped
+	if status != "skipped" {
+		t.Errorf("Status changed to %q, expected 'skipped'", status)
+	}
+
+	// Check import_time was updated
+	if newImportTime == initialImportTime {
+		t.Errorf("Import time was not updated: before=%q, after=%q", initialImportTime, newImportTime)
+	}
+}

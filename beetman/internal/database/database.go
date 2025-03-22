@@ -146,7 +146,7 @@ func (s *SQLiteDB) updateAlbumStatus(albums []string, status string) error {
 	query := `
 		UPDATE albums 
 		SET status = ?,
-		    import_time = CASE WHEN ? = 'imported' THEN ? ELSE NULL END
+		    import_time = ?
 		WHERE directory_name = ?
 	`
 	stmt, err := tx.Prepare(query)
@@ -157,7 +157,7 @@ func (s *SQLiteDB) updateAlbumStatus(albums []string, status string) error {
 
 	now := time.Now().UTC().Format(timeFormat)
 	for _, album := range albums {
-		if _, err := stmt.Exec(status, status, now, album); err != nil {
+		if _, err := stmt.Exec(status, now, album); err != nil {
 			return fmt.Errorf("failed to update album status: %w", err)
 		}
 	}
@@ -216,4 +216,40 @@ func (s *SQLiteDB) GetAlbumStats() (map[string]int, error) {
 		stats[status] = count
 	}
 	return stats, rows.Err()
+}
+
+// UpdateStatusTimestamp updates the import_time for albums without changing their status
+func (s *SQLiteDB) UpdateStatusTimestamp(albums ...string) error {
+	if len(albums) == 0 {
+		return nil
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	query := `
+		UPDATE albums 
+		SET import_time = ?
+		WHERE directory_name = ?
+	`
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stmt.Close()
+
+	now := time.Now().UTC().Format(timeFormat)
+	for _, album := range albums {
+		if _, err := stmt.Exec(now, album); err != nil {
+			return fmt.Errorf("failed to update album timestamp: %w", err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+	return nil
 }
