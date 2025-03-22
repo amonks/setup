@@ -8,7 +8,7 @@
 
 name="backupd"
 rcvar="backupd_enable"
-backupd_command="/home/ajm/go/bin/backupd"
+backupd_command="/home/ajm/go/bin/backupd  -logfile=/var/log/backupd.log"
 pidfile="/var/run/backupd/${name}.pid"
 command="/usr/sbin/daemon"
 command_args="-P ${pidfile} -r -f ${backupd_command}"

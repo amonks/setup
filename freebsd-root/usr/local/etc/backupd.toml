@@ -2,17 +2,17 @@
   ssh_key = "/home/ajm/.ssh/id_ed25519"
   ssh_host = "root@57269.zfs.rsync.net"
   root = "data1/thor/tank"
-  [remote.policy]
+  [remote.policy]   # 13 per dataset
     hourly  = 0
     daily   = 1
     weekly  = 0
     monthly = 12
-    yearly  = 1000
-    manual  = 1000
+    yearly  = 1000  # unlimited, but only a handful IRL
+    manual  = 1000  # unlimited, but currently none IRL
 
 [local]
   root = "data/tank"
-  [local.policy]
+  [local.policy]    # 174 per dataset
     hourly  = 72
     daily   = 90
     weekly  = 0
