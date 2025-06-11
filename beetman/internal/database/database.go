@@ -103,7 +103,7 @@ func (s *SQLiteDB) GetFailedAlbums() ([]string, error) {
 }
 
 func (s *SQLiteDB) getAlbumsByStatus(status string) ([]string, error) {
-	rows, err := s.db.Query("SELECT directory_name FROM albums WHERE status = ?", status)
+	rows, err := s.db.Query("SELECT directory_name FROM albums WHERE status = ? ORDER BY import_time DESC NULLS LAST", status)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query albums: %w", err)
 	}
