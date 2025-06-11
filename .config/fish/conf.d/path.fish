@@ -19,6 +19,7 @@ debug-fish-init start (status -f)
     ~/Library/Python/3.8/bin \
     ~/Library/Python/3.9/bin \
     ~/.local/bin \
+    /home/ajm/.claude/local/ \
 
 debug-fish-init end (status -f)
 
