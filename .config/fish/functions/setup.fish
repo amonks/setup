@@ -175,7 +175,7 @@ function setup
     if has-setup-option setup_neovim
         install-package --name nvim --macport neovim
         install-package --name cmake
-        install-package --name lua-language-server
+        install-package --name lua-language-server --freebsdpkg SKIP
 
         if ! is-installed pip3
             echo Installing pip3
