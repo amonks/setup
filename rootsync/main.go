@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -327,12 +329,21 @@ func syncDirs() error {
 
 		sourceInfo, err := os.Stat(sourcePath)
 		if os.IsNotExist(err) {
-			fmt.Printf("  → copying to source (file missing in source)\n")
-			// File doesn't exist in source, copy from destination to source
-			if err := os.MkdirAll(filepath.Dir(sourcePath), 0755); err != nil {
-				return fmt.Errorf("failed to create source directory: %w", err)
+			fmt.Printf("  → file missing in source, showing new file content:\n")
+			fmt.Printf("--- /dev/null\n+++ %s\n", sourcePath)
+			if err := exec.Command("cat", destPath).Run(); err == nil {
+				// Show the content with + prefix for each line
+				cmd := exec.Command("sed", "s/^/+/", destPath)
+				cmd.Stdout = os.Stdout
+				cmd.Run()
 			}
-			return copyFile(destPath, sourcePath)
+			if promptConfirmation("Copy to source?") {
+				if err := os.MkdirAll(filepath.Dir(sourcePath), 0755); err != nil {
+					return fmt.Errorf("failed to create source directory: %w", err)
+				}
+				return copyFile(destPath, sourcePath)
+			}
+			return nil
 		}
 		if err != nil {
 			return fmt.Errorf("failed to stat source file: %w", err)
@@ -340,11 +351,21 @@ func syncDirs() error {
 
 		destInfo := info
 		if sourceInfo.ModTime().After(destInfo.ModTime()) {
-			fmt.Printf("  → copying to destination (source is newer)\n")
-			return copyFile(sourcePath, destPath)
+			fmt.Printf("  → source is newer, showing diff:\n")
+			if err := showDiff(destPath, sourcePath); err != nil {
+				fmt.Printf("Error showing diff: %v\n", err)
+			}
+			if promptConfirmation("Copy source to destination?") {
+				return copyFile(sourcePath, destPath)
+			}
 		} else if destInfo.ModTime().After(sourceInfo.ModTime()) {
-			fmt.Printf("  → copying to source (destination is newer)\n")
-			return copyFile(destPath, sourcePath)
+			fmt.Printf("  → destination is newer, showing diff:\n")
+			if err := showDiff(sourcePath, destPath); err != nil {
+				fmt.Printf("Error showing diff: %v\n", err)
+			}
+			if promptConfirmation("Copy destination to source?") {
+				return copyFile(destPath, sourcePath)
+			}
 		}
 
 		fmt.Printf("  → no action needed (files are in sync)\n")
@@ -385,4 +406,27 @@ func copyFile(src, dst string) error {
 	}
 
 	return nil
+}
+
+func showDiff(file1, file2 string) error {
+	cmd := exec.Command("diff", "-u", file1, file2)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if exitErr, ok := err.(*exec.ExitError); ok {
+		if exitErr.ExitCode() == 1 {
+			return nil
+		}
+	}
+	return err
+}
+
+func promptConfirmation(message string) bool {
+	fmt.Printf("%s (y/N): ", message)
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		response := strings.ToLower(strings.TrimSpace(scanner.Text()))
+		return response == "y" || response == "yes"
+	}
+	return false
 }
