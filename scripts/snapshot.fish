@@ -1,7 +1,5 @@
 #!/usr/bin/env fish
 
-set delete true
-
 set periodicity $argv[1]
 
 if test -z $periodicity

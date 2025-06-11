@@ -1,3 +1,5 @@
+snitch_id = "97cb3d76e0"
+
 [remote]
   ssh_key = "/home/ajm/.ssh/id_ed25519"
   ssh_host = "root@57269.zfs.rsync.net"

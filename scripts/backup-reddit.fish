@@ -1,5 +1,6 @@
 #!/usr/bin/env fish
 
-cd reddit-archiver
-and go run .
+cd ~/monks.co/apps/reddit     ; or exit 1
+source ~/monks.co/.envrc      ; or exit 1
+go run . update               ; or exit 1
 

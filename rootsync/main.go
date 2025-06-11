@@ -19,6 +19,21 @@ var (
 func init() {
 	flag.StringVar(&sourceDir, "source", "", "source directory")
 	flag.StringVar(&destinationDir, "destination", "", "destination directory")
+	
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [flags] <command> [args...]\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Flags:\n")
+		flag.PrintDefaults()
+		fmt.Fprintf(os.Stderr, "\nCommands:\n")
+		fmt.Fprintf(os.Stderr, "  add <path...>    Add files or directories from source to destination\n")
+		fmt.Fprintf(os.Stderr, "  sync             Synchronize files between source and destination\n")
+		fmt.Fprintf(os.Stderr, "  rm <path...>     Remove files or directories from destination\n")
+		fmt.Fprintf(os.Stderr, "  ls               List contents of destination directory\n")
+		fmt.Fprintf(os.Stderr, "\nExamples:\n")
+		fmt.Fprintf(os.Stderr, "  %s -source /home/user -destination /backup add config.txt\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s -source /home/user -destination /backup sync\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s -source /home/user -destination /backup ls\n", os.Args[0])
+	}
 }
 
 func main() {
