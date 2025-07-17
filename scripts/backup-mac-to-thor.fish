@@ -29,6 +29,7 @@ rsync --archive --human-readable --delete --progress --ignore-errors \
   --exclude "/Library" \
   --exclude "/Library/Fonts" \
   --exclude "/Music/Library-v0" \
+  --exclude "/go/pkg" \
   --exclude "/mnt" \
   --exclude "tailscaled.state" \
   ~/ "thor-syncer:/data/tank/mirror/$machine_name/$machine_user"
