@@ -38,18 +38,18 @@ require('lazy').setup({
     'mason-org/mason-lspconfig.nvim',     -- language-tool manager integration
     'zapling/mason-lock.nvim',            -- save deps
 
-    'darfink/vim-plist',
+    "ibhagwan/fzf-lua",
     'christoomey/vim-tmux-navigator',     -- ctrl+j,k,l,m across tmux and vim panes (doesn't support nesting)
+    'darfink/vim-plist',
     'dhruvasagar/vim-table-mode',         -- markdown tables; use :TableModeToggle
     'easymotion/vim-easymotion',          -- type, eg, ,,j
     'google/vim-searchindex',             -- show "N of M"
-    'nvimtools/none-ls.nvim',             -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
-    "ibhagwan/fzf-lua",
     'lewis6991/gitsigns.nvim',            -- gitgutter
     'masukomi/vim-markdown-folding',      -- makes markdown headers foldable
     'mbbill/undotree',                    -- UndotreeToggle
     'neovim/nvim-lspconfig',              -- seems required for using builtin lsp
     'nvim-lua/plenary.nvim',              -- dependency of many lua plugins
+    'nvimtools/none-ls.nvim',             -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
     'stefandtw/quickfix-reflector.vim',   -- find-and-replace
     'vrischmann/tree-sitter-templ',       -- highlighting for go-templ
 
