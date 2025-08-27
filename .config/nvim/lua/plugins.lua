@@ -34,6 +34,10 @@ require('lazy').setup({
         build = ':TSUpdate'
     },
 
+    'mason-org/mason.nvim',               -- language-tool manager
+    'mason-org/mason-lspconfig.nvim',     -- language-tool manager integration
+    'zapling/mason-lock.nvim',            -- save deps
+
     'darfink/vim-plist',
     'christoomey/vim-tmux-navigator',     -- ctrl+j,k,l,m across tmux and vim panes (doesn't support nesting)
     'dhruvasagar/vim-table-mode',         -- markdown tables; use :TableModeToggle

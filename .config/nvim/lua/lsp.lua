@@ -1,3 +1,11 @@
+local mason = require('mason')
+mason.setup()
+
+require('mason-lock').setup()
+
+require('mason-lspconfig').setup()
+
+
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 local on_attach = function(client, bufnr)

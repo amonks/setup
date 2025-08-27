@@ -8,7 +8,7 @@ require('nvim-treesitter').install {
     "go",
     "ledger",
     "templ",
-    -- "terraform",
+    "terraform",
     "tsx",
     "typescript",
 }
