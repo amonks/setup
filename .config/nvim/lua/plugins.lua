@@ -13,6 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+    -- when editing lua, only lazily load nvim-related types
     {
         "folke/lazydev.nvim",
         ft = "lua", -- only load on lua files
@@ -24,6 +25,15 @@ require('lazy').setup({
             },
         },
     },
+
+    -- fast syntax highlighting
+    {
+        'nvim-treesitter/nvim-treesitter',
+        lazy = false,
+        branch = 'main',
+        build = ':TSUpdate'
+    },
+
     'darfink/vim-plist',
     'christoomey/vim-tmux-navigator',     -- ctrl+j,k,l,m across tmux and vim panes (doesn't support nesting)
     'dhruvasagar/vim-table-mode',         -- markdown tables; use :TableModeToggle
@@ -36,7 +46,6 @@ require('lazy').setup({
     'mbbill/undotree',                    -- UndotreeToggle
     'neovim/nvim-lspconfig',              -- seems required for using builtin lsp
     'nvim-lua/plenary.nvim',              -- dependency of many lua plugins
-    'nvim-treesitter/nvim-treesitter',    -- fast syntax highlighting
     'stefandtw/quickfix-reflector.vim',   -- find-and-replace
     'vrischmann/tree-sitter-templ',       -- highlighting for go-templ
 
@@ -44,7 +53,7 @@ require('lazy').setup({
     'tpope/vim-abolish',                  -- :%Subvert/facilit{y,ies}/building{,s}/g, crs(nake)
     'tpope/vim-commentary',               -- gcc
     'tpope/vim-eunuch',                   -- :Rename (also renames buffer), :SudoWrite, :Mkdir
-                                              -- also, redetect filetype and chmod+x after writing #! line
+                                          -- also, redetect filetype and chmod+x after writing #! line
     'tpope/vim-fireplace',                -- clojure repl
     'tpope/vim-fugitive',                 -- :Git blame
     'tpope/vim-repeat',                   -- make . repeat more things
@@ -52,37 +61,5 @@ require('lazy').setup({
     'tpope/vim-sleuth',                   -- automatically detect indent
     'tpope/vim-surround',                 -- ysiW"
     'tpope/vim-vinegar',                  -- press - to go to netrw
-
-    {
-        'milanglacier/minuet-ai.nvim',
-        config = function()
-            require('minuet').setup {
-                provider = 'openai_fim_compatible',
-                n_completions = 1,
-                context_window = 512,
-                request_timeout = 30,
-                provider_options = {
-                    openai_fim_compatible = {
-                        api_key = 'TERM',
-                        name = 'Ollama',
-                        end_point = 'http://localhost:11434/v1/completions',
-                        model = 'qwen2.5-coder:7b',
-                    },
-                },
-                virtualtext = {
-                    auto_trigger_ft = {'go'},
-                    keymap = {
-                        accept = '<C-n>',
-                        accept_line = nil,
-                        accept_n_lines = nil,
-                        prev = nil,
-                        next = nil,
-                        dismiss = nil,
-                    },
-                },
-            }
-        end,
-    }
-
 })
 

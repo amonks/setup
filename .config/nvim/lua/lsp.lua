@@ -68,6 +68,7 @@ lspconfig["eslint"].setup({ on_attach = on_attach })
 lspconfig["ts_ls"].setup({ on_attach = on_attach })
 lspconfig["templ"].setup({ on_attach = on_attach })
 lspconfig["ruff"].setup({ on_attach = on_attach })
+lspconfig["basedpyright"].setup({ on_attach = on_attach })
 lspconfig["gopls"].setup({
     on_attach = on_attach,
     settings = {
