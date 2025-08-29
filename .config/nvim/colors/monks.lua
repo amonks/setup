@@ -64,7 +64,7 @@ local green   = "#719e07"
 local ui                  = { bg = base2, fg = base02 }
 local prose               = { italic = true, bold = true, fg = base03 }
 local code                = { fg = base02 }
-local usertext            = { italic = true }
+local usertext            = { italic = true, fg = green }
 local marked              = { bg = highlighter }
 local ctrlflow_break      = { fg = magenta }
 local ctrlflow_internal   = { fg = yellow }
@@ -116,6 +116,8 @@ hi("Define", code)
 hi("Macro", code)
 hi("String", usertext)
 hi("SpecialChar", usertext)
+hi("CharData", usertext)
+hi("@string", usertext)
 hi("@none.tsx", usertext)
 hi("Character", code)
 hi("Number", code)
@@ -128,7 +130,6 @@ hi("@constructor", code)
 
 hi("Statement", code)
 hi("Conditional", code)
-hi("Repeat", code)
 hi("Label", code)
 hi("Operator", code)
 hi("Keyword", code)
@@ -136,6 +137,10 @@ hi("Keyword", code)
 hi("@keyword.function.go", ctrlflow_break)
 hi("@keyword.return", ctrlflow_break)
 hi("Exception", ctrlflow_break)
+hi("@keyword.exception", ctrlflow_break)
+hi("@keyword.ts.try", code)
+hi("@keyword.ts.catch", code)
+hi("@operator.arrow", ctrlflow_internal)
 hi("@keyword.coroutine.go", ctrlflow_concurrent)
 hi("@keyword.coroutine.typescript", ctrlflow_concurrent)
 hi("@keyword.defer.go", ctrlflow_concurrent)

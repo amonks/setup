@@ -1,3 +1,5 @@
+set -x EDITOR nvim
+
 if test -d /Applications/Xcode.app
   set -x SDKROOT (xcrun --sdk macosx --show-sdk-path)
   set -x LIBRARY_PATH "$LIBRARY_PATH" "$SDKROOT/usr/lib"

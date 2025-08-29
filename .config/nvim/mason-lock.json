@@ -7,5 +7,6 @@
   "pyright": "1.1.404",
   "tailwindcss-language-server": "0.14.26",
   "templ": "v0.3.943",
+  "tree-sitter-cli": "v0.25.8",
   "typescript-language-server": "4.4.0"
 }
