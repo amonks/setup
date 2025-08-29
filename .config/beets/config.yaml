@@ -2,6 +2,9 @@ directory: /data/tank/music/flac
 library: /data/tank/music/library.db
 plugins: embedart fetchart ftintitle mbsync convert mbsubmit lastgenre
 
+import:
+  languages: en
+
 lastgenre:
   auto: yes
   canonical: no
