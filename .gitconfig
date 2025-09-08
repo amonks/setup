@@ -63,7 +63,6 @@
 
 [core]
 	editor = nvim
-	excludesfile = ~/.global_gitignore
 	# pager = delta --theme=zenburn
 
 [alias]
