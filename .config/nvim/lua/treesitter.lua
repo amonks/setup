@@ -17,8 +17,16 @@ require('nvim-treesitter').setup {
     },
 }
 
-vim.api.nvim_create_autocmd("BufReadPost", {
-    callback = function()
-        vim.treesitter.start()
-    end,
+-- requires nvim-treesitter
+local parsers = require("nvim-treesitter.parsers")
+
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+  callback = function(args)
+    local ft = vim.bo[args.buf].filetype
+    local lang = parsers.ft_to_lang(ft)              -- maps e.g. 'typescriptreact' -> 'tsx'
+
+    if parsers.has_parser(lang) then                 -- only start if we have a grammar
+      vim.treesitter.start(args.buf, lang)
+    end
+  end,
 })
