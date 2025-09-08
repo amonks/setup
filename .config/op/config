@@ -1,0 +1,14 @@
+{
+	"latest_signin": "my",
+	"device": "7cfctmiponzmo22ab5qb6b7bba",
+	"accounts": [
+		{
+			"shorthand": "my",
+			"url": "https://my.1password.com",
+			"email": "a@monks.co",
+			"accountKey": "A3-3Y4EHG-QJZRP8-NYE7N-39N72-HMPAG-Z8W3H",
+			"userUUID": "7W3MRYN3XVFT3ACMNAWPDNZZWM",
+			"dsecret": "fsR2-SwWI3nQCLACjNBrzg"
+		}
+	]
+}
