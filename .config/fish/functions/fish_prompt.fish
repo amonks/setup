@@ -28,7 +28,18 @@ function fish_prompt
   echo -n $bold"$machine_sigil "$normal_color
   echo -n $cyan(prompt_pwd) $normal_color
 
-  if git_is_repo
+  if jj_is_repo
+    # jj branch/change
+    echo -n $bold(jj_branch_name) $normal_color
+
+    # jj status
+    if jj_is_touched
+      echo -n -s $dirty $normal_color
+    else
+      echo -n -s $bold (jj_ahead $ahead $behind $diverged $none) $normal_color
+    end
+    echo -n " "
+  else if git_is_repo
     # git branch
     echo -n $bold(git_branch_name) $normal_color
 
