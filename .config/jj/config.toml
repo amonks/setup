@@ -1,0 +1,15 @@
+#:schema https://jj-vcs.github.io/jj/latest/config-schema.json
+
+[user]
+name = "Andrew Monks"
+email = "a@monks.co"
+
+[ui]
+merge-editor = ":builtin"
+editor = "nvim"
+pager = "ov"
+default-command = "log"
+
+[git]
+private-commits = "description(glob:'DO NOT MERGE:*') | description(glob:'DO-NOT-MERGE:*')"
+
