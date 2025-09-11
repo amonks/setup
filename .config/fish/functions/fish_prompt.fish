@@ -28,7 +28,7 @@ function fish_prompt
   echo -n $bold"$machine_sigil "$normal_color
   echo -n $cyan(prompt_pwd) $normal_color
 
-  if jj_is_repo
+  if is-installed jj && jj_is_repo
     # jj branch/change
     echo -n $bold(jj_branch_name) $normal_color
 
