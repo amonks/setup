@@ -7,7 +7,7 @@ email = "a@monks.co"
 [ui]
 merge-editor = ":builtin"
 editor = "nvim"
-pager = "ov --exit-write"
+pager = "ov --quit-if-one-screen --exit-write"
 default-command = "log"
 
 [git]
