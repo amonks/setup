@@ -1,4 +1,8 @@
-require("fzf-lua").setup()
+require("fzf-lua").setup({
+    grep = {
+        hidden = true,
+    },
+})
 require("fzf-lua").register_ui_select()
 
 local config = [[{ file_ignore_patterns = { "terraform/output" } }]]
