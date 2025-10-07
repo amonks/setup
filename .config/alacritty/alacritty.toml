@@ -1,0 +1,40 @@
+[scrolling]
+  history = 100_000
+
+[colors.primary]
+  background = "0x000000"
+  foreground = "0xE8DCB7"
+
+[colors.normal]
+  black = "0x555555"
+
+[font]
+  size = 16
+
+  [font.offset]
+    y = 15
+
+  [font.normal]
+    family = "Operator Mono"
+    style = "Light"
+
+  [font.italic]
+    family = "Triplicate OT"
+    style = "B Regular"
+
+  [font.bold]
+    family = "Operator Mono"
+    style = "Medium"
+
+  [font.bold_italic]
+    family = "Triplicate OT"
+    style = "B Bold"
+
+[bell.command]
+  program = "osascript"
+  args = [ "-e", "beep" ]
+
+[keyboard]
+  bindings = [
+      { key = "Return", mods = "Command", chars = "\n" }
+  ]
