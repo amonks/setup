@@ -50,6 +50,7 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',              -- seems required for using builtin lsp
     'nvim-lua/plenary.nvim',              -- dependency of many lua plugins
     'nvimtools/none-ls.nvim',             -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
+    'rafikdraoui/jj-diffconflicts',       -- jujutsu jj diff conflicts; open file with markers then :JJDiffConflicts
     'stefandtw/quickfix-reflector.vim',   -- find-and-replace
     'vrischmann/tree-sitter-templ',       -- highlighting for go-templ
 
