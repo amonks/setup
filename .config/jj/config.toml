@@ -1,15 +1,108 @@
 #:schema https://jj-vcs.github.io/jj/latest/config-schema.json
 
 [user]
-name = "Andrew Monks"
-email = "a@monks.co"
+  name = "Andrew Monks"
+  email = "a@monks.co"
 
 [ui]
-merge-editor = ":builtin"
-editor = "nvim"
-pager = "ov --quit-if-one-screen --exit-write"
-default-command = "log"
+  merge-editor = ":builtin"
+  editor = "nvim"
+  pager = "ov --quit-if-one-screen --exit-write"
+  default-command = "log"
+  diff-editor = ":builtin"
+
+[aliases]
+  # A truly genius alias from Martin that gracefully lets you do things like type
+  # 'jj jj log' on the command line without getting a command-not-found error.
+  jj = []
+
+  push = ["git", "push", "--allow-new", "-r", "pr_branches()"]
+  spr = ["util", "exec", "--", "jj-spr"]
 
 [git]
-private-commits = "description(glob:'DO NOT MERGE:*') | description(glob:'DO-NOT-MERGE:*')"
+  private-commits = "private()"
 
+[fix.tools.prettier]
+  command = ["npx", "prettier", "--stdin-filepath=$path"]
+  patterns = ["glob:'**/*.tsx'", "glob:'**/*.ts'", "glob:'**/*.jsx'", "glob:'**/*.js'", "glob:'**/*.css'", "glob:'**/*.html'"]
+
+# templates used by jj internal commands
+[templates]
+  git_push_bookmark = '"amonks/push_" ++ change_id.short()'
+
+# template functions that can be used anywhere
+[template-aliases]
+  "format_timestamp(timestamp)" = "timestamp.ago()"
+  commit_description_body = '''
+    description.remove_prefix(
+      description.first_line()
+    ).trim_start()
+  '''
+
+# revsets used by jj internal commands
+[revsets]
+  # By default, show all my current stacks of work.
+  log = 'stack(mine() | @) | trunk() | @'
+
+  # Prioritize megamerges so that they always appear on the 'left-most' side of
+  # the graph.
+  log-graph-prioritize = 'coalesce(megamerge(), trunk())'
+
+# revset functions to be used anywhere
+[revset-aliases]
+  'user(x)' = 'author(x) | committer(x)'
+  'mine()' = 'user("a@monks.co")'
+
+  # mutable bookmarks with no private ancestors
+  'pr_branches()' = 'mutable() & bookmarks() & (~private()::bookmarks())'
+
+  # By default, show the repo trunk, the remote bookmarks, and all remote tags. We
+  # don't want to change these in most cases, but in some repos it's useful.
+  'immutable_heads()' = 'present(trunk()) | untracked_remote_bookmarks() | tags()'
+
+  # Private and WIP commits that should never be pushed anywhere. Often part of
+  # work-in-progress merge stacks.
+  'private()' = "description(glob:'LOCAL:*')"
+
+  # stack(x, n) is the set of mutable commits reachable from 'x', with 'n'
+  # parents. 'n' is often useful to customize the display and return set for
+  # certain operations. 'x' can be used to target the set of 'roots' to traverse,
+  # e.g. @ is the current stack.
+  'stack()' = 'stack(@)'
+  'stack(x)' = 'stack(x, 2)'
+  'stack(x, n)' = 'ancestors(reachable(x, mutable()), n)'
+
+  # The current set of "open" works. It is defined as: all stacks that are
+  # reachable from my working copy, or any other commit I wrote.
+  # n = 1, meaning that nothing from `trunk()` is included, so all resulting
+  # commits are mutable by definition.
+  'open()' = 'stack(mine() | @, 1)'
+
+  # the set of 'ready()' commits. defined as the set of open commits, but nothing
+  # that is private.
+  'ready()' = 'open() ~ descendants(private())'
+
+  # Find the megamerge. Mostly useful in combination with other aliases, primarily
+  # 'sandwich'. Normally when there's only one megamerge, sandwich works perfectly
+  # fine and is basically "magic". However, there are more complex cases; consider
+  # something like this which represents a forked repository of an upstream:
+  #
+  #
+  #    ----> P1 ... Pn -----------\
+  #   /                            \
+  #  /---> X --\           (main)   \
+  # B          M1 --> T1 ... Tn --> M2 --> @
+  #  \---> Y --/
+  #
+  # X and Y are typical features on top of base B, combined inside megamerge M1.
+  # However, we may want changes T1...Tn to go on top of M1, because (in my case)
+  # they're custom and will never go upstream, but are correctly published as part
+  # of the fork; Tn is where the main bookmark points. Finally, we have changes P1
+  # ... Pn which are private and should never be pushed upstream at all.
+  #
+  # In this case, sandwich will work poorly because 'reachable(stack(), merges())'
+  # will resolve to {M1, M2}, which is not what we want for 'rebase -B'. So to
+  # handle that case, we allow the user to specify the merge via literal tag
+  # "megamerge". In this case if we 'bookmark set megamerge -r M1' then sandwich
+  # will always work correctly.
+  'megamerge()' = 'coalesce(present(megamerge), reachable(stack(), merges()))'
