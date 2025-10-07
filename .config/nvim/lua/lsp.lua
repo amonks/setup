@@ -8,27 +8,7 @@ require('mason-lspconfig').setup()
 
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
-local on_attach = function(client, bufnr)
-    -- avoid formatting conflict between ts_ls and prettier
-    if client.name == "ts_ls" then
-        client.server_capabilities.documentFormattingProvider = false
-    end
-
-    -- make null-ls format on save when possible
-    if client.name == "null-ls" then
-        if client.supports_method("textDocument/formatting") then
-            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                group = augroup,
-                buffer = bufnr,
-                callback = function()
-                    vim.lsp.buf.format({ bufnr = bufnr, async = false })
-                end,
-                desc = "[lsp] format on save",
-            })
-        end
-    end
-
+local remap = function(_, bufnr)
     -- enable completion triggered by <C-x><C-o>
     vim.api.nvim_set_option_value("omnifunc", "v:lua.vim.lsp.omnifunc", {
         buf = bufnr,
@@ -47,7 +27,7 @@ local on_attach = function(client, bufnr)
     k.imap("<C-k>", vim.lsp.buf.signature_help, extra)
 
     k.nmap("[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, extra)
-    k.nmap("]d", function() vim.diagnostic.jump({ count = 1,  float = true }) end, extra)
+    k.nmap("]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, extra)
 
     k.nmap("<space>rn", vim.lsp.buf.rename, extra)
     k.nmap("<space>ca", vim.lsp.buf.code_action, extra)
@@ -57,36 +37,64 @@ end
 local null_ls = require("null-ls")
 null_ls.setup({
     debug = true,
-    on_attach = on_attach,
+    on_attach = function(client, bufnr)
+        -- make null-ls format on save when possible
+        if client.supports_method("textDocument/formatting") then
+            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                group = augroup,
+                buffer = bufnr,
+                callback = function()
+                    vim.lsp.buf.format({ bufnr = bufnr, async = false })
+                end,
+                desc = "[lsp] format on save",
+            })
+        end
+        remap(client, bufnr)
+    end,
     sources = {
         null_ls.builtins.formatting.prettierd,
     },
 })
 
-local lspconfig = require("lspconfig")
-lspconfig["lua_ls"].setup({
-    on_attach = on_attach,
-    diagnostics = {
-        globals = {
-            "vim"
-        }
+for k, v in pairs({
+    basedpyright = { on_attach = remap },
+    eslint = { on_attach = remap },
+    ruff = { on_attach = remap },
+    templ = { on_attach = remap },
+
+    lua_ls = {
+        on_attach = remap,
+        diagnostics = {
+            globals = {
+                "vim"
+            }
+        },
     },
-})
-lspconfig["eslint"].setup({ on_attach = on_attach })
-lspconfig["ts_ls"].setup({ on_attach = on_attach })
-lspconfig["templ"].setup({ on_attach = on_attach })
-lspconfig["ruff"].setup({ on_attach = on_attach })
-lspconfig["basedpyright"].setup({ on_attach = on_attach })
-lspconfig["gopls"].setup({
-    on_attach = on_attach,
-    settings = {
-        gopls = {
-            env = {
-                GOFLAGS = "--tags=linux,wasm,js,fts5,sqlite_math_functions"
+
+    ts_ls = {
+        on_attach = function(client, bufnr)
+            -- avoid formatting conflict between ts_ls and prettier
+            client.server_capabilities.documentFormattingProvider = false
+
+            remap(client, bufnr)
+        end
+    },
+
+    gopls = {
+        on_attach = remap,
+        settings = {
+            gopls = {
+                env = {
+                    GOFLAGS = "--tags=linux,wasm,js,fts5,sqlite_math_functions"
+                }
             }
         }
-    }
-})
+    },
+}) do
+    vim.lsp.config[k] = v
+    vim.lsp.enable(k)
+end
 
 -- workaround for buggy lsp implementations
 -- https://github.com/neovim/neovim/issues/12970
