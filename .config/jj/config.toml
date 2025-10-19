@@ -16,8 +16,7 @@
   # 'jj jj log' on the command line without getting a command-not-found error.
   jj = []
 
-  push = ["git", "push", "--allow-new", "-r", "pr_branches()"]
-  spr = ["util", "exec", "--", "jj-spr"]
+  pr = ["util", "exec", "--", "jpr"]
 
 [git]
   private-commits = "private()"
@@ -29,6 +28,26 @@
 # templates used by jj internal commands
 [templates]
   git_push_bookmark = '"amonks/push_" ++ change_id.short()'
+  draft_commit_description = '''
+    concat(
+      coalesce(
+	concat(description.first_line(), "\n"),
+	"\n"
+      ),
+      "\n",
+      coalesce(
+        commit_description_body,
+        default_commit_description_body,
+      ),
+      surround(
+        "\nJJ: This commit contains the following changes:\n",
+	"",
+        indent("JJ:     ", diff.stat(72)),
+      ),
+      "\nJJ: ignore-rest\n",
+      diff.git(),
+    )
+  '''
 
 # template functions that can be used anywhere
 [template-aliases]
@@ -38,6 +57,9 @@
       description.first_line()
     ).trim_start()
   '''
+
+  # repos can define this in .jj/repo/config.toml
+  default_commit_description_body = ""
 
 # revsets used by jj internal commands
 [revsets]
