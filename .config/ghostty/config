@@ -1,0 +1,24 @@
+window-inherit-working-directory = false
+keybind = shift+enter=text:\x1b\r
+
+background = #000000
+foreground = #E8DCB7
+
+
+font-size = 16
+adjust-cell-height = 15
+adjust-cell-width = -1
+font-synthetic-style = false
+minimum-contrast = 1.1
+
+font-family = "Operator Mono"
+font-style = "Book"
+
+font-family-italic = "Triplicate OT"
+font-style-italic = "B Regular"
+
+font-family-bold = "Operator Mono"
+font-style-bold = "Medium"
+
+font-family-bold-italic = "Triplicate OT"
+font-style-bold-italic = "B Bold"
