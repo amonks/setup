@@ -116,24 +116,21 @@ function setup
         install-package --name racket --macport function:_macos_install_racket
     end
 
-    if has-setup-option setup_golang_environment
-        install-package --name go
+    install-package --name go
 
-        function _install_go_tool --argument-names invocation repo
-            if ! is-installed $invocation
-                go install $repo@latest
-            end
+    function _install_go_tool --argument-names invocation repo
+        if ! is-installed $invocation
+            go install $repo@latest
         end
-
-        _install_go_tool gore github.com/x-motemen/gore/cmd/gore
-        _install_go_tool gocode github.com/stamblerre/gocode
-        _install_go_tool godoc golang.org/x/tools/cmd/godoc
-        _install_go_tool goimports golang.org/x/tools/cmd/goimports
-        _install_go_tool gorename golang.org/x/tools/cmd/gorename
-        _install_go_tool guru golang.org/x/tools/cmd/guru
-        _install_go_tool gotests github.com/cweill/gotests/gotests
-        _install_go_tool gomodifytags github.com/fatih/gomodifytags
     end
+
+    _install_go_tool rootsync github.com/amonks/rootsync
+    _install_go_tool linebuf github.com/amonks/linebuf
+
+    if has-setup-option setup_nas_tools
+        _install_go_tool beetman github.com/amonks/beetman
+    end
+
 
     if has-setup-option setup_rust_environment
         if ! is-installed rustc
@@ -205,17 +202,5 @@ function setup
         if has-setup-option install_desktop_apps
             source ~/scripts/install-macos-apps.fish
         end
-    end
-
-    if ! is-installed rootsync
-        pushd $HOME/rootsync
-            go install .
-        popd
-    end
-
-    if ! is-installed linebuf
-        pushd $HOME/linebuf
-            go install .
-        popd
     end
 end
