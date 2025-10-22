@@ -1,0 +1,18 @@
+approval_policy = "on-request"
+sandbox_mode = "danger-full-access"
+
+[sandbox_workspace_write]
+writable_roots = ["/Users/ajm/Library/Caches"]
+
+[projects."/Users/ajm/Work/jjpr"]
+trust_level = "trusted"
+
+[projects."/Users/ajm/Work/flipturn/flipturn"]
+trust_level = "trusted"
+
+[shell_environment_policy]
+inherit = "all"
+ignore_default_excludes = true
+
+[notice]
+hide_full_access_warning = true
