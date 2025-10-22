@@ -34,7 +34,3 @@
   program = "osascript"
   args = [ "-e", "beep" ]
 
-[keyboard]
-  bindings = [
-      { key = "Return", mods = "Command", chars = "\n" }
-  ]
