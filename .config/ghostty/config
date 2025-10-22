@@ -1,5 +1,6 @@
 window-inherit-working-directory = false
 keybind = shift+enter=text:\x1b\r
+link-url = false
 
 background = #000000
 foreground = #E8DCB7
