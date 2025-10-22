@@ -32,8 +32,5 @@ function set-macos-preferences
   defaults write com.apple.dock "autohide" -bool "true"
   # Don't show recents
   defaults write com.apple.dock "show-recents" -bool "false"
-
-  # contrast mode
-  defaults write com.apple.universalaccess increaseContrast -bool YES
 end
 
