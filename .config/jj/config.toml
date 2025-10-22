@@ -16,7 +16,8 @@
   # 'jj jj log' on the command line without getting a command-not-found error.
   jj = []
 
-  pr = ["util", "exec", "--", "jpr"]
+  push = ["git", "push", "--allow-new", "-r", "pr_branches()"]
+  pr = ["util", "exec", "--", "jjpr"]
 
 [git]
   private-commits = "private()"
