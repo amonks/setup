@@ -30,7 +30,7 @@ function setup
             ~/.fzf/install
         end
 
-        install-package --name autojump
+        install-package --name zoxide
         install-package --name bash
         install-package --name bat --apt SKIP
         install-package --name eza
