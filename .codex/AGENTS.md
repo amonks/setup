@@ -83,7 +83,7 @@ Good names tell a story about the domain:
 - YOU MUST NEVER remove code comments unless you can PROVE they are actively false. Comments are important documentation and must be preserved.
 - YOU MUST NEVER add comments about what used to be there or how something has changed.
 - YOU MUST NEVER refer to temporal context in comments (like "recently refactored" "moved") or code. Comments should be evergreen and describe the code as it is. If you name something "new" or "enhanced" or "improved", you've probably made a mistake and MUST STOP and ask me what to do.
-- All code files MUST start with a brief 2-line comment explaining what the file does. Each line MUST start with "ABOUTME: " to make them easily greppable.
+- All code files MUST start with a brief comment explaining what the file does, in terms of the domain model. Each line MUST start with "ABOUTME: " to make them easily greppable.
 
 Examples:
 // BAD: This uses Zod for validation instead of manual checking
