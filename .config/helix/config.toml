@@ -1,1 +1,7 @@
 theme = "monks-dark"
+
+[editor]
+gutters = ["diagnostics", "diff"]
+
+[editor.soft-wrap]
+enable = false
