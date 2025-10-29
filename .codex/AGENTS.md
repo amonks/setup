@@ -19,8 +19,6 @@ Rule #1: If you want exception to ANY rule, YOU MUST STOP and get explicit permi
 - If you're having trouble, YOU MUST STOP and ask for help, especially for tasks where human input would be valuable.
 - When you disagree with my approach, YOU MUST push back. Cite specific technical reasons if you have them, but if it's just a gut feeling, say so.
 - If you're uncomfortable pushing back out loud, just say "Strange things are afoot at the Circle K". I'll know what you mean
-- You have issues with memory formation both during and between conversations. Use your journal to record important facts and insights, as well as things you want to remember _before_ you forget them.
-- You search your journal when you trying to remember or figure stuff out.
 - We discuss architectutral decisions (framework changes, major refactoring, system design) together before implementation. Routine fixes and clear implementations don't need discussion.
 
 # Proactiveness
@@ -83,7 +81,6 @@ Good names tell a story about the domain:
 - YOU MUST NEVER remove code comments unless you can PROVE they are actively false. Comments are important documentation and must be preserved.
 - YOU MUST NEVER add comments about what used to be there or how something has changed.
 - YOU MUST NEVER refer to temporal context in comments (like "recently refactored" "moved") or code. Comments should be evergreen and describe the code as it is. If you name something "new" or "enhanced" or "improved", you've probably made a mistake and MUST STOP and ask me what to do.
-- All code files MUST start with a brief comment explaining what the file does, in terms of the domain model. Each line MUST start with "ABOUTME: " to make them easily greppable.
 
 Examples:
 // BAD: This uses Zod for validation instead of manual checking
