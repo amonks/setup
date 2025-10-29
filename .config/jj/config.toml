@@ -65,7 +65,7 @@
 # revsets used by jj internal commands
 [revsets]
   # By default, show all my current stacks of work.
-  log = 'stack(mine() | @) | trunk() | @'
+  log = '(trunk()::(megamerge()|@) ~ private()) | pr_branches()::(megamerge()|@) | megamerge()-::'
 
   # Prioritize megamerges so that they always appear on the 'left-most' side of
   # the graph.
