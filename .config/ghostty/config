@@ -1,10 +1,11 @@
 window-inherit-working-directory = false
 keybind = shift+enter=text:\x1b\r
-link-url = false
+link-url = true
 
 background = #000000
 foreground = #E8DCB7
 
+macos-option-as-alt = left
 
 font-size = 16
 adjust-cell-height = 15
