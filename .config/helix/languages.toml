@@ -1,3 +1,7 @@
 [[language]]
 name = "markdown"
 soft-wrap = { enable = true, wrap-indicator = "↪ " }
+
+[[language]]
+name = "typescript"
+formatter = { command = "npx", args = ["prettier", "--parser", "typescript"] }

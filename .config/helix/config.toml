@@ -3,5 +3,10 @@ theme = "monks-dark"
 [editor]
 gutters = ["diagnostics", "diff"]
 
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
 [editor.soft-wrap]
 enable = false
