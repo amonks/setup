@@ -1,4 +1,3 @@
-
 function fan-control --argument-names level
 	switch $level
 		case standard

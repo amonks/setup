@@ -1,5 +1,6 @@
 function sudo
-  if test (status stack-trace | wc -l) -eq 1    # excludes scripts, even scripts run interactively
+  set depth (string trim "$(status stack-trace | wc -l)")
+  if test "$depth" -le 3    # excludes scripts, even scripts run interactively
     switch $argv[1]
     case port
       switch $argv[2]

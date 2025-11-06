@@ -18,11 +18,11 @@ function setup
     install-package --name pv
 
 
-    function _after_install_atuin
+    if ! is-installed atuin
+        curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
         atuin import auto
         atuin login -u amonks
     end
-    install-package --name atuin --after _after_install_atuin
 
     if has-setup-option setup_fancy_cli_tools
         function _install-fzf-on-apt-system
