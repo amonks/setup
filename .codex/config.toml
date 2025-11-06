@@ -1,10 +1,32 @@
+forced_login_method = "api"
+
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
+notice.hide_full_access_warning = true
 
+model = "gpt-5-codex" # default
+model_provider = "openai-api-key"
+model_reasoning_effort = "medium" # default
+model_reasoning_summary = "detailed"
+hide_agent_reasoning = false
+show_raw_agent_reasoning = true
+
+features.web_search_request = true
+features.view_image_tool = true
+
+tui.notifications = ["agent-turn-complete", "approval-requested"]
 notify = ["python3", "/Users/ajm/bin/notify_agent.py"]
 
-[sandbox_workspace_write]
-writable_roots = ["/Users/ajm/Library/Caches"]
+shell_environment_policy.inherit = "all"
+shell_environment_policy.ignore_default_excludes = true
+sandbox_workspace_write.writable_roots = ["/Users/ajm/Library/Caches"]
+
+[model_providers.openai-api-key]
+name = "openai-api-key"
+base_url = "https://api.openai.com/v1"
+env_key = "OPENAI_API_KEY"
+wire_api = "responses"
+
 
 [projects."/Users/ajm/Work/jjpr"]
 trust_level = "trusted"
@@ -12,12 +34,4 @@ trust_level = "trusted"
 [projects."/Users/ajm/Work/flipturn/flipturn"]
 trust_level = "trusted"
 
-[shell_environment_policy]
-inherit = "all"
-ignore_default_excludes = true
 
-[notice]
-hide_full_access_warning = true
-
-[tui]
-notifications = ["agent-turn-complete", "approval-requested"]
