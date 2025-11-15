@@ -18,6 +18,7 @@
 
   push = ["git", "push", "--allow-new", "-r", "pr_branches()"]
   pr = ["util", "exec", "--", "jjpr"]
+  catchup = ["util", "exec", "--", "bash", "-c", "jj git fetch && jj rebase --skip-emptied -d main && jj simplify-parents"]
 
 [git]
   private-commits = "private()"
