@@ -78,7 +78,7 @@
 
 # revset functions to be used anywhere
 [revset-aliases]
-  'without_private()' = '( stack( pr_branches()|@ ) ~ private() ) | trunk() | @ | megamerge- | megamerge'
+  'without_private()' = '( stack( pr_branches()|@ ) ~ private() ) | trunk() | @ | megamerge()- | megamerge()'
   'all_mine()' = 'stack(mine() | @) | trunk() | @'
 
   'user(x)' = 'author(x) | committer(x)'
