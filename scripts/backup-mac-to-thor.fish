@@ -22,6 +22,7 @@ rsync --archive --human-readable --delete --progress --ignore-errors \
   --exclude ".Trash" \
   --exclude ".localized" \
   --exclude ".viminfo" \
+  --exclude "node_modules" \
   --exclude "/.cache" \
   --exclude "/.local/share/autojump" \
   --exclude "/.zfs" \
