@@ -3,10 +3,11 @@ forced_login_method = "api"
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
 notice.hide_full_access_warning = true
+notice.hide_gpt5_1_migration_prompt = true
 
-model = "gpt-5-codex" # default
+model = "gpt-5.1-codex"
 model_provider = "openai-api-key"
-model_reasoning_effort = "medium" # default
+model_reasoning_effort = "medium"
 model_reasoning_summary = "detailed"
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
