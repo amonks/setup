@@ -46,8 +46,8 @@ for k, v in pairs({
     -- make backspace normal
     backspace = "indent,eol,start",
 
-    -- infer folds from syntax highlighting somehow idk
-    foldmethod = "syntax",
+    -- infer folds from indentation
+    foldmethod = "indent",
     -- start with all folds open
     foldlevelstart = 99,
 }) do
