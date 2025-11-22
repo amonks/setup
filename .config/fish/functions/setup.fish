@@ -60,12 +60,16 @@ function setup
         function _has_recent_git
             git --version | grep -e 2.2 -e 2.3 -e 2.4 -e 2.5 1>/dev/null 2>&1
         end
-        function _install_git_on_apt
-            sudo add-apt-repository ppa:git-core/ppa
-            sudo apt-get update
-            sudo apt-get install git
-        end
         install-package --name git --versioncheck _has_recent_git
+
+        if ! is-installed jj
+            cargo install --git https://github.com/jj-vcs/jj.git \
+            --locked --bin jj jj-cli
+        end
+
+        if ! is-installed jjui
+            go install github.com/idursun/jjui/cmd/jjui@HEAD
+        end
 
         install-package --name gls --macport coreutils --apt SKIP --freebsdpkg SKIP # not sure why I need this on macos... exa?
         install-package --name direnv
