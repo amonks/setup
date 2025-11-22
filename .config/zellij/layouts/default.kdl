@@ -1,0 +1,9 @@
+layout {
+    default_tab_template {
+        children
+    }
+    tab {
+        pane
+    }
+}
+
