@@ -79,6 +79,7 @@
 
 # revset functions to be used anywhere
 [revset-aliases]
+  'log()' = 'without_private()'
   'without_private()' = '( stack( pr_branches()|@ ) ~ private() ) | trunk() | @ | megamerge()- | megamerge()'
   'all_mine()' = 'stack(mine() | @) | trunk() | @'
 
