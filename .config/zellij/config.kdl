@@ -31,7 +31,6 @@ keybinds clear-defaults=true {
         bind "k" { MoveFocus "up"; SwitchToMode "normal"; }
         bind "l" { MoveFocus "right"; SwitchToMode "normal"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "normal"; }
-        bind "Ctrl b" { GoToNextTab; }
         bind ":" { SwitchToMode "renametab"; TabNameInput 0; }
 
         bind "w" {
@@ -42,11 +41,16 @@ keybinds clear-defaults=true {
             }
             SwitchToMode "normal"
         }
+        bind "Ctrl b" { SwitchToMode "locked"; }
+        bind "d" { SwitchToMode "scroll"; }
         bind "t" { SwitchToMode "tab"; }
         bind "p" { SwitchToMode "pane"; }
         bind "r" { SwitchToMode "resize"; }
         bind "b" { SwitchToMode "session"; }
         bind "m" { SwitchToMode "move"; }
+    }
+    locked {
+        bind "Ctrl g" { SwitchToMode "normal"; }
     }
     pane {
         bind "left" { MoveFocus "left"; }
