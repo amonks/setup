@@ -4,6 +4,7 @@ approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
 notice.hide_full_access_warning = true
 notice.hide_gpt5_1_migration_prompt = true
+notice."hide_gpt-5.1-codex-max_migration_prompt" = true
 
 model = "gpt-5.1-codex"
 model_provider = "openai-api-key"
