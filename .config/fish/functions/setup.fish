@@ -2,7 +2,7 @@ function setup
     set system_type (system-type)
     if test $system_type = unknown
         echo "Unsupported OS"
-        exit 1
+        return 1
     end
 
     echo Setting up on $system_type
@@ -62,12 +62,19 @@ function setup
         end
         install-package --name git --versioncheck _has_recent_git
 
+        if ! is-installed rustc
+            echo "Installing rust"
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        end
+
         if ! is-installed jj
+            echo "Installing jj"
             cargo install --git https://github.com/jj-vcs/jj.git \
-            --locked --bin jj jj-cli
+                --locked --bin jj jj-cli
         end
 
         if ! is-installed jjui
+            echo "Installing jjui"
             go install github.com/idursun/jjui/cmd/jjui@HEAD
         end
 
@@ -136,13 +143,6 @@ function setup
     end
 
 
-    if has-setup-option setup_rust_environment
-        if ! is-installed rustc
-            echo "Installing rust"
-            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-        end
-    end
-
     if has-setup-option setup_python_environment
         if ! is-installed pip3
             echo Installing pip3
@@ -174,7 +174,20 @@ function setup
     end
 
     if has-setup-option setup_neovim
-        install-package --name nvim --macport neovim
+        if ! is-installed nvim
+            echo "Installing neovim"
+            if test -d ~/neovim
+                rm -rf ~/neovim
+            end
+            git clone git@github.com:neovim/neovim.git ~/neovim
+            and pushd ~/neovim
+            and make CMAKE_BUILD_TYPE=RelWithDebInfo
+            and sudo make install
+            or echo "failed to install neovim"
+            and return 1
+            popd
+        end
+
         install-package --name cmake
         install-package --name lua-language-server --freebsdpkg SKIP
 
