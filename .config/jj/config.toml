@@ -71,7 +71,7 @@
 # revsets used by jj internal commands
 [revsets]
   # By default, show all my current stacks of work.
-  log = 'without_private()'
+  log = 'log()'
 
   # Prioritize megamerges so that they always appear on the 'left-most' side of
   # the graph.
@@ -79,7 +79,8 @@
 
 # revset functions to be used anywhere
 [revset-aliases]
-  'log()' = 'without_private()'
+  'log()' = 'without_private() | tracked_remote_bookmarks()'
+
   'without_private()' = '( stack( pr_branches()|@ ) ~ private() ) | trunk() | @ | megamerge()- | megamerge()'
   'all_mine()' = 'stack(mine() | @) | trunk() | @'
 
