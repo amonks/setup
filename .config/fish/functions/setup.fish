@@ -73,7 +73,7 @@ function setup
                 --locked --bin jj jj-cli
         end
 
-        if ! is_installed ov
+        if ! is-installed ov
             echo "Installing ov"
             go install github.com/noborus/ov@latest
         end
