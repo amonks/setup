@@ -1,5 +1,6 @@
 debug-fish-init start (status -f)
   set -U fish_user_paths \
+    /Applications/Wireshark.app/Contents/MacOS \
     ~/.fly/bin \
     ~/bin \
     /usr/local/opt/ruby/bin \
