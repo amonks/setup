@@ -58,7 +58,7 @@ null_ls.setup({
 })
 
 for k, v in pairs({
-    basedpyright = { on_attach = remap },
+    ty = { on_attach = remap },
     eslint = { on_attach = remap },
     ruff = { on_attach = remap },
     templ = { on_attach = remap },
