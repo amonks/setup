@@ -16,7 +16,6 @@
   # 'jj jj log' on the command line without getting a command-not-found error.
   jj = []
 
-  push = ["git", "push", "--allow-new", "-r", "pr_branches()"]
   pr = ["util", "exec", "--", "jjpr"]
   catchup = ["util", "exec", "--", "bash", "-c", "jj git fetch && jj rebase --skip-emptied -d main && jj simplify-parents"]
   privatize = ["util", "exec", "--", "jj-privatize"]
@@ -70,7 +69,6 @@
 
 # revsets used by jj internal commands
 [revsets]
-  # By default, show all my current stacks of work.
   log = 'log()'
 
   # Prioritize megamerges so that they always appear on the 'left-most' side of
@@ -79,16 +77,19 @@
 
 # revset functions to be used anywhere
 [revset-aliases]
-  'log()' = 'without_private() | tracked_remote_bookmarks()'
-
-  'without_private()' = '( stack( pr_branches()|@ ) ~ private() ) | trunk() | @ | megamerge()- | megamerge()'
-  'all_mine()' = 'stack(mine() | @) | trunk() | @'
+  'log()' = """
+    @
+    | ( stack( pr_branches()|@|megamerge() ) ~ private() )
+    | trunk()
+    | bookmarks()
+    | tracked_remote_bookmarks()
+  """
 
   'user(x)' = 'author(x) | committer(x)'
   'mine()' = 'user("a@monks.co")'
 
   # mutable bookmarks with no private ancestors
-  'pr_branches()' = 'mutable() & bookmarks() & (~private()::bookmarks())'
+  'pr_branches()' = 'mutable() & bookmarks() & (~private()::)'
 
   # By default, show the repo trunk, the remote bookmarks, and all remote tags. We
   # don't want to change these in most cases, but in some repos it's useful.
@@ -105,16 +106,6 @@
   'stack()' = 'stack(@)'
   'stack(x)' = 'stack(x, 2)'
   'stack(x, n)' = 'ancestors(reachable(x, mutable()), n)'
-
-  # The current set of "open" works. It is defined as: all stacks that are
-  # reachable from my working copy, or any other commit I wrote.
-  # n = 1, meaning that nothing from `trunk()` is included, so all resulting
-  # commits are mutable by definition.
-  'open()' = 'stack(mine() | @, 1)'
-
-  # the set of 'ready()' commits. defined as the set of open commits, but nothing
-  # that is private.
-  'ready()' = 'open() ~ descendants(private())'
 
   # Find the megamerge. Mostly useful in combination with other aliases, primarily
   # 'sandwich'. Normally when there's only one megamerge, sandwich works perfectly
