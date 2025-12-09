@@ -73,6 +73,11 @@ function setup
                 --locked --bin jj jj-cli
         end
 
+        if ! is_installed ov
+            echo "Installing ov"
+            go install github.com/noborus/ov@latest
+        end
+
         if ! is-installed jjui
             echo "Installing jjui"
             go install github.com/idursun/jjui/cmd/jjui@HEAD
