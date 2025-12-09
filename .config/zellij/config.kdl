@@ -12,7 +12,7 @@ ui {
 theme "kanagawa"
 
 keybinds clear-defaults=true {
-    shared_except "normal" "entersearch" "renametab" "renamepane" {
+    shared_except "normal" "entersearch" "renametab" "renamepane" "locked" {
         bind "esc" { SwitchToMode "normal"; }
     }
     normal {
