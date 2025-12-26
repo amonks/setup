@@ -16,6 +16,7 @@
   # 'jj jj log' on the command line without getting a command-not-found error.
   jj = []
 
+  shift-back = ["rebase", "--insert-after=main", "--insert-before=megamerge", "-r"]
   pr = ["util", "exec", "--", "jjpr"]
   catchup = ["util", "exec", "--", "bash", "-c", "jj git fetch && jj rebase --skip-emptied -d main && jj simplify-parents"]
   privatize = ["util", "exec", "--", "jj-privatize"]
