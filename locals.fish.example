@@ -17,5 +17,6 @@ set --universal setup_racket_environment false
 set --universal setup_rust_environment false
 set --universal setup_ssh_primary true
 set --universal setup_swift_environment false
-set --universal use_tmux true
+set --universal use_tmux false
+set --universal use_zellij true
 set --universal debug_fish_init false
