@@ -18,6 +18,20 @@
 
   shift-back = ["rebase", "--insert-after=main", "--insert-before=megamerge", "-r"]
   pr = ["util", "exec", "--", "jjpr"]
+  clone-github = [
+    "util", "exec", "--",
+    "bash", "-c",
+    """
+      set -euo pipefail
+      repo="$1"                  # e.g. amonks/incrementum
+      org="${repo%%/*}"           # amonks
+      name="${repo#*/}"           # incrementum
+      dest="$HOME/git/$org/$name" # ~/git/amonks/incrementum
+      mkdir -p "$HOME/git/$org"
+      jj git clone "git@github.com:$repo.git" "$dest"
+    """,
+    "--"
+  ]
   catchup = ["util", "exec", "--", "bash", "-c", "jj git fetch && jj rebase --skip-emptied -d main && jj simplify-parents"]
   privatize = ["util", "exec", "--", "jj-privatize"]
 

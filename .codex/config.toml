@@ -1,19 +1,18 @@
-forced_login_method = "api"
-
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
+web_search = "live"
+
 notice.hide_full_access_warning = true
 notice.hide_gpt5_1_migration_prompt = true
 notice."hide_gpt-5.1-codex-max_migration_prompt" = true
 
-model = "gpt-5.1-codex"
-model_provider = "openai-api-key"
+model = "gpt-5.2-codex"
+model_provider = "tailscale"
 model_reasoning_effort = "medium"
 model_reasoning_summary = "detailed"
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
 
-features.web_search_request = true
 features.view_image_tool = true
 
 tui.notifications = ["agent-turn-complete", "approval-requested"]
@@ -22,13 +21,15 @@ notify = ["python3", "/Users/ajm/bin/notify_agent.py"]
 shell_environment_policy.inherit = "all"
 shell_environment_policy.ignore_default_excludes = true
 sandbox_workspace_write.writable_roots = ["/Users/ajm/Library/Caches"]
+personality = "pragmatic"
 
-[model_providers.openai-api-key]
-name = "openai-api-key"
-base_url = "https://api.openai.com/v1"
-env_key = "OPENAI_API_KEY"
+[model_providers.tailscale]
+name = "Tailscale Aperture"
+base_url = "https://ai.tail98579.ts.net/v1"
 wire_api = "responses"
 
+[notice.model_migrations]
+"gpt-5.1-codex" = "gpt-5.2-codex"
 
 [projects."/Users/ajm/Work/jjpr"]
 trust_level = "trusted"

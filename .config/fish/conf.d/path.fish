@@ -1,5 +1,6 @@
 debug-fish-init start (status -f)
   set -U fish_user_paths \
+    ~/.opencode/bin \
     /Applications/Wireshark.app/Contents/MacOS \
     ~/.fly/bin \
     ~/bin \
