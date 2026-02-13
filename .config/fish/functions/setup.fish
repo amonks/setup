@@ -69,19 +69,25 @@ function setup
 
         if ! is-installed jj
             echo "Installing jj"
-            cargo install --git https://github.com/jj-vcs/jj.git \
-                --locked --bin jj jj-cli
+        else
+            echo "Updating jj"
         end
+        cargo install --git https://github.com/jj-vcs/jj.git \
+            --locked --bin jj jj-cli
 
         if ! is-installed ov
             echo "Installing ov"
-            go install github.com/noborus/ov@latest
+        else
+            echo "Updating ov"
         end
+        go install github.com/noborus/ov@latest
 
         if ! is-installed jjui
             echo "Installing jjui"
-            go install github.com/idursun/jjui/cmd/jjui@HEAD
+        else
+            echo "Updating jjui"
         end
+        go install github.com/idursun/jjui/cmd/jjui@HEAD
 
         install-package --name gls --macport coreutils --apt SKIP --freebsdpkg SKIP # not sure why I need this on macos... exa?
         install-package --name direnv
