@@ -75,6 +75,13 @@ function setup
         cargo install --git https://github.com/jj-vcs/jj.git \
             --locked --bin jj jj-cli
 
+        if ! is-installed uv
+            echo "Installing uv"
+        else
+            echo "Updating uv"
+        end
+        cargo install --locked uv
+
         if ! is-installed ov
             echo "Installing ov"
         else
