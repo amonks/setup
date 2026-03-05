@@ -1,6 +1,6 @@
 directory: /data/tank/music/flac
 library: /data/tank/music/library.db
-plugins: embedart fetchart ftintitle mbsync convert mbsubmit lastgenre
+plugins: embedart fetchart ftintitle mbsync convert mbsubmit lastgenre musicbrainz
 
 import:
   languages: en
