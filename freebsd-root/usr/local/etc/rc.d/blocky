@@ -11,7 +11,7 @@ rcvar="blocky_enable"
 blocky_command="/home/ajm/go/bin/blocky --config /data/tank/blocky/config.yaml"
 pidfile="/var/run/blocky/${name}.pid"
 command="/usr/sbin/daemon"
-command_args="-P ${pidfile} -r -f ${blocky_command}"
+command_args="-P ${pidfile} -r -o /var/log/blocky.log -f ${blocky_command}"
 
 load_rc_config $name
 : ${blocky_enable:=no}

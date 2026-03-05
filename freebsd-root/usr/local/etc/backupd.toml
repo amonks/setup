@@ -2,7 +2,7 @@ snitch_id = "97cb3d76e0"
 
 [remote]
   ssh_key = "/home/ajm/.ssh/id_ed25519"
-  ssh_host = "root@57269.zfs.rsync.net"
+  ssh_host = "root@de1424b.rsync.net"
   root = "data1/thor/tank"
   [remote.policy]   # 13 per dataset
     hourly  = 0
@@ -14,8 +14,8 @@ snitch_id = "97cb3d76e0"
 
 [local]
   root = "data/tank"
-  [local.policy]    # 174 per dataset
-    hourly  = 72
+  [local.policy]    # 102 per dataset
+    hourly  = 0
     daily   = 90
     weekly  = 0
     monthly = 12
