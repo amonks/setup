@@ -47,6 +47,7 @@ require('lazy').setup({
     'lewis6991/gitsigns.nvim',            -- gitgutter
     'masukomi/vim-markdown-folding',      -- makes markdown headers foldable
     'mbbill/undotree',                    -- UndotreeToggle
+    'neoclide/jsonc.vim',                 -- jsonc support
     'neovim/nvim-lspconfig',              -- seems required for using builtin lsp
     'nvim-lua/plenary.nvim',              -- dependency of many lua plugins
     'nvimtools/none-ls.nvim',             -- uses nvim's lsp integration as a hook to add a bunch of non-lsp tools
