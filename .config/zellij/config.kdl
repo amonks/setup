@@ -32,6 +32,7 @@ keybinds clear-defaults=true {
         bind "l" { MoveFocus "right"; SwitchToMode "normal"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "normal"; }
         bind ":" { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "x" { CloseFocus; SwitchToMode "normal"; }
 
         bind "w" {
             LaunchOrFocusPlugin "file:~/.config/zellij/plugins/room.wasm" {
@@ -42,6 +43,7 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
         bind "Ctrl b" { SwitchToMode "locked"; }
+        bind "/" { SwitchToMode "entersearch"; }
         bind "d" { SwitchToMode "scroll"; }
         bind "t" { SwitchToMode "tab"; }
         bind "p" { SwitchToMode "pane"; }
@@ -206,14 +208,9 @@ keybinds clear-defaults=true {
         bind "esc" { SwitchToMode "scroll"; }
         bind "enter" { SwitchToMode "search"; }
     }
-    renametab {
-        bind "esc" { UndoRenameTab; SwitchToMode "tab"; }
-    }
     shared_among "renametab" "renamepane" {
-        bind "Ctrl c" { SwitchToMode "normal"; }
-    }
-    renamepane {
-        bind "esc" { UndoRenamePane; SwitchToMode "pane"; }
+        bind "esc" { UndoRenameTab; SwitchToMode "normal"; }
+        bind "enter" { SwitchToMode "normal"; }
     }
     shared_among "session" "tmux" {
         bind "d" { Detach; }
