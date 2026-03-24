@@ -1,0 +1,19 @@
+[job]
+implementation-model = "gpt-5.2-codex"
+code-review-model = "gpt-5.2-codex"
+project-review-model = "gpt-5.2-codex"
+
+[llm]
+model = "gpt-5.2-codex"
+
+[[llm.providers]]
+name = "tailnet-openai"
+api = "openai-responses"
+base-url = "https://ai.tail98579.ts.net"
+models = ["gpt-5.2", "gpt-5.2-codex", "gpt-5-nano", "gpt-5", "gpt-5.1"]
+
+[[llm.providers]]
+name = "tailnet-anthropic"
+api = "anthropic-messages"
+base-url = "https://ai.tail98579.ts.net"
+models = ["claude-sonnet-4-5-20250929", "claude-haiku-4-5-20251001", "claude-sonnet-4-5", "claude-haiku-4-5", "claude-opus-4-5"]
