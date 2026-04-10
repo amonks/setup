@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-cd ~/monks.co/
+cd ~/git/amonks/monks.co/
 source .envrc
 cd apps/air
-MONKS_ROOT=~/monks.co go run .
+MONKS_ROOT=~/git/amonks/monks.co go run .
