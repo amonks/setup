@@ -13,16 +13,20 @@ function setup
         setup-ssh-key
     end
 
+    function _cargo_install --argument-names name
+        set -e argv[1]
+        if ! is-installed $name
+            echo "Installing $name"
+            cargo install --locked $argv
+        else
+            echo "Updating $name"
+            cargo install $argv
+        end
+    end
+
     install-package --name rsync
     install-package --name mbuffer --macport SKIP
     install-package --name pv
-
-
-    if ! is-installed atuin
-        curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-        atuin import auto
-        atuin login -u amonks
-    end
 
     if has-setup-option setup_fancy_cli_tools
         function _install-fzf-on-apt-system
@@ -67,20 +71,22 @@ function setup
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         end
 
-        if ! is-installed jj
-            echo "Installing jj"
+        if ! is-installed atuin
+            echo "Installing atuin"
+            curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+            atuin import auto
+            atuin login -u amonks
         else
-            echo "Updating jj"
+            _cargo_install atuin atuin
         end
-        cargo install --git https://github.com/jj-vcs/jj.git \
-            --locked --bin jj jj-cli
 
+        _cargo_install jj --git https://github.com/jj-vcs/jj.git --bin jj jj-cli
         if ! is-installed uv
             echo "Installing uv"
+            curl -LsSf https://astral.sh/uv/install.sh | sh
         else
-            echo "Updating uv"
+            uv self update
         end
-        cargo install --locked uv
 
         if ! is-installed ov
             echo "Installing ov"
