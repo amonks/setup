@@ -11,7 +11,7 @@ font-size = 16
 adjust-cell-height = 15
 adjust-cell-width = -1
 font-synthetic-style = false
-minimum-contrast = 1.1
+minimum-contrast = 2
 
 font-family = "Operator Mono"
 font-style = "Book"
