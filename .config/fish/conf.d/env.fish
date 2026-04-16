@@ -9,6 +9,3 @@ if test -d /Applications/Android\ Studio.app/Contents/jbr/Contents/Home
   set -x JAVA_HOME '/Library/Java/JavaVirtualMachines/jdk-21-macports.jdk/Contents/Home'
 end
 
-export ANTHROPIC_AUTH_TOKEN="---"
-export ANTHROPIC_BASE_URL="https://ai.tail98579.ts.net"
-
