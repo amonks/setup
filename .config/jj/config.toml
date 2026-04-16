@@ -98,7 +98,7 @@
     | trunk()
     | bookmarks()
     | tracked_remote_bookmarks()
-    | (working_copies() ~ (empty() & root()+))
+    | (working_copies() & (((trunk()..working_copies()) ~ empty())::))
   """
 
   'user(x)' = 'author(x) | committer(x)'
