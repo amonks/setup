@@ -10,28 +10,21 @@ if test -z "$machine_user"
   exit 1
 end
 
-if which fileproviderctl
+if command -q fileproviderctl
   materialize-icloud ~
+end
+
+set -l rsync_excludes
+for name in (backup-home-exclude-names)
+    set -a rsync_excludes --exclude $name
+end
+for p in (backup-home-exclude-paths)
+    set -a rsync_excludes --exclude /$p
 end
 
 rsync --archive --human-readable --delete --progress --ignore-errors \
   --include "/Library/Application?Support/*" \
   --include "/Library/Keychains/*" \
   --include "/Library/Preferences/*" \
-  --exclude ".DS_Store" \
-  --exclude ".Trash" \
-  --exclude ".localized" \
-  --exclude ".viminfo" \
-  --exclude "node_modules" \
-  --exclude "/.cache" \
-  --exclude "/.local/share/autojump" \
-  --exclude "/.zfs" \
-  --exclude "/AppleInternal" \
-  --exclude "/Library" \
-  --exclude "/Library/Fonts" \
-  --exclude "/Music/Library-v0" \
-  --exclude "/go/pkg" \
-  --exclude "/mnt" \
-  --exclude "tailscaled.state" \
+  $rsync_excludes \
   ~/ "thor-syncer:/data/tank/mirror/$machine_name/$machine_user"
-

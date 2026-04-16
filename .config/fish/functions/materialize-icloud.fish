@@ -1,16 +1,12 @@
 function materialize-icloud --argument-names path
-  fd \
-    --type file \
-    --exclude "Library" \
-    --exclude ".cache" \
-    --exclude ".zfs" \
-    --exclude "AppleInternal" \
-    --exclude "Library" \
-    --exclude "Library/Fonts" \
-    --exclude "Music/Library-v0" \
-    --exclude "mnt" \
-    --print0 \
-    . $path \
-    | xargs -0 head -c 1 > /dev/null
-end
+    set -l excludes
+    for name in (backup-home-exclude-names)
+        set -a excludes --exclude $name
+    end
+    for p in (backup-home-exclude-paths)
+        set -a excludes --exclude $p
+    end
 
+    fd --type file $excludes --print0 . $path \
+        | xargs -0 -P 8 -n 64 head -c 1 > /dev/null
+end
