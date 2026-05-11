@@ -14,31 +14,6 @@ else
 	echo "✔︎ running on thor"
 end
 
-if test -f "/data/tank/movies/1933-I'm No Angel.mkv"
-	echo "✔︎ already mounted zfs filesystem"
-else
-	echo "▶︎ loading zfs key"
-	echo "  zfs load-key -a"
-	set out "$(sudo zfs load-key -a 2>&1)"
-	if test $status -ne 0
-		if ! string match '*Key already loaded*' "$out"
-			echo "error"
-			echo $out
-			exit 1
-		end
-	end
-	echo "✔︎ loaded zfs key"
-
-	echo "▶︎ mounting zfs filesystem"
-	echo "  zfs mount -a"
-	sudo zfs mount -a
-	if test $status -ne 0
-		echo "error"
-		exit 1
-	end
-	echo "✔︎ mounted zfs filesystem"
-end
-
 if test -d ~/mnt/whatbox/files
 	echo "✔︎ already mounted whatbox filesystem"
 else
@@ -75,4 +50,3 @@ else
 	end
 	echo "✔︎ mounted sshfs"
 end
-
