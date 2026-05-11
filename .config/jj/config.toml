@@ -16,6 +16,8 @@
   # 'jj jj log' on the command line without getting a command-not-found error.
   jj = []
 
+  sudo = ["--ignore-immutable"]
+
   re = ["rebase", "-r=fork_point(@|trunk())..@", "-o=trunk()"]
 
   shift-back = ["rebase", "--insert-after=main", "--insert-before=megamerge", "-r"]
