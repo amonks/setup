@@ -27,4 +27,4 @@ rsync --archive --human-readable --delete --progress --ignore-errors \
   --include "/Library/Keychains/*" \
   --include "/Library/Preferences/*" \
   $rsync_excludes \
-  ~/ "thor-syncer:/data/tank/mirror/$machine_name/$machine_user"
+  ~/ "thor:/data/tank/mirror/$machine_name/$machine_user"
