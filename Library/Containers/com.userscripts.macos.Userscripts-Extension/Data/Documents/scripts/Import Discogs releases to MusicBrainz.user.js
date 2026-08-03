@@ -1,21 +1,20 @@
 // ==UserScript==
 
-// @name           Import Discogs releases to MusicBrainz
-// @description    Add a button to import Discogs releases to MusicBrainz and add links to matching MusicBrainz entities for various Discogs entities (artist,release,master,label)
-// @version        2021.8.10.1
-// @namespace      http://userscripts.org/users/22504
-// @downloadURL    https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/discogs_importer.user.js
-// @updateURL      https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/discogs_importer.user.js
-// @include        http*://www.discogs.com/*
-// @include        http*://*.discogs.com/*release/*
-// @exclude        http*://*.discogs.com/*release/*?f=xml*
-// @exclude        http*://www.discogs.com/release/add
-// @require        https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
-// @require        https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/lib/mbimport.js
-// @require        https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/lib/logger.js
-// @require        https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/lib/mblinks.js
-// @require        https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/lib/mbimportstyle.js
-// @icon           https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/assets/images/Musicbrainz_import_logo.png
+// @name         Import Discogs releases to MusicBrainz
+// @description  Add a button to import Discogs releases to MusicBrainz and add links to matching MusicBrainz entities for various Discogs entities (artist,release,master,label)
+// @version      2026.7.7.1
+// @namespace    http://userscripts.org/users/22504
+// @downloadURL  https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/discogs_importer.user.js
+// @updateURL    https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/discogs_importer.user.js
+// @match        https://www.discogs.com/*
+// @match        https://www.discogs.com/release/*
+// @exclude      https://www.discogs.com/release/add
+// @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
+// @require      https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/refs/heads/master/lib/mbimport.js
+// @require      https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/refs/heads/master/lib/logger.js
+// @require      https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/refs/heads/master/lib/mblinks.js?version=v2026.05.31.1
+// @require      https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/refs/heads/master/lib/mbimportstyle.js
+// @icon         https://raw.githubusercontent.com/murdos/musicbrainz-userscripts/master/assets/images/Musicbrainz_import_logo.png
 // ==/UserScript==
 
 // prevent JQuery conflicts, see http://wiki.greasespot.net/@grant
@@ -40,7 +39,7 @@ $(document).ready(function () {
     MBSearchItStyle();
 
     const current_page_key = getDiscogsLinkKey(
-        window.location.href.replace(/\?.*$/, '').replace(/#.*$/, '').replace('/master/view/', '/master/')
+        window.location.href.replace(/\?.*$/, '').replace(/#.*$/, '').replace('/master/view/', '/master/'),
     );
     if (!current_page_key) return;
 
@@ -73,11 +72,15 @@ $(document).ready(function () {
                     let mbContentBlock = $('<div class="section_content"></div>');
                     mbUI.append(mbContentBlock);
                     let mbError = $(
-                        `<p><small>${e}<br /><b>Please <a href="https://github.com/murdos/musicbrainz-userscripts/issues">report</a> this error, along the current page URL.</b></small></p>`
+                        `<p><small>${e}<br /><b>Please <a href="https://github.com/murdos/musicbrainz-userscripts/issues">report</a> this error, along the current page URL.</b></small></p>`,
                     );
                     mbContentBlock.prepend(mbError);
                     insertMbUI(mbUI);
-                    mbError.css({ 'background-color': '#fbb', 'margin-top': '4px', 'margin-bottom': '4px' });
+                    mbError.css({
+                        'background-color': '#fbb',
+                        'margin-top': '4px',
+                        'margin-bottom': '4px',
+                    });
                     mbUI.slideDown();
                     throw e;
                 }
@@ -114,7 +117,7 @@ function insertMBLinks(current_page_key) {
                     .filter(function (e) {
                         return e != '';
                     })
-                    .join(',')
+                    .join(','),
             );
             if (link_infos[mlink] && link_infos[mlink].type === discogs_type) {
                 const discogs_url = link_infos[mlink].clean_url;
@@ -131,6 +134,7 @@ function insertMBLinks(current_page_key) {
                         'release-group': { mark: 'G' },
                         place: { mark: 'P' },
                         label: { mark: 'L' },
+                        series: { mark: 'S' },
                     };
                     let mark = '';
                     let entity_name = 'entity';
@@ -143,8 +147,8 @@ function insertMBLinks(current_page_key) {
                         .prepend(
                             `<span class="mb_valign mb_searchit"><a class="mb_search_link" target="_blank" title="Search this ${entity_name} on MusicBrainz (open in a new tab)" href="${MBImport.searchUrlFor(
                                 mb_type,
-                                $link.text()
-                            )}"><small>${mark}</small>?</a></span>`
+                                $link.text(),
+                            )}"><small>${mark}</small>?</a></span>`,
                         );
                 }
                 const insert_normal = function (link) {
@@ -243,24 +247,49 @@ function insertMBLinks(current_page_key) {
     mbLinks.searchAndDisplayMbLink(current_page_info.clean_url, mb_type, mbLinkInsert, cachekey);
 
     const $root = $('body');
-    // artist/label/master pages, release pages (before the 2021-08-09 update)
-    add_mblinks($root, 'div.profile', ['artist', 'label']);
-    add_mblinks($root, 'tr[data-object-type="release"] td.artist,td.title', 'artist');
-    add_mblinks($root, 'tr[data-object-type="release"] td.title', 'release');
-    add_mblinks($root, 'tr[data-object-type="release"]', 'label');
-    add_mblinks($root, 'tr[data-object-type~="master"]', ['master', 'artist', 'label']);
-    // release pages (since the 2021-08-09 update)
-    add_mblinks($root, '#release-header', ['artist', 'label']);
-    setInterval(() => add_mblinks($root, '#release-other-versions', ['artist', 'release', 'label']), 500); // Discogs loads this dynamically, wait a moment
-    add_mblinks($root, '#release-tracklist', 'artist');
-    add_mblinks($root, '#release-companies', [['label', 'place'], 'label']);
-    add_mblinks($root, '#release-credits', ['label', 'artist']);
-    add_mblinks($root, '#release-actions', 'master', true);
-    // release pages (before the 2021-08-09 update, TODO: remove after the new layout becomes permanent)
-    add_mblinks($root, 'div#tracklist', 'artist');
-    add_mblinks($root, 'div#companies', [['label', 'place'], 'label']);
-    add_mblinks($root, 'div#credits', ['label', 'artist']);
-    add_mblinks($root, 'div#page_aside div.section_content:first', 'master', true);
+
+    if (current_page_info.type === 'artist') {
+        // profile text and relationships
+        add_mblinks($root, 'div[class^=info_]', ['artist', 'label']);
+        setInterval(() => {
+            // dynamically loaded, paged and filterable (master) release listing
+            add_mblinks($root, 'table[class^=releases_]', ['artist', 'label', 'master', 'release']);
+            // dynamically expanded master release
+            add_mblinks($root, 'tr[class^=versionsTextWithCoversRow_]', ['label', 'release']);
+        }, 1500);
+    } else if (current_page_info.type === 'label') {
+        // profile text and relationships
+        add_mblinks($root, 'div[class^=info_]', ['artist', 'label']);
+        setInterval(() => {
+            // dynamically loaded and paged (master) release listing
+            add_mblinks($root, 'table[class^=labelReleasesTable_]', ['artist', 'master', 'release']);
+            // dynamically expanded master release
+            add_mblinks($root, 'tr[class^=versionsTextWithCoversRow_]', ['artist', 'release']);
+        }, 1500);
+    } else if (current_page_info.type === 'master') {
+        // master release artist
+        add_mblinks($root, 'h1', ['artist']);
+        // master release tracklist
+        add_mblinks($root, 'table[class^=tracklist_] td[class^=artist_]', ['artist']);
+        setInterval(() => {
+            // dynamically expanded credits section (master release summary)
+            add_mblinks($root, '#Credits li[class^=artist_]', ['artist']);
+            // dynamically paged and filterable release listing
+            add_mblinks($root, '#versions tr[class^=row_]', ['label', 'release']);
+        }, 1000);
+    } else if (current_page_info.type === 'release') {
+        // master release in the actions sidebar (link early to prevent duplicate release groups on import!)
+        add_mblinks($root, '#release-actions', ['master']);
+        // release artist
+        add_mblinks($root, 'h1', ['artist']);
+        // release labels and series
+        add_mblinks($root, 'div[class^=info_]', [['label', 'series'], 'label']);
+        add_mblinks($root, '#release-companies', [['label', 'place'], 'label']);
+        add_mblinks($root, '#release-credits', ['artist', 'label']);
+        add_mblinks($root, '#release-tracklist', ['artist']);
+        // dynamically paged and filterable listing of other release versions
+        setTimeout(() => add_mblinks($root, '#release-other-versions', ['artist', 'label', 'release']), 1000);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +325,8 @@ const link_infos = {};
 // Parse discogs url to extract info, returns a key and set link_infos for this key
 // the key is in the form discogs_type/discogs_id
 function getDiscogsLinkKey(url) {
-    const re = /^https?:\/\/(?:www|api)\.discogs\.com\/(?:(?:(?!sell).+|sell.+)\/)?(master|release|artist|label)s?\/(\d+)(?:[^?#]*)(?:\?noanv=1|\?anv=[^=]+)?$/i;
+    const re =
+        /^https?:\/\/(?:www|api)\.discogs\.com\/(?:(?:(?!sell).+|sell.+)\/)?(master|release|artist|label)s?\/(\d+)(?:[^?#]*)(?:\?noanv=1|\?anv=[^=]+)?$/i;
     const m = re.exec(url);
     if (m !== null) {
         const key = `${m[1]}/${m[2]}`;
@@ -378,17 +408,18 @@ function MBIDfromUrl(url, discogs_type, mb_type) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function insertMbUI(mbUI) {
-    let e;
-    if ((e = $('#release-marketplace')) && e.length) {
-        e.before(mbUI);
-    }
-    // FIXME: the following selectors are broken since the 2021-08-09 release page update, not sure why there are three alternative selectors
-    else if ((e = $('div.section.collections')) && e.length) {
-        e.after(mbUI);
-    } else if ((e = $('#statistics')) && e.length) {
-        e.before(mbUI);
-    } else if ((e = $('div.section.social')) && e.length) {
-        e.before(mbUI);
+    for (const sel of [
+        // As of 2026-01-27, only appears in discogs UI when not logged in
+        // see: https://github.com/murdos/musicbrainz-userscripts/issues/777
+        '#release-marketplace',
+        '#shopping-box-host', // <- equivalent to #marketplace when logged in
+        '#release-stats', // <- formerly #statistics (until ~2021-08-09)
+    ]) {
+        const section = $(sel);
+        if (section.length > 0) {
+            section.before(mbUI);
+            break;
+        }
     }
 }
 
@@ -405,7 +436,7 @@ function insertMBSection(release, current_page_key) {
 
     if (release.maybe_buggy) {
         const warning_buggy = $(
-            '<p><small><b>Warning</b>: this release has perhaps a buggy tracklist, please check twice the data you import.</small><p'
+            '<p><small><b>Warning</b>: this release has perhaps a buggy tracklist, please check twice the data you import.</small><p',
         ).css({ color: 'red', 'margin-top': '4px', 'margin-bottom': '4px' });
         mbContentBlock.prepend(warning_buggy);
     }
@@ -441,6 +472,14 @@ function insertMBSection(release, current_page_key) {
     $('form.musicbrainz_import').css({ width: '49%', display: 'inline-block' });
     $('form.musicbrainz_import_search').css({ float: 'right' });
     $('form.musicbrainz_import > button').css({ width: '100%', 'box-sizing': 'border-box' });
+
+    // Fix tracklist with long credits text overlap issue by setting track height to auto
+    const tracklistCss = `
+        [class*="trackCredits"][class*="expanded"] {
+            height: auto !important;
+        }
+    `;
+    document.head.insertAdjacentHTML('beforeend', `<style>${tracklistCss}</style>`);
 
     mbUI.slideDown();
 }
@@ -621,7 +660,7 @@ function parseDiscogsRelease(discogsRelease) {
     // Barcode
     if (discogsRelease.identifiers) {
         $.each(discogsRelease.identifiers, function (index, identifier) {
-            if (identifier.type === 'Barcode') {
+            if (identifier.type === 'Barcode' && identifier.value !== null) {
                 release.barcode = identifier.value.replace(/ /g, '');
                 return false;
             }
@@ -748,7 +787,7 @@ function parseDiscogsRelease(discogsRelease) {
 
         // Create release if needed
         let discindex = releaseNumber - 1;
-        if (!release.discs[discindex]) {
+        while (!release.discs[discindex]) {
             let newdisc = {
                 tracks: [],
                 format: release_formats[discindex],
@@ -808,7 +847,10 @@ function decodeDiscogsJoinphrase(join) {
 
 const MediaTypes = {
     '8-Track Cartridge': 'Cartridge',
-    Acetate: 'Vinyl',
+    Acetate: 'Acetate',
+    'Acetate7"': '7" Acetate',
+    'Acetate10"': '10" Acetate',
+    'Acetate12"': '12" Acetate',
     Betamax: 'Betamax',
     'Blu-ray': 'Blu-ray',
     'Blu-ray-R': 'Blu-ray',
