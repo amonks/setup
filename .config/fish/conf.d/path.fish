@@ -23,5 +23,11 @@ debug-fish-init start (status -f)
     ~/.local/bin \
     /home/ajm/.claude/local/ \
 
+  # sbin dirs: login sessions get these from login.conf (FreeBSD) or
+  # /etc/paths (macOS), but non-interactive `ssh host cmd` shells don't.
+  for dir in /sbin /usr/sbin /usr/local/sbin
+    test -d $dir; and set -Ua fish_user_paths $dir
+  end
+
 debug-fish-init end (status -f)
 
