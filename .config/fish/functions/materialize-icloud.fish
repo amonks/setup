@@ -9,4 +9,12 @@ function materialize-icloud --argument-names path
 
     fd --type file $excludes --print0 . $path \
         | xargs -0 -P 8 -n 64 head -c 1 > /dev/null
+    # Preserve traversal failures as well as failed reads.
+    set -l codes $pipestatus
+    for code in $codes
+        if test $code -ne 0
+            return $code
+        end
+    end
+    return 0
 end
